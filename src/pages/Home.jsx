@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Mic } from "lucide-react";
 
 export default function Home() {
   const features = [
