@@ -50,6 +50,12 @@ const vocalStyles = [
   "Voz Grave & Sombria",
 ];
 
+const voiceOptions = [
+  { id: "homem", label: "Homem", tag: "[Ele]" },
+  { id: "mulher", label: "Mulher", tag: "[Ela]" },
+  { id: "ambos", label: "Ambos", tag: "[Ambos]" },
+];
+
 export default function LyricGenerator() {
   const [concept, setConcept] = useState("");
   const [musicStyle, setMusicStyle] = useState("");
