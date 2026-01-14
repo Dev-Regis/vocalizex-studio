@@ -67,9 +67,15 @@ export default function LyricGenerator() {
   const [lyricsParts, setLyricsParts] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const toggleVoice = (voiceId) => {
+    setSelectedVoices(prev =>
+      prev.includes(voiceId) ? prev.filter(v => v !== voiceId) : [...prev, voiceId]
+    );
+  };
+
   const generateLyrics = async () => {
-    if (!concept.trim() || !musicStyle || !vocalStyle) {
-      toast.error("Preencha todos os campos");
+    if (!concept.trim() || !musicStyle || !vocalStyle || selectedVoices.length === 0) {
+      toast.error("Preencha todos os campos e selecione pelo menos uma voz");
       return;
     }
 
@@ -77,25 +83,55 @@ export default function LyricGenerator() {
     try {
       toast.loading("Gerando letra original...", { id: "generate" });
 
+      const voicesTags = selectedVoices.map(v => {
+        const vo = voiceOptions.find(o => o.id === v);
+        return vo?.tag;
+      }).join(", ");
+
       const prompt = `Crie uma LETRA DE MÚSICA TOTALMENTE ORIGINAL E ÚNICA que NÃO EXISTE no mundo.
 
 CONCEITO & VIBE: ${concept}
 ESTILO DE MÚSICA: ${musicStyle}
 ESTILO VOCAL: ${vocalStyle}
+DURAÇÃO: ${duration} minutos
+VOZES/GÊNEROS: ${voicesTags}
+
+Estrutura obrigatória (use EXATAMENTE este formato):
+[Intro] [tag] 0:00-0:XX
+[Verso 1] [tag] 0:XX-0:XX
+[Verso 2] [tag] 0:XX-0:XX
+[Pré-Refrão] [tag] 0:XX-0:XX
+[Refrão A] [tag] 0:XX-0:XX
+[Verso 3] [tag] 0:XX-0:XX
+[Refrão B] [tag] 0:XX-0:XX
+[Ponte (call & response)] [tag] 0:XX-0:XX
+[Break/Paradinha 150] [tag] 0:XX-0:XX
+[Ponte final] [tag] 0:XX-0:XX
+[Outro] [tag] 0:XX-0:XX
 
 Requisitos:
 1. A letra DEVE ser uma música INÉDITA e original
 2. Crie um título ÚNICO e criativo
-3. Inclua verso, pré-refrão e refrão (mínimo 2 versos)
-4. A letra deve ser bem estruturada e fluida
-5. Retorne EXATAMENTE no formato JSON abaixo:
+3. Distribua os timecodes para atingir aprox. ${duration} minutos no total
+4. Escolha as tags: ${voicesTags}
+5. A letra deve ser bem estruturada e fluida
+6. Retorne EXATAMENTE no formato JSON abaixo:
 
 {
   "title": "Título da música",
   "musicStyle": "${musicStyle}",
   "vocalStyle": "${vocalStyle}",
-  "lyrics": "letra aqui com quebras de linha usando \\n",
-  "description": "Descrição breve sobre batida, tom e sentimento da música"
+  "duration": ${duration},
+  "description": "Descrição breve sobre batida, tom e sentimento da música",
+  "parts": [
+    {
+      "section": "Intro",
+      "tag": "[tag]",
+      "startTime": "0:00",
+      "endTime": "0:15",
+      "lyrics": "letra da intro aqui"
+    }
+  ]
 }`;
 
       const response = await base44.integrations.Core.InvokeLLM({
@@ -106,15 +142,28 @@ Requisitos:
             title: { type: "string" },
             musicStyle: { type: "string" },
             vocalStyle: { type: "string" },
-            lyrics: { type: "string" },
+            duration: { type: "number" },
             description: { type: "string" },
+            parts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  section: { type: "string" },
+                  tag: { type: "string" },
+                  startTime: { type: "string" },
+                  endTime: { type: "string" },
+                  lyrics: { type: "string" },
+                },
+              },
+            },
           },
-          required: ["title", "musicStyle", "vocalStyle", "lyrics", "description"],
+          required: ["title", "musicStyle", "vocalStyle", "duration", "description", "parts"],
         },
       });
 
       setTitle(response.title);
-      setLyrics(response.lyrics);
+      setLyricsParts(response.parts || []);
       setDetails(response.description);
       toast.success("Letra gerada com sucesso!", { id: "generate" });
     } catch (error) {
