@@ -175,16 +175,18 @@ Requisitos:
   };
 
   const copyLyrics = () => {
-    navigator.clipboard.writeText(`${title}\n\n${lyrics}`);
+    const text = lyricsParts.map(p => `[${p.section}] ${p.tag} ${p.startTime}-${p.endTime}\n${p.lyrics}`).join("\n\n");
+    navigator.clipboard.writeText(`${title}\n\n${text}`);
     toast.success("Letra copiada!");
   };
 
   const downloadLyrics = () => {
-    const text = `${title}\n\n${lyrics}\n\n---\n${details}`;
+    const text = lyricsParts.map(p => `[${p.section}] ${p.tag} ${p.startTime}-${p.endTime}\n${p.lyrics}`).join("\n\n");
+    const fullText = `${title}\n\nDuração: ${duration} minutos\n\n${text}\n\n---\n${details}`;
     const element = document.createElement("a");
     element.setAttribute(
       "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      "data:text/plain;charset=utf-8," + encodeURIComponent(fullText)
     );
     element.setAttribute("download", `${title.toLowerCase().replace(/\s+/g, "-")}.txt`);
     element.style.display = "none";
