@@ -189,7 +189,7 @@ Requisitos CRÍTICOS:
   };
 
   const copyLyrics = () => {
-    const text = lyricsParts.map(p => `[${p.section}] ${p.tag} ${p.startTime}-${p.endTime}\n${p.lyrics}`).join("\n\n");
+    const text = lyricsParts.map(p => `[${p.section} • ${p.startTime}]\n${p.tag}\n\n${p.lyrics.split(' / ').join('\n')}`).join("\n\n");
     navigator.clipboard.writeText(`${title}\n\n${text}`);
     toast.success("Letra copiada!");
   };
