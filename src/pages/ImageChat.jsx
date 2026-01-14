@@ -4,8 +4,9 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown } from "lucide-react";
 import { toast } from "sonner";
+import { jsPDF } from "jspdf";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -300,6 +301,37 @@ Tarefa do usuário: ${prompt}`;
     }
   };
 
+  const downloadTextAsPDF = (text) => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const maxWidth = pageWidth - (margin * 2);
+      
+      doc.setFont("helvetica");
+      doc.setFontSize(11);
+      
+      const lines = doc.splitTextToSize(text, maxWidth);
+      let y = margin;
+      
+      lines.forEach((line, index) => {
+        if (y + 10 > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(line, margin, y);
+        y += 7;
+      });
+      
+      doc.save(`texto-${Date.now()}.pdf`);
+      toast.success("PDF baixado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao gerar PDF");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#050506] text-white flex flex-col">
       {/* Header */}
@@ -355,7 +387,22 @@ Tarefa do usuário: ${prompt}`;
                         : "bg-[#121214] border border-[#27272a]"
                     }`}
                   >
-                    {msg.content && <p className="mb-2">{msg.content}</p>}
+                    {msg.content && (
+                      <div className="relative group">
+                        <p className="mb-2">{msg.content}</p>
+                        {msg.role === "assistant" && msg.content.length > 50 && !msg.image && (
+                          <Button
+                            onClick={() => downloadTextAsPDF(msg.content)}
+                            size="sm"
+                            variant="ghost"
+                            className="mt-2 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                          >
+                            <FileDown className="w-4 h-4 mr-2" />
+                            Baixar PDF
+                          </Button>
+                        )}
+                      </div>
+                    )}
                     
                     {msg.files && msg.files.length > 0 && (
                       <div className="grid grid-cols-2 gap-2 mt-2">
