@@ -2,6 +2,7 @@ import BatchImages from './pages/BatchImages';
 import Home from './pages/Home';
 import ImageChat from './pages/ImageChat';
 import LyricsImage from './pages/LyricsImage';
+import ImageCreator from './pages/ImageCreator';
 
 
 export const PAGES = {
@@ -9,6 +10,7 @@ export const PAGES = {
     "Home": Home,
     "ImageChat": ImageChat,
     "LyricsImage": LyricsImage,
+    "ImageCreator": ImageCreator,
 }
 
 export const pagesConfig = {
