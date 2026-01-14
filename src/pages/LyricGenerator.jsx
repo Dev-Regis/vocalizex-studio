@@ -385,16 +385,16 @@ Requisitos CRÍTICOS:
               </div>
             )}
 
-            {details && (
-              <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
-                <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
-                  Estilo, Batida & Detalhes
-                </label>
-                <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-4 text-gray-300 text-sm leading-relaxed">
-                  {details}
-                </div>
-              </div>
-            )}
+            {!isGenerating && details && (
+               <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
+                 <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
+                   Estilo, Batida & Detalhes
+                 </label>
+                 <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-4 text-gray-300 text-sm leading-relaxed">
+                   {details}
+                 </div>
+               </div>
+             )}
 
             {!isGenerating && lyricsParts.length > 0 && (
               <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
