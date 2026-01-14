@@ -438,6 +438,13 @@ Requisitos CRÍTICOS:
                     <Download className="w-4 h-4 mr-2" />
                     Baixar
                   </Button>
+                  <Button
+                    onClick={clearResults}
+                    variant="outline"
+                    className="flex-1 border-red-500/30 text-red-400 hover:bg-red-500/10"
+                  >
+                    Limpar
+                  </Button>
                 </div>
               </div>
             )}
