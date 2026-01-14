@@ -5,18 +5,38 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Wand2, Loader2, Download } from "lucide-react";
+import { ArrowLeft, Wand2, Loader2, Download, Image as ImageIcon, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BatchImages() {
   const [prompt, setPrompt] = useState("");
+  const [lyrics, setLyrics] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [images, setImages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const handlePhotoSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("Foto não pode exceder 20MB");
+      return;
+    }
+
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setPhoto({ url: file_url, name: file.name });
+      toast.success("Foto enviada!");
+    } catch (error) {
+      toast.error("Erro ao enviar foto");
+    }
+  };
+
   const generateImages = async () => {
-    if (!prompt.trim()) {
-      toast.error("Digite uma descrição para as imagens");
+    if (!lyrics.trim()) {
+      toast.error("Digite a letra da música");
       return;
     }
 
@@ -28,10 +48,21 @@ export default function BatchImages() {
 
     try {
       for (let i = 0; i < 10; i++) {
-        const enhancedPrompt = `${prompt}. Variação ${i + 1}, estilo único e criativo.`;
+        let enhancedPrompt = `Crie uma imagem artística e criativa baseada nesta letra de música: "${lyrics}". Variação ${i + 1}. `;
+        
+        if (prompt.trim()) {
+          enhancedPrompt += `Estilo adicional: ${prompt}. `;
+        }
+
+        if (photo) {
+          enhancedPrompt += `Use a pessoa da foto como personagem principal na cena. `;
+        }
+
+        enhancedPrompt += `Imagem de alta qualidade, cores vibrantes, composição profissional.`;
         
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: enhancedPrompt
+          prompt: enhancedPrompt,
+          existing_image_urls: photo ? [photo.url] : undefined
         });
 
         const imageUrl = response.url || response.file_url || response;
@@ -77,7 +108,7 @@ export default function BatchImages() {
         {/* Header */}
         <header className="mb-8">
           <Link 
-            to={createPageUrl("ImageCreator")} 
+            to={createPageUrl("Home")} 
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -85,25 +116,82 @@ export default function BatchImages() {
           </Link>
 
           <div className="text-center">
-            <h1 className="text-4xl font-black mb-2">Gerar 10 Imagens</h1>
-            <p className="text-gray-400">Crie múltiplas variações de uma só vez</p>
+            <h1 className="text-4xl font-black mb-2">Gerar 10 Imagens com Letra</h1>
+            <p className="text-gray-400">Transforme letras de música em arte visual com sua foto</p>
           </div>
         </header>
 
         {/* Input Area */}
         <Card className="bg-[#121214] border-[#27272a] mb-8">
-          <CardContent className="p-6">
-            <Textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Descreva as imagens que deseja gerar... Ex: Um cachorro fofo em um parque ensolarado, estilo cartoon colorido"
-              className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[120px] mb-4"
-              disabled={isGenerating}
-            />
+          <CardContent className="p-6 space-y-4">
+            {/* Photo Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Sua Foto (opcional)
+              </label>
+              {photo ? (
+                <div className="relative inline-block">
+                  <img
+                    src={photo.url}
+                    alt="Foto selecionada"
+                    className="w-32 h-32 rounded-lg object-cover border-2 border-purple-500"
+                  />
+                  <button
+                    onClick={() => setPhoto(null)}
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ) : (
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoSelect}
+                    className="hidden"
+                    disabled={isGenerating}
+                  />
+                  <div className="border-2 border-dashed border-[#27272a] rounded-lg p-6 hover:border-purple-500 transition-colors text-center">
+                    <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm text-gray-400">Clique para adicionar sua foto</p>
+                    <p className="text-xs text-gray-500 mt-1">Você aparecerá nas imagens geradas</p>
+                  </div>
+                </label>
+              )}
+            </div>
+
+            {/* Lyrics Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Letra da Música *
+              </label>
+              <Textarea
+                value={lyrics}
+                onChange={(e) => setLyrics(e.target.value)}
+                placeholder="Cole aqui a letra da música... Ex: Olhos castanhos, cabelo ao vento, sorriso que ilumina meu pensamento..."
+                className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[120px]"
+                disabled={isGenerating}
+              />
+            </div>
+
+            {/* Style Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Estilo Adicional (opcional)
+              </label>
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Ex: estilo anime, fotorealista, pintura a óleo, cartoon..."
+                className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[80px]"
+                disabled={isGenerating}
+              />
+            </div>
 
             <Button
               onClick={generateImages}
-              disabled={isGenerating || !prompt.trim()}
+              disabled={isGenerating || !lyrics.trim()}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500"
             >
               {isGenerating ? (
