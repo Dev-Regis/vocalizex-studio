@@ -79,6 +79,9 @@ export default function LyricGenerator() {
       return;
     }
 
+    setLyricsParts([]);
+    setTitle("");
+    setDetails("");
     setIsGenerating(true);
     try {
       toast.loading("Gerando letra original...", { id: "generate" });
