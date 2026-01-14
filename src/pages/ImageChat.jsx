@@ -113,6 +113,7 @@ export default function ImageChat() {
     { id: 'search', label: 'Busca na Web', icon: '🌐' },
     { id: 'analyze', label: 'Analisar', icon: '🔍' },
     { id: 'create', label: 'Criar Imagem', icon: '🎨' },
+    { id: 'agent', label: 'Modo agente', icon: '🤖' },
     { id: 'extract', label: 'Extrair Dados', icon: '📊' }
   ];
 
@@ -126,13 +127,20 @@ export default function ImageChat() {
 
     const newFiles = [];
     for (const file of selectedFiles) {
+      // Verificar tamanho (20MB max)
+      if (file.size > 20 * 1024 * 1024) {
+        toast.error(`${file.name} excede 20MB`);
+        continue;
+      }
+
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
         newFiles.push({ 
           url: file_url, 
           name: file.name,
           type: file.type,
-          fileType: fileType
+          fileType: fileType,
+          size: file.size
         });
         toast.success(`${file.name} enviado!`);
       } catch (error) {
@@ -160,6 +168,9 @@ export default function ImageChat() {
         break;
       case 'spreadsheet':
         input.accept = '.xls,.xlsx,.csv';
+        break;
+      case 'zip':
+        input.accept = '.zip,.rar,.7z';
         break;
       default:
         input.accept = '*';
@@ -198,6 +209,7 @@ export default function ImageChat() {
       const shouldSearchWeb = selectedModes.includes('search') || /\b(pesquisa|pesquise|busca|busque|procura|procure|pesquisar|buscar|search|find)\b/i.test(currentInput);
       const shouldAnalyze = selectedModes.includes('analyze');
       const shouldThink = selectedModes.includes('think');
+      const agentMode = selectedModes.includes('agent');
 
       if (shouldGenerateImage) {
         // Gerar imagem
@@ -228,6 +240,16 @@ export default function ImageChat() {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
         
+        if (agentMode) {
+          prompt = `Você é um programador profissional expert em todas as linguagens e tecnologias. 
+Analise os arquivos enviados (incluindo .zip), execute as tarefas solicitadas com precisão máxima.
+Se necessário criar/modificar código, faça isso de forma profissional e completa.
+Se pedirem um arquivo .zip atualizado, descreva as modificações feitas.
+Forneça código completo quando solicitado, não apenas trechos.
+
+Tarefa do usuário: ${prompt}`;
+        }
+        
         if (shouldThink) {
           prompt = `Pense cuidadosamente e analise em profundidade antes de responder: ${prompt}`;
         }
@@ -237,7 +259,7 @@ export default function ImageChat() {
         }
         
         if (currentFiles.length > 0) {
-          prompt += `\n\nArquivos: ${currentFiles.map(f => f.name).join(', ')}`;
+          prompt += `\n\nArquivos enviados: ${currentFiles.map(f => `${f.name} (${(f.size / 1024).toFixed(1)}KB)`).join(', ')}`;
         }
 
         const response = await base44.integrations.Core.InvokeLLM({
@@ -462,6 +484,13 @@ export default function ImageChat() {
                   Criar imagem
                 </DropdownMenuItem>
                 <DropdownMenuItem 
+                  onClick={() => toggleMode('agent')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <span className="mr-2">🤖</span>
+                  Modo agente
+                </DropdownMenuItem>
+                <DropdownMenuItem 
                   onClick={() => toggleMode('think')}
                   className="text-white hover:bg-purple-500/20 cursor-pointer"
                 >
@@ -502,6 +531,13 @@ export default function ImageChat() {
                 >
                   <File className="w-4 h-4 mr-2" />
                   Planilha (Excel, CSV)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('zip')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <File className="w-4 h-4 mr-2" />
+                  Arquivo ZIP (até 20MB)
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -561,7 +597,7 @@ export default function ImageChat() {
           </div>
 
           <p className="text-xs text-gray-500 mt-2 text-center">
-            {files.length}/10 arquivos • Pressione Enter para enviar • Sem limites de funcionalidade
+            {files.length}/10 arquivos (até 20MB cada) • Pressione Enter para enviar • Modo agente: programador profissional
           </p>
         </div>
       </div>
