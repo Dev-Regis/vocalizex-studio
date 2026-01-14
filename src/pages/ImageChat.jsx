@@ -308,7 +308,7 @@ Tarefa do usuário: ${prompt}`;
             <ArrowLeft className="w-4 h-4" />
             <span>Voltar</span>
           </Link>
-          <h1 className="text-xl font-bold">Chat de Imagens IA</h1>
+          <h1 className="text-xl font-bold">Chat IA Completo</h1>
           <Button
             onClick={() => {
               if (confirm("Limpar todo o histórico?")) {
@@ -334,8 +334,8 @@ Tarefa do usuário: ${prompt}`;
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-20">
               <ImageIcon className="w-16 h-16 text-gray-600 mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Comece a criar</h2>
-              <p className="text-gray-400">Envie até 5 fotos e descreva o que deseja criar</p>
+              <h2 className="text-2xl font-bold mb-2">Chat IA Completo</h2>
+              <p className="text-gray-400">Pergunte qualquer coisa, crie imagens, pesquise na web ou envie arquivos</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -408,7 +408,7 @@ Tarefa do usuário: ${prompt}`;
                   <div className="bg-[#121214] border border-[#27272a] rounded-2xl p-4">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                      <span className="text-gray-400">Gerando imagem...</span>
+                      <span className="text-gray-400">Pensando...</span>
                     </div>
                   </div>
                 </div>
