@@ -203,7 +203,44 @@ export default function ImageChat() {
     setFiles([]);
     setIsGenerating(true);
 
-      if (shouldGenerateImage && !agentMode && currentFiles.filter(f => f.type?.startsWith('image/')).length > 0) {
+    try {
+      // Detectar funcionalidades pelos modos selecionados ou palavras
+      const shouldSearchWeb = selectedModes.includes('search') || /\b(pesquisa|pesquise|busca|busque|procura|procure|pesquisar|buscar|search|find)\b/i.test(currentInput);
+      const shouldAnalyze = selectedModes.includes('analyze');
+      const shouldThink = selectedModes.includes('think');
+      const agentMode = selectedModes.includes('agent');
+      
+      // Só gerar imagem se modo create estiver ativo OU se pedir explicitamente
+      const hasNonImageFiles = currentFiles.some(f => !f.type?.startsWith('image/'));
+      const shouldGenerateImage = selectedModes.includes('create') || 
+        (/\b(gera|cria|criar|gerar|desenha|desenhe)\s+(uma\s+)?(imagem|foto|desenho)\b/i.test(currentInput) && !hasNonImageFiles);
+
+      if (shouldGenerateImage && !hasNonImageFiles) {
+        // Gerar imagem
+        let enhancedPrompt = currentInput;
+        const imagesToUse = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
+        
+        if (imagesToUse.length > 0) {
+          enhancedPrompt += ` Use as fotos fornecidas como referência.`;
+        }
+        
+        enhancedPrompt += ` Crie uma imagem artística, de alta qualidade, com cores vibrantes e composição profissional.`;
+
+        const response = await base44.integrations.Core.GenerateImage({
+          prompt: enhancedPrompt,
+          existing_image_urls: imagesToUse.length > 0 ? imagesToUse : undefined
+        });
+
+        const imageUrl = response.url || response.file_url || response;
+
+        const aiMessage = {
+          role: "assistant",
+          content: "Aqui está sua imagem gerada:",
+          image: imageUrl
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
         
@@ -242,6 +279,7 @@ Tarefa do usuário: ${prompt}`;
 
         setMessages(prev => [...prev, aiMessage]);
       }
+    }
     } catch (error) {
       toast.error("Erro ao processar");
       console.error(error);
