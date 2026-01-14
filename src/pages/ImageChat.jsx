@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ImageChat() {
@@ -15,8 +15,10 @@ export default function ImageChat() {
   const [input, setInput] = useState("");
   const [files, setFiles] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,6 +31,58 @@ export default function ImageChat() {
   useEffect(() => {
     localStorage.setItem('imageChat_messages', JSON.stringify(messages));
   }, [messages]);
+
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'pt-BR';
+
+      recognitionRef.current.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setInput(transcript);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          toast.error("Permissão de microfone negada");
+        }
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      toast.error("Reconhecimento de voz não suportado neste navegador");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+      toast.success("Escutando... Fale agora!");
+    }
+  };
 
   const handleFileSelect = async (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -315,14 +369,25 @@ export default function ImageChat() {
               <Plus className="w-5 h-5" />
             </Button>
 
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Descreva a imagem que deseja criar..."
-              className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px]"
-              disabled={isGenerating}
-            />
+            <div className="flex-1 relative">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Descreva a imagem que deseja criar..."
+                className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] pr-12"
+                disabled={isGenerating}
+              />
+              <Button
+                onClick={toggleListening}
+                disabled={isGenerating}
+                size="icon"
+                variant="ghost"
+                className={`absolute right-2 top-2 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
+              >
+                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </Button>
+            </div>
 
             <Button
               onClick={handleSubmit}
