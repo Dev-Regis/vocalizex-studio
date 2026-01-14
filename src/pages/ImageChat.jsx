@@ -4,8 +4,14 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File } from "lucide-react";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function ImageChat() {
   const [messages, setMessages] = useState(() => {
@@ -84,24 +90,25 @@ export default function ImageChat() {
     }
   };
 
-  const handleFileSelect = async (e) => {
+  const handleFileSelect = async (e, fileType = 'all') => {
     const selectedFiles = Array.from(e.target.files);
     
-    if (files.length + selectedFiles.length > 5) {
-      toast.error("Máximo de 5 fotos permitidas");
+    if (files.length + selectedFiles.length > 10) {
+      toast.error("Máximo de 10 arquivos");
       return;
     }
 
     const newFiles = [];
     for (const file of selectedFiles) {
-      if (!file.type.startsWith("image/")) {
-        toast.error("Apenas imagens são permitidas");
-        continue;
-      }
-
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        newFiles.push({ url: file_url, name: file.name });
+        newFiles.push({ 
+          url: file_url, 
+          name: file.name,
+          type: file.type,
+          fileType: fileType
+        });
+        toast.success(`${file.name} enviado!`);
       } catch (error) {
         toast.error(`Erro ao enviar ${file.name}`);
       }
@@ -110,13 +117,39 @@ export default function ImageChat() {
     setFiles(prev => [...prev, ...newFiles]);
   };
 
+  const openFileDialog = (fileType) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    
+    switch(fileType) {
+      case 'image':
+        input.accept = 'image/*';
+        break;
+      case 'audio':
+        input.accept = 'audio/*,.mp3,.wav,.ogg';
+        break;
+      case 'document':
+        input.accept = '.pdf,.doc,.docx,.txt';
+        break;
+      case 'spreadsheet':
+        input.accept = '.xls,.xlsx,.csv';
+        break;
+      default:
+        input.accept = '*';
+    }
+    
+    input.onchange = (e) => handleFileSelect(e, fileType);
+    input.click();
+  };
+
   const removeFile = (index) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
     if (!input.trim() && files.length === 0) {
-      toast.error("Digite algo ou adicione imagens");
+      toast.error("Digite algo ou adicione arquivos");
       return;
     }
 
@@ -131,63 +164,68 @@ export default function ImageChat() {
     const currentFiles = [...files];
     setInput("");
     setFiles([]);
-
-    // Verificar se o usuário quer gerar uma imagem ou apenas conversar
-    const shouldGenerateImage = 
-      currentFiles.length > 0 || 
-      /\b(gera|cria|criar|gerar|faça|faz|desenha|desenhe|quero|preciso de.*imagem)\b/i.test(currentInput);
-
-    if (!shouldGenerateImage) {
-      // Apenas responder sem gerar imagem
-      const aiMessage = {
-        role: "assistant",
-        content: "Entendido! Se quiser gerar uma nova imagem, me diga exatamente o que deseja criar ou envie novas fotos."
-      };
-      setMessages(prev => [...prev, aiMessage]);
-      return;
-    }
-
     setIsGenerating(true);
 
     try {
-      let enhancedPrompt = currentInput;
+      // Detectar se deve gerar imagem
+      const shouldGenerateImage = /\b(gera|cria|criar|gerar|faça|faz|desenha|desenhe|imagem|foto|picture|image)\b/i.test(currentInput);
       
-      // Buscar imagens anteriores no histórico se não houver novas
-      let imagesToUse = currentFiles.map(f => f.url);
-      if (imagesToUse.length === 0) {
-        const previousImages = messages
-          .filter(m => m.files && m.files.length > 0)
-          .slice(-1)[0]?.files?.map(f => f.url) || [];
-        imagesToUse = previousImages;
+      // Detectar se deve pesquisar na internet
+      const shouldSearchWeb = /\b(pesquisa|pesquise|busca|busque|procura|procure|pesquisar|buscar|search|find)\b/i.test(currentInput);
+
+      if (shouldGenerateImage) {
+        // Gerar imagem
+        let enhancedPrompt = currentInput;
+        const imagesToUse = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
+        
+        if (imagesToUse.length > 0) {
+          enhancedPrompt += ` Use as fotos fornecidas como referência.`;
+        }
+        
+        enhancedPrompt += ` Crie uma imagem artística, de alta qualidade, com cores vibrantes e composição profissional.`;
+
+        const response = await base44.integrations.Core.GenerateImage({
+          prompt: enhancedPrompt,
+          existing_image_urls: imagesToUse.length > 0 ? imagesToUse : undefined
+        });
+
+        const imageUrl = response.url || response.file_url || response;
+
+        const aiMessage = {
+          role: "assistant",
+          content: "Aqui está sua imagem gerada:",
+          image: imageUrl
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        // Processar com LLM (com ou sem busca na web)
+        let prompt = currentInput;
+        
+        if (currentFiles.length > 0) {
+          prompt += `\n\nO usuário enviou ${currentFiles.length} arquivo(s): ${currentFiles.map(f => f.name).join(', ')}`;
+        }
+
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt,
+          add_context_from_internet: shouldSearchWeb,
+          file_urls: currentFiles.map(f => f.url)
+        });
+
+        const aiMessage = {
+          role: "assistant",
+          content: response
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
       }
-      
-      if (imagesToUse.length > 0) {
-        enhancedPrompt += ` Use as foto(s) fornecidas como referência para inspiração, estilo ou composição.`;
-      }
-      
-      enhancedPrompt += ` Crie uma imagem artística, de alta qualidade, com cores vibrantes e composição profissional.`;
-
-      const response = await base44.integrations.Core.GenerateImage({
-        prompt: enhancedPrompt,
-        existing_image_urls: imagesToUse.length > 0 ? imagesToUse : undefined
-      });
-
-      const imageUrl = response.url || response.file_url || response;
-
-      const aiMessage = {
-        role: "assistant",
-        content: "Aqui está sua imagem gerada:",
-        image: imageUrl
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      toast.error("Erro ao gerar imagem");
+      toast.error("Erro ao processar");
       console.error(error);
       
       const errorMessage = {
         role: "assistant",
-        content: "Desculpe, ocorreu um erro ao gerar a imagem. Tente novamente."
+        content: "Desculpe, ocorreu um erro. Tente novamente."
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -332,12 +370,25 @@ export default function ImageChat() {
           {files.length > 0 && (
             <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
               {files.map((file, index) => (
-                <div key={index} className="relative flex-shrink-0">
-                  <img
-                    src={file.url}
-                    alt={file.name}
-                    className="w-16 h-16 rounded-lg object-cover"
-                  />
+                <div key={index} className="relative flex-shrink-0 bg-[#18181b] rounded-lg p-2 border border-[#27272a]">
+                  {file.type?.startsWith('image/') ? (
+                    <img
+                      src={file.url}
+                      alt={file.name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg flex flex-col items-center justify-center">
+                      {file.type?.startsWith('audio/') ? (
+                        <Music className="w-8 h-8 text-purple-400" />
+                      ) : (
+                        <FileText className="w-8 h-8 text-blue-400" />
+                      )}
+                      <span className="text-[8px] text-gray-400 mt-1 text-center truncate w-full px-1">
+                        {file.name.split('.').pop()?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
                   <button
                     onClick={() => removeFile(index)}
                     className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
@@ -350,24 +401,55 @@ export default function ImageChat() {
           )}
 
           <div className="flex gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              variant="outline"
-              size="icon"
-              disabled={files.length >= 5 || isGenerating}
-              className="flex-shrink-0"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={files.length >= 10 || isGenerating}
+                  className="flex-shrink-0"
+                >
+                  <Plus className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-[#18181b] border-[#27272a]">
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('image')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <ImageIcon className="w-4 h-4 mr-2" />
+                  Imagem
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('audio')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <Music className="w-4 h-4 mr-2" />
+                  Música (MP3)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('document')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Documento (PDF, Word)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('spreadsheet')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <File className="w-4 h-4 mr-2" />
+                  Planilha (Excel)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openFileDialog('all')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <File className="w-4 h-4 mr-2" />
+                  Qualquer arquivo
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <div className="flex-1 relative">
               <Textarea
@@ -404,7 +486,7 @@ export default function ImageChat() {
           </div>
 
           <p className="text-xs text-gray-500 mt-2 text-center">
-            {files.length}/5 fotos • Pressione Enter para enviar
+            {files.length}/10 arquivos • Pressione Enter para enviar • Sem limites de funcionalidade
           </p>
         </div>
       </div>
