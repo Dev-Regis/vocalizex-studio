@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Loader2, Copy, Download } from "lucide-react";
+import { ArrowLeft, Loader2, Copy, Download, Music } from "lucide-react";
 import { toast } from "sonner";
 import {
   Select,
