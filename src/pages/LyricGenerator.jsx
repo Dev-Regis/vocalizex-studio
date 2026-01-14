@@ -425,8 +425,7 @@ Requisitos CRÍTICOS:
                 <div className="flex gap-3">
                   <Button
                     onClick={copyLyrics}
-                    variant="outline"
-                    className="flex-1 border-[#27272a]"
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800"
                   >
                     <Copy className="w-4 h-4 mr-2" />
                     Copiar
