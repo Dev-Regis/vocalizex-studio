@@ -8,7 +8,10 @@ import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download } from 
 import { toast } from "sonner";
 
 export default function ImageChat() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('imageChat_messages');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [input, setInput] = useState("");
   const [files, setFiles] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -21,6 +24,10 @@ export default function ImageChat() {
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('imageChat_messages', JSON.stringify(messages));
   }, [messages]);
 
   const handleFileSelect = async (e) => {
@@ -66,22 +73,49 @@ export default function ImageChat() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
+    const currentFiles = [...files];
     setInput("");
     setFiles([]);
+
+    // Verificar se o usuário quer gerar uma imagem ou apenas conversar
+    const shouldGenerateImage = 
+      currentFiles.length > 0 || 
+      /\b(gera|cria|criar|gerar|faça|faz|desenha|desenhe|quero|preciso de.*imagem)\b/i.test(currentInput);
+
+    if (!shouldGenerateImage) {
+      // Apenas responder sem gerar imagem
+      const aiMessage = {
+        role: "assistant",
+        content: "Entendido! Se quiser gerar uma nova imagem, me diga exatamente o que deseja criar ou envie novas fotos."
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
-      let enhancedPrompt = input;
+      let enhancedPrompt = currentInput;
       
-      if (files.length > 0) {
-        enhancedPrompt += ` Use as ${files.length} foto(s) fornecidas como referência para inspiração, estilo ou composição.`;
+      // Buscar imagens anteriores no histórico se não houver novas
+      let imagesToUse = currentFiles.map(f => f.url);
+      if (imagesToUse.length === 0) {
+        const previousImages = messages
+          .filter(m => m.files && m.files.length > 0)
+          .slice(-1)[0]?.files?.map(f => f.url) || [];
+        imagesToUse = previousImages;
+      }
+      
+      if (imagesToUse.length > 0) {
+        enhancedPrompt += ` Use as foto(s) fornecidas como referência para inspiração, estilo ou composição.`;
       }
       
       enhancedPrompt += ` Crie uma imagem artística, de alta qualidade, com cores vibrantes e composição profissional.`;
 
       const response = await base44.integrations.Core.GenerateImage({
         prompt: enhancedPrompt,
-        existing_image_urls: files.length > 0 ? files.map(f => f.url) : undefined
+        existing_image_urls: imagesToUse.length > 0 ? imagesToUse : undefined
       });
 
       const imageUrl = response.url || response.file_url || response;
@@ -127,7 +161,22 @@ export default function ImageChat() {
             <span>Voltar</span>
           </Link>
           <h1 className="text-xl font-bold">Chat de Imagens IA</h1>
-          <div className="w-20" />
+          <Button
+            onClick={() => {
+              if (confirm("Limpar todo o histórico?")) {
+                setMessages([]);
+                setFiles([]);
+                localStorage.removeItem('imageChat_messages');
+                toast.success("Histórico limpo!");
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
+            <X className="w-4 h-4 mr-1" />
+            Limpar
+          </Button>
         </div>
       </header>
 
