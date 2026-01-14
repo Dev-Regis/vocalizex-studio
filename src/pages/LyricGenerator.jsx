@@ -129,7 +129,8 @@ Requisitos CRÍTICOS:
 7. Use as tags: ${voicesTags}
 8. A letra deve ser bem estruturada, fluida e profissional
 9. Crie TODAS as 14 seções listadas acima
-10. Retorne EXATAMENTE no formato JSON abaixo:
+10. ⚠️ IMPORTANTE: A seção [Intro] NUNCA deve começar com [Ambos]. Use [Ele] ou [Ela] para a Intro
+11. Retorne EXATAMENTE no formato JSON abaixo:
 
 {
   "title": "Título da música",
