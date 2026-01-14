@@ -146,47 +146,50 @@ export default function Mp3Extractor() {
                 </div>
               </button>
             ) : (
-              <div className="flex items-center justify-between p-4 bg-[#18181b] rounded-xl border border-[#27272a]">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-purple-500/20">
-                    <Music className="w-5 h-5 text-purple-400" />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-[#18181b] rounded-xl border border-[#27272a]">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-purple-500/20">
+                      <Music className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">{file.name}</p>
+                      <p className="text-xs text-gray-400">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold">{file.name}</p>
-                    <p className="text-xs text-gray-400">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
+                  <Button
+                    onClick={() => {
+                      setFile(null);
+                      setLyrics("");
+                    }}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    Remover
+                  </Button>
                 </div>
+
                 <Button
-                  onClick={() => setFile(null)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-400 hover:text-red-300"
+                  onClick={extractLyrics}
+                  disabled={isExtracting}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 py-6 text-lg"
                 >
-                  Remover
+                  {isExtracting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Extraindo letra...
+                    </>
+                  ) : (
+                    <>
+                      <Music className="w-5 h-5 mr-2" />
+                      Extrair Letra da Música
+                    </>
+                  )}
                 </Button>
               </div>
-            )}
-
-            {file && !lyrics && (
-              <Button
-                onClick={extractLyrics}
-                disabled={isExtracting}
-                className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
-              >
-                {isExtracting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Extraindo letra...
-                  </>
-                ) : (
-                  <>
-                    <Music className="w-4 h-4 mr-2" />
-                    Extrair Letra
-                  </>
-                )}
-              </Button>
             )}
           </CardContent>
         </Card>
