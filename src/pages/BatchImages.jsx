@@ -11,12 +11,13 @@ import { toast } from "sonner";
 export default function BatchImages() {
   const [prompt, setPrompt] = useState("");
   const [lyrics, setLyrics] = useState("");
-  const [photo, setPhoto] = useState(null);
+  const [photoMan, setPhotoMan] = useState(null);
+  const [photoWoman, setPhotoWoman] = useState(null);
   const [images, setImages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const handlePhotoSelect = async (e) => {
+  const handlePhotoSelect = async (e, gender) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -27,8 +28,13 @@ export default function BatchImages() {
 
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setPhoto({ url: file_url, name: file.name });
-      toast.success("Foto enviada!");
+      if (gender === 'man') {
+        setPhotoMan({ url: file_url, name: file.name });
+        toast.success("Foto do homem enviada!");
+      } else {
+        setPhotoWoman({ url: file_url, name: file.name });
+        toast.success("Foto da mulher enviada!");
+      }
     } catch (error) {
       toast.error("Erro ao enviar foto");
     }
@@ -47,22 +53,54 @@ export default function BatchImages() {
     const generatedImages = [];
 
     try {
+      // Detectar tags na letra
+      const hasHe = lyrics.includes('[Ele]');
+      const hasShe = lyrics.includes('[Ela]');
+      const hasBoth = lyrics.includes('[Ambos]');
+
       for (let i = 0; i < 10; i++) {
-        let enhancedPrompt = `Crie uma imagem artística e criativa baseada nesta letra de música: "${lyrics}". Variação ${i + 1}. `;
+        let enhancedPrompt = `FOTOGRAFIA PROFISSIONAL ULTRA REALISTA de alta qualidade. Baseado nesta letra: "${lyrics}". `;
         
+        const photosToUse = [];
+        
+        // Determinar quais fotos usar baseado nas tags
+        if (hasBoth || (hasHe && hasShe)) {
+          enhancedPrompt += `Cena com um homem e uma mulher juntos. `;
+          if (photoMan) photosToUse.push(photoMan.url);
+          if (photoWoman) photosToUse.push(photoWoman.url);
+        } else if (hasHe) {
+          enhancedPrompt += `Cena focada no homem. `;
+          if (photoMan) photosToUse.push(photoMan.url);
+        } else if (hasShe) {
+          enhancedPrompt += `Cena focada na mulher. `;
+          if (photoWoman) photosToUse.push(photoWoman.url);
+        } else {
+          // Sem tags, usar ambas se disponíveis
+          if (photoMan && photoWoman) {
+            enhancedPrompt += `Cena com um homem e uma mulher. `;
+            photosToUse.push(photoMan.url, photoWoman.url);
+          } else if (photoMan) {
+            enhancedPrompt += `Cena com o homem. `;
+            photosToUse.push(photoMan.url);
+          } else if (photoWoman) {
+            enhancedPrompt += `Cena com a mulher. `;
+            photosToUse.push(photoWoman.url);
+          }
+        }
+
+        if (photosToUse.length > 0) {
+          enhancedPrompt += `Use as pessoas das fotos como personagens principais. `;
+        }
+
         if (prompt.trim()) {
-          enhancedPrompt += `Estilo adicional: ${prompt}. `;
+          enhancedPrompt += `${prompt}. `;
         }
 
-        if (photo) {
-          enhancedPrompt += `Use a pessoa da foto como personagem principal na cena. `;
-        }
-
-        enhancedPrompt += `Imagem de alta qualidade, cores vibrantes, composição profissional.`;
+        enhancedPrompt += `IMPORTANTE: Fotografia real, não arte ou desenho. Lugares reais e autênticos. Iluminação natural profissional. Qualidade cinematográfica. Ultra detalhado e realista. 8K. Variação ${i + 1}.`;
         
         const response = await base44.integrations.Core.GenerateImage({
           prompt: enhancedPrompt,
-          existing_image_urls: photo ? [photo.url] : undefined
+          existing_image_urls: photosToUse.length > 0 ? photosToUse : undefined
         });
 
         const imageUrl = response.url || response.file_url || response;
@@ -71,7 +109,7 @@ export default function BatchImages() {
         setProgress(((i + 1) / 10) * 100);
       }
 
-      toast.success("10 imagens geradas com sucesso!");
+      toast.success("10 imagens fotorealistas geradas!");
     } catch (error) {
       toast.error("Erro ao gerar imagens");
       console.error(error);
@@ -124,41 +162,81 @@ export default function BatchImages() {
         {/* Input Area */}
         <Card className="bg-[#121214] border-[#27272a] mb-8">
           <CardContent className="p-6 space-y-4">
-            {/* Photo Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Sua Foto (opcional)
-              </label>
-              {photo ? (
-                <div className="relative inline-block">
-                  <img
-                    src={photo.url}
-                    alt="Foto selecionada"
-                    className="w-32 h-32 rounded-lg object-cover border-2 border-purple-500"
-                  />
-                  <button
-                    onClick={() => setPhoto(null)}
-                    className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
-                  >
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                </div>
-              ) : (
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoSelect}
-                    className="hidden"
-                    disabled={isGenerating}
-                  />
-                  <div className="border-2 border-dashed border-[#27272a] rounded-lg p-6 hover:border-purple-500 transition-colors text-center">
-                    <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-400">Clique para adicionar sua foto</p>
-                    <p className="text-xs text-gray-500 mt-1">Você aparecerá nas imagens geradas</p>
-                  </div>
+            {/* Photos Upload */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Foto Homem */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Foto do Homem (opcional)
                 </label>
-              )}
+                {photoMan ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={photoMan.url}
+                      alt="Foto do homem"
+                      className="w-full h-40 rounded-lg object-cover border-2 border-blue-500"
+                    />
+                    <button
+                      onClick={() => setPhotoMan(null)}
+                      className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handlePhotoSelect(e, 'man')}
+                      className="hidden"
+                      disabled={isGenerating}
+                    />
+                    <div className="border-2 border-dashed border-[#27272a] rounded-lg p-6 hover:border-blue-500 transition-colors text-center h-40 flex flex-col justify-center">
+                      <ImageIcon className="w-8 h-8 mx-auto mb-2 text-blue-400" />
+                      <p className="text-sm text-gray-400">Foto do Homem</p>
+                      <p className="text-xs text-gray-500 mt-1">Para tag [Ele]</p>
+                    </div>
+                  </label>
+                )}
+              </div>
+
+              {/* Foto Mulher */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Foto da Mulher (opcional)
+                </label>
+                {photoWoman ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={photoWoman.url}
+                      alt="Foto da mulher"
+                      className="w-full h-40 rounded-lg object-cover border-2 border-pink-500"
+                    />
+                    <button
+                      onClick={() => setPhotoWoman(null)}
+                      className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handlePhotoSelect(e, 'woman')}
+                      className="hidden"
+                      disabled={isGenerating}
+                    />
+                    <div className="border-2 border-dashed border-[#27272a] rounded-lg p-6 hover:border-pink-500 transition-colors text-center h-40 flex flex-col justify-center">
+                      <ImageIcon className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                      <p className="text-sm text-gray-400">Foto da Mulher</p>
+                      <p className="text-xs text-gray-500 mt-1">Para tag [Ela]</p>
+                    </div>
+                  </label>
+                )}
+              </div>
             </div>
 
             {/* Lyrics Input */}
@@ -169,24 +247,30 @@ export default function BatchImages() {
               <Textarea
                 value={lyrics}
                 onChange={(e) => setLyrics(e.target.value)}
-                placeholder="Cole aqui a letra da música... Ex: Olhos castanhos, cabelo ao vento, sorriso que ilumina meu pensamento..."
+                placeholder="Cole a letra e use tags: [Ele] para cenas com homem, [Ela] para mulher, [Ambos] para os dois juntos..."
                 className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[120px]"
                 disabled={isGenerating}
               />
+              <p className="text-xs text-gray-500 mt-2">
+                💡 Dica: Use [Ele], [Ela] ou [Ambos] na letra para controlar quem aparece nas imagens
+              </p>
             </div>
 
             {/* Style Input */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Estilo Adicional (opcional)
+                Detalhes Adicionais (opcional)
               </label>
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ex: estilo anime, fotorealista, pintura a óleo, cartoon..."
+                placeholder="Ex: ao pôr do sol na praia, em uma cidade grande, em um parque..."
                 className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[80px]"
                 disabled={isGenerating}
               />
+              <p className="text-xs text-gray-500 mt-2">
+                📸 Todas as imagens serão fotorealistas de alta qualidade
+              </p>
             </div>
 
             <Button
