@@ -275,6 +275,58 @@ Requisitos:
               </Select>
             </div>
 
+            {/* Voz / Gênero */}
+            <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
+              <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
+                Voz / Gênero
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {voiceOptions.map((voice) => (
+                  <button
+                    key={voice.id}
+                    onClick={() => toggleVoice(voice.id)}
+                    disabled={isGenerating}
+                    className={`py-3 px-3 rounded-lg font-semibold text-sm transition-all ${
+                      selectedVoices.includes(voice.id)
+                        ? "bg-purple-600 text-white border border-purple-400"
+                        : "bg-[#18181b] border border-[#27272a] text-gray-300 hover:border-purple-500/50"
+                    }`}
+                  >
+                    {voice.label} <span className="text-xs text-gray-400">{voice.tag}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Duração da Música */}
+            <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
+              <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
+                Duração da Música
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  value={duration}
+                  onChange={(e) => setDuration(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+                  min="1"
+                  max="10"
+                  disabled={isGenerating}
+                  className="w-16 bg-[#18181b] border border-[#27272a] rounded-lg py-2 px-3 text-white font-semibold"
+                />
+                <span className="text-gray-400">minutos</span>
+                <span className="text-xs text-gray-500 ml-auto">(1-10 min)</span>
+              </div>
+              <input
+                type="range"
+                value={duration}
+                onChange={(e) => setDuration(parseInt(e.target.value))}
+                min="1"
+                max="10"
+                disabled={isGenerating}
+                className="w-full mt-2"
+              />
+            </div>
+
             <Button
               onClick={generateLyrics}
               disabled={isGenerating || !concept.trim() || !musicStyle || !vocalStyle}
