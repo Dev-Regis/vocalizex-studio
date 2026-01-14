@@ -85,7 +85,7 @@ export default function Mp3Extractor() {
         {/* Header */}
         <header className="mb-8">
           <Link 
-            to={createPageUrl("ImageCreator")} 
+            to={createPageUrl("Home")} 
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
