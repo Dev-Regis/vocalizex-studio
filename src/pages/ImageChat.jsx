@@ -338,7 +338,7 @@ Tarefa do usuário: ${prompt}`;
       <header className="border-b border-[#27272a] bg-[#121214] sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link 
-            to={createPageUrl("ImageCreator")} 
+            to={createPageUrl("Home")} 
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
