@@ -35,13 +35,7 @@ export default function Home() {
       link: "LyricsImage",
       color: "bg-green-500"
     },
-    {
-      icon: Zap,
-      title: "Extrair Letras MP3",
-      description: "Extraia letras de músicas de arquivos MP3",
-      link: "Mp3Extractor",
-      color: "bg-orange-500"
-    }
+
   ];
 
   return (
