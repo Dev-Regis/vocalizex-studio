@@ -22,6 +22,10 @@ export default function ImageChat() {
   const [files, setFiles] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [selectedModes, setSelectedModes] = useState(() => {
+    const saved = localStorage.getItem('imageChat_modes');
+    return saved ? JSON.parse(saved) : [];
+  });
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -37,6 +41,10 @@ export default function ImageChat() {
   useEffect(() => {
     localStorage.setItem('imageChat_messages', JSON.stringify(messages));
   }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('imageChat_modes', JSON.stringify(selectedModes));
+  }, [selectedModes]);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -89,6 +97,24 @@ export default function ImageChat() {
       toast.success("Escutando... Fale agora!");
     }
   };
+
+  const toggleMode = (mode) => {
+    setSelectedModes(prev => {
+      if (prev.includes(mode)) {
+        return prev.filter(m => m !== mode);
+      } else {
+        return [...prev, mode];
+      }
+    });
+  };
+
+  const availableModes = [
+    { id: 'think', label: 'Pensar', icon: '💭' },
+    { id: 'search', label: 'Busca na Web', icon: '🌐' },
+    { id: 'analyze', label: 'Analisar', icon: '🔍' },
+    { id: 'create', label: 'Criar Imagem', icon: '🎨' },
+    { id: 'extract', label: 'Extrair Dados', icon: '📊' }
+  ];
 
   const handleFileSelect = async (e, fileType = 'all') => {
     const selectedFiles = Array.from(e.target.files);
@@ -167,11 +193,11 @@ export default function ImageChat() {
     setIsGenerating(true);
 
     try {
-      // Detectar se deve gerar imagem
-      const shouldGenerateImage = /\b(gera|cria|criar|gerar|faça|faz|desenha|desenhe|imagem|foto|picture|image)\b/i.test(currentInput);
-      
-      // Detectar se deve pesquisar na internet
-      const shouldSearchWeb = /\b(pesquisa|pesquise|busca|busque|procura|procure|pesquisar|buscar|search|find)\b/i.test(currentInput);
+      // Detectar funcionalidades pelos modos selecionados ou palavras
+      const shouldGenerateImage = selectedModes.includes('create') || /\b(gera|cria|criar|gerar|faça|faz|desenha|desenhe|imagem|foto|picture|image)\b/i.test(currentInput);
+      const shouldSearchWeb = selectedModes.includes('search') || /\b(pesquisa|pesquise|busca|busque|procura|procure|pesquisar|buscar|search|find)\b/i.test(currentInput);
+      const shouldAnalyze = selectedModes.includes('analyze');
+      const shouldThink = selectedModes.includes('think');
 
       if (shouldGenerateImage) {
         // Gerar imagem
@@ -202,8 +228,16 @@ export default function ImageChat() {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
         
+        if (shouldThink) {
+          prompt = `Pense cuidadosamente e analise em profundidade antes de responder: ${prompt}`;
+        }
+        
+        if (shouldAnalyze && currentFiles.length > 0) {
+          prompt += `\n\nAnalise detalhadamente os ${currentFiles.length} arquivo(s) enviados.`;
+        }
+        
         if (currentFiles.length > 0) {
-          prompt += `\n\nO usuário enviou ${currentFiles.length} arquivo(s): ${currentFiles.map(f => f.name).join(', ')}`;
+          prompt += `\n\nArquivos: ${currentFiles.map(f => f.name).join(', ')}`;
         }
 
         const response = await base44.integrations.Core.InvokeLLM({
@@ -407,25 +441,53 @@ export default function ImageChat() {
                   variant="outline"
                   size="icon"
                   disabled={files.length >= 10 || isGenerating}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 bg-[#18181b] border-[#27272a] hover:bg-[#27272a]"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-5 h-5 text-white" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-[#18181b] border-[#27272a]">
+              <DropdownMenuContent className="bg-[#18181b] border-[#27272a] w-56">
                 <DropdownMenuItem 
                   onClick={() => openFileDialog('image')}
                   className="text-white hover:bg-purple-500/20 cursor-pointer"
                 >
                   <ImageIcon className="w-4 h-4 mr-2" />
-                  Imagem
+                  Adicionar fotos e arquivos
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => toggleMode('create')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <span className="mr-2">🎨</span>
+                  Criar imagem
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => toggleMode('think')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <span className="mr-2">💭</span>
+                  Pensando
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => toggleMode('search')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <span className="mr-2">🌐</span>
+                  Investigar
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => toggleMode('analyze')}
+                  className="text-white hover:bg-purple-500/20 cursor-pointer"
+                >
+                  <span className="mr-2">🔍</span>
+                  Analisar arquivos
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => openFileDialog('audio')}
                   className="text-white hover:bg-purple-500/20 cursor-pointer"
                 >
                   <Music className="w-4 h-4 mr-2" />
-                  Música (MP3)
+                  Enviar áudio/música
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => openFileDialog('document')}
@@ -439,36 +501,49 @@ export default function ImageChat() {
                   className="text-white hover:bg-purple-500/20 cursor-pointer"
                 >
                   <File className="w-4 h-4 mr-2" />
-                  Planilha (Excel)
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openFileDialog('all')}
-                  className="text-white hover:bg-purple-500/20 cursor-pointer"
-                >
-                  <File className="w-4 h-4 mr-2" />
-                  Qualquer arquivo
+                  Planilha (Excel, CSV)
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <div className="flex-1 relative">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Descreva a imagem que deseja criar..."
-                className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] pr-12"
-                disabled={isGenerating}
-              />
-              <Button
-                onClick={toggleListening}
-                disabled={isGenerating}
-                size="icon"
-                variant="ghost"
-                className={`absolute right-2 top-2 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
-              >
-                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </Button>
+            <div className="flex-1 flex flex-col gap-2">
+              {selectedModes.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
+                  {selectedModes.map(modeId => {
+                    const mode = availableModes.find(m => m.id === modeId);
+                    return (
+                      <button
+                        key={modeId}
+                        onClick={() => toggleMode(modeId)}
+                        className="flex items-center gap-1 px-3 py-1 bg-purple-600/20 border border-purple-500/30 rounded-full text-sm text-purple-300 hover:bg-purple-600/30"
+                      >
+                        <X className="w-3 h-3" />
+                        <span>{mode?.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              
+              <div className="relative">
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Pergunte alguma coisa..."
+                  className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] pr-12"
+                  disabled={isGenerating}
+                />
+                <Button
+                  onClick={toggleListening}
+                  disabled={isGenerating}
+                  size="icon"
+                  variant="ghost"
+                  className={`absolute right-2 top-2 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
+                >
+                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </Button>
+              </div>
             </div>
 
             <Button
