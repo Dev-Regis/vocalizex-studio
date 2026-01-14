@@ -35,6 +35,13 @@ export default function Home() {
       link: "LyricsImage",
       color: "bg-green-500"
     },
+    {
+      icon: Music,
+      title: "Gerar Letras",
+      description: "Crie músicas originais com IA usando estilo e conceito",
+      link: "LyricGenerator",
+      color: "bg-pink-500"
+    },
 
   ];
 
