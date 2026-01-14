@@ -389,8 +389,8 @@ Tarefa do usuário: ${prompt}`;
                   >
                     {msg.content && (
                       <div className="relative group">
-                        <p className="mb-2">{msg.content}</p>
-                        {msg.role === "assistant" && msg.content.length > 50 && !msg.image && (
+                        <p className="mb-2 whitespace-pre-wrap">{msg.content}</p>
+                        {msg.role === "assistant" && !msg.image && (
                           <Button
                             onClick={() => downloadTextAsPDF(msg.content)}
                             size="sm"
