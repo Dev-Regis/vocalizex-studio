@@ -81,19 +81,17 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <Link key={index} to={createPageUrl(feature.link)}>
-              <Button
-                variant="outline"
-                className="w-full h-auto flex flex-col items-start p-6 bg-[#121214] border-[#27272a] hover:border-purple-500/50 hover:bg-[#1a1a1c] transition-all duration-300 hover:scale-105"
-              >
-                <div className={`w-14 h-14 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
-                  <feature.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-white text-xl font-bold mb-2 text-left">{feature.title}</h3>
-                <p className="text-gray-400 text-sm text-left">
-                  {feature.description}
-                </p>
-                <ArrowRight className="w-5 h-5 text-purple-400 mt-3 ml-auto" />
-              </Button>
+              <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
+                <CardHeader>
+                  <div className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}>
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <CardTitle className="text-white text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    {feature.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
             </Link>
           ))}
         </div>
