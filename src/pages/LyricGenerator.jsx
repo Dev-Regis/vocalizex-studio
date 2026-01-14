@@ -213,6 +213,13 @@ Requisitos CRÍTICOS:
     toast.success("Letra baixada!");
   };
 
+  const clearResults = () => {
+    setTitle("");
+    setDetails("");
+    setLyricsParts([]);
+    toast.success("Resultado limpo!");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">
       <div className="fixed inset-0 pointer-events-none">
