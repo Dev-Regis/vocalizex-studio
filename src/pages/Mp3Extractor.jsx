@@ -34,34 +34,52 @@ export default function Mp3Extractor() {
     }
 
     setIsExtracting(true);
+    setLyrics("");
 
     try {
-      // Upload do arquivo
+      toast.loading("Enviando arquivo...", { id: 'upload' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      toast.success("Arquivo enviado!", { id: 'upload' });
 
-      // Usar LLM para extrair/transcrever a letra
-      const prompt = `Você recebeu um arquivo de áudio de música. 
-      Sua tarefa é extrair/transcrever a letra completa da música.
+      toast.loading("Extraindo letra da música...", { id: 'extract' });
       
-      Formate a letra de forma clara e estruturada:
-      [Intro]
-      [Verse 1]
-      [Chorus]
-      etc.
+      const prompt = `Você é um especialista em transcrição de músicas. 
       
-      Separe as linhas corretamente e identifique as seções da música.
-      Se não conseguir extrair a letra, informe que não foi possível.`;
+      TAREFA: Ouça o áudio fornecido e transcreva COMPLETAMENTE a letra da música.
+      
+      INSTRUÇÕES:
+      1. Transcreva toda a letra da música palavra por palavra
+      2. Organize em seções: [Intro], [Verse 1], [Chorus], [Bridge], [Verse 2], [Outro], etc
+      3. Coloque cada linha em uma linha separada
+      4. Mantenha a ordem exata das palavras cantadas
+      5. Se houver partes instrumentais longas, marque como [Instrumental]
+      6. Transcreva em PORTUGUÊS mesmo que a música seja em outro idioma
+      
+      FORMATO DE SAÍDA:
+      [Nome da seção]
+      Linha 1 da letra
+      Linha 2 da letra
+      
+      [Próxima seção]
+      ...
+      
+      Agora, transcreva a letra completa do arquivo de áudio fornecido.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
         file_urls: [file_url]
       });
 
-      setLyrics(response);
-      toast.success("Letra extraída com sucesso!");
+      if (!response || response.trim().length < 10) {
+        throw new Error("Letra não encontrada ou muito curta");
+      }
+
+      setLyrics(response.trim());
+      toast.success("Letra extraída com sucesso!", { id: 'extract' });
     } catch (error) {
-      toast.error("Erro ao extrair a letra. Tente novamente.");
-      console.error(error);
+      console.error("Erro na extração:", error);
+      toast.error("Erro ao extrair letra. Tente outro arquivo MP3.", { id: 'extract' });
+      setLyrics("Não foi possível extrair a letra deste arquivo. Certifique-se de que é um arquivo MP3 com música cantada.");
     } finally {
       setIsExtracting(false);
     }
