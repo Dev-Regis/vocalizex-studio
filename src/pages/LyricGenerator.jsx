@@ -195,7 +195,7 @@ Requisitos CRÍTICOS:
   };
 
   const downloadLyrics = () => {
-    const text = lyricsParts.map(p => `[${p.section}] ${p.tag} ${p.startTime}-${p.endTime}\n${p.lyrics}`).join("\n\n");
+    const text = lyricsParts.map(p => `[${p.section} • ${p.startTime}]\n${p.tag}\n\n${p.lyrics.split(' / ').join('\n')}`).join("\n\n");
     const fullText = `${title}\n\nDuração: ${duration} minutos\n\n${text}\n\n---\n${details}`;
     const element = document.createElement("a");
     element.setAttribute(
