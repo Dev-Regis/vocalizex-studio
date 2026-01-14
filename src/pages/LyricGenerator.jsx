@@ -116,21 +116,23 @@ Estrutura obrigatória (use EXATAMENTE este formato):
 [Outro] [tag] 0:XX-0:XX - Encerramento/fade out (3-4 linhas)
 
 Requisitos CRÍTICOS:
-1. A letra DEVE ser uma música INÉDITA, ORIGINAL e CRIATIVA que NÃO EXISTE
-2. MÍNIMO 80-100 linhas de letra no total (MUITO DETALHADA E COMPLETA)
-3. Crie um título ÚNICO e criativo
-4. CADA SEÇÃO DEVE TER PELO MENOS 3-6 LINHAS DE LETRA PROFISSIONAL
-5. ⚠️ PROFISSIONALISMO: NÃO MISTURE TAGS NUMA MESMA SEÇÃO:
+1. ⚠️ A letra DEVE ser 100% INÉDITA, ORIGINAL e CRIATIVA - NUNCA CRIAR SIMILAR A MÚSICAS CONHECIDAS
+2. Crie uma música que NUNCA foi criada antes - conceito e estilo ÚNICO e diferente
+3. NÃO REUTILIZE estruturas, refrões ou versos de músicas famosas - seja completamente criativo
+4. MÍNIMO 80-100 linhas de letra no total (MUITO DETALHADA E COMPLETA)
+5. Crie um título ÚNICO, criativo e que NUNCA foi usado em música conhecida
+6. CADA SEÇÃO DEVE TER PELO MENOS 3-6 LINHAS DE LETRA PROFISSIONAL
+7. ⚠️ PROFISSIONALISMO: NÃO MISTURE TAGS NUMA MESMA SEÇÃO:
    - Se a seção começa com [Ele], todas as linhas são [Ele]
    - Se é [Ela], todas são [Ela]
    - Se é [Ambos], pode haver interação, mas estruturada profissionalmente
    - CALL & RESPONSE: use padrão "Ele: linha 1 / Ela: linha 2 / Ele: linha 3" ETC (separado profissionalmente)
-6. Distribua os timecodes para atingir aprox. ${duration} minutos no total
-7. Use as tags: ${voicesTags}
-8. A letra deve ser bem estruturada, fluida e profissional
-9. Crie TODAS as 14 seções listadas acima
-10. ⚠️ IMPORTANTE: A seção [Intro] NUNCA deve começar com [Ambos]. Use [Ele] ou [Ela] para a Intro
-11. Retorne EXATAMENTE no formato JSON abaixo:
+8. Distribua os timecodes para atingir aprox. ${duration} minutos no total
+9. Use as tags: ${voicesTags}
+10. A letra deve ser bem estruturada, fluida e profissional
+11. Crie TODAS as 14 seções listadas acima
+12. ⚠️ IMPORTANTE: A seção [Intro] NUNCA deve começar com [Ambos]. Use [Ele] ou [Ela] para a Intro
+13. Retorne EXATAMENTE no formato JSON abaixo:
 
 {
   "title": "Título da música",
