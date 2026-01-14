@@ -279,7 +279,6 @@ Tarefa do usuário: ${prompt}`;
 
         setMessages(prev => [...prev, aiMessage]);
       }
-    }
     } catch (error) {
       toast.error("Erro ao processar");
       console.error(error);
