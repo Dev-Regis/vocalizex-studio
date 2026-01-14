@@ -562,34 +562,6 @@ Tarefa do usuário: ${prompt}`;
                   <span className="mr-2">🔍</span>
                   Analisar arquivos
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openFileDialog('audio')}
-                  className="text-white hover:bg-purple-500/20 cursor-pointer"
-                >
-                  <Music className="w-4 h-4 mr-2" />
-                  Enviar áudio/música
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openFileDialog('document')}
-                  className="text-white hover:bg-purple-500/20 cursor-pointer"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Documento (PDF, Word)
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openFileDialog('spreadsheet')}
-                  className="text-white hover:bg-purple-500/20 cursor-pointer"
-                >
-                  <File className="w-4 h-4 mr-2" />
-                  Planilha (Excel, CSV)
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openFileDialog('zip')}
-                  className="text-white hover:bg-purple-500/20 cursor-pointer"
-                >
-                  <File className="w-4 h-4 mr-2" />
-                  Arquivo ZIP (até 20MB)
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
