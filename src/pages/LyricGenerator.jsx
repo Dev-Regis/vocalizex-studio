@@ -408,7 +408,7 @@ Requisitos CRÍTICOS:
                         <div className="font-bold text-purple-400 mb-1">[{part.section} • {part.startTime}]</div>
                         <div className="text-pink-400 text-sm">{part.tag}</div>
                       </div>
-                      <p className="text-gray-200 text-sm whitespace-pre-wrap">{part.lyrics.split(' / ').join('\n')}</p>
+                      <div className="text-gray-200 text-sm whitespace-pre-wrap">{part.lyrics.split(' / ').join('\n')}</div>
                     </div>
                   ))}
                 </div>
