@@ -226,13 +226,38 @@ export default function LyricsImage() {
                   Resultado
                 </Label>
 
-                <div className="flex-1 bg-[#09090b] rounded-xl flex items-center justify-center min-h-[400px]">
+                <div className="flex-1 bg-[#09090b] rounded-xl flex flex-col items-center justify-center min-h-[400px] p-4">
                   {generatedImage ? (
-                    <img
-                      src={generatedImage}
-                      alt="Imagem gerada"
-                      className="w-full h-full object-contain rounded-xl"
-                    />
+                    <div className="w-full h-full flex flex-col">
+                      <img
+                        src={generatedImage}
+                        alt="Imagem gerada"
+                        className="w-full flex-1 object-contain rounded-xl mb-4"
+                      />
+                      <Button
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(generatedImage);
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = `imagem-letra-${Date.now()}.png`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(url);
+                            toast.success("Imagem baixada!");
+                          } catch (error) {
+                            toast.error("Erro ao baixar imagem");
+                          }
+                        }}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500"
+                      >
+                        <Upload className="w-4 h-4 mr-2 rotate-180" />
+                        Baixar Imagem
+                      </Button>
+                    </div>
                   ) : (
                     <div className="text-center text-gray-600">
                       <ImageIcon className="w-16 h-16 mx-auto mb-4 opacity-20" />

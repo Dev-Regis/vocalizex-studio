@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ImageChat() {
@@ -170,11 +170,37 @@ export default function ImageChat() {
                     )}
 
                     {msg.image && (
-                      <img
-                        src={msg.image}
-                        alt="Generated"
-                        className="rounded-lg w-full mt-2"
-                      />
+                      <div className="relative group mt-2">
+                        <img
+                          src={msg.image}
+                          alt="Generated"
+                          className="rounded-lg w-full"
+                        />
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(msg.image);
+                              const blob = await response.blob();
+                              const url = window.URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `imagem-${Date.now()}.png`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              window.URL.revokeObjectURL(url);
+                              toast.success("Imagem baixada!");
+                            } catch (error) {
+                              toast.error("Erro ao baixar imagem");
+                            }
+                          }}
+                          size="sm"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black hover:bg-gray-200"
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          Baixar
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>

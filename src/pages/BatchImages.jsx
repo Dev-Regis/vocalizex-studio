@@ -146,16 +146,23 @@ export default function BatchImages() {
                     alt={`Gerada ${index + 1}`}
                     className="w-full aspect-square object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <Button
                       onClick={() => downloadImage(url, index)}
                       size="sm"
                       className="bg-white text-black hover:bg-gray-200"
                     >
-                      <Download className="w-4 h-4 mr-2" />
+                      <Download className="w-4 h-4 mr-1" />
                       Baixar
                     </Button>
                   </div>
+                  <Button
+                    onClick={() => downloadImage(url, index)}
+                    size="icon"
+                    className="absolute bottom-2 right-2 h-8 w-8 bg-white text-black hover:bg-gray-200 opacity-90"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
                   <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
                     #{index + 1}
                   </div>
