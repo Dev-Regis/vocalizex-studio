@@ -359,7 +359,22 @@ Requisitos CRÍTICOS:
 
           {/* Right Panel - Resultado */}
           <div className="space-y-4">
-            {title && (
+            {isGenerating && (
+              <div className="bg-[#121214] border border-[#27272a] rounded-xl p-12 text-center h-full flex items-center justify-center">
+                <div>
+                  <div className="w-24 h-24 mx-auto mb-6 relative">
+                    <div className="w-full h-full border-4 border-[#27272a] rounded-full animate-spin border-t-purple-500"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Music className="w-10 h-10 text-purple-400" />
+                    </div>
+                  </div>
+                  <p className="text-white font-semibold mb-2">Compilando estrutura...</p>
+                  <p className="text-sm text-gray-400">Verticalizando versos • Simplificando rimas</p>
+                </div>
+              </div>
+            )}
+
+            {!isGenerating && title && (
               <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
                 <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
                   Título da Música
