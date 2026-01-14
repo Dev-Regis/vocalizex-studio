@@ -10,7 +10,9 @@ import { toast } from "sonner";
 export default function Mp3Extractor() {
   const [file, setFile] = useState(null);
   const [lyrics, setLyrics] = useState("");
+  const [manualLyrics, setManualLyrics] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -37,52 +39,73 @@ export default function Mp3Extractor() {
     setLyrics("");
 
     try {
-      toast.loading("Enviando arquivo...", { id: 'upload' });
+      toast.loading("Enviando arquivo de áudio...", { id: 'upload' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       toast.success("Arquivo enviado!", { id: 'upload' });
 
-      toast.loading("Extraindo letra da música...", { id: 'extract' });
+      toast.loading("Analisando e transcrevendo áudio... Isso pode levar alguns minutos.", { id: 'extract' });
       
-      const prompt = `Você é um especialista em transcrição de músicas. 
-      
-      TAREFA: Ouça o áudio fornecido e transcreva COMPLETAMENTE a letra da música.
-      
-      INSTRUÇÕES:
-      1. Transcreva toda a letra da música palavra por palavra
-      2. Organize em seções: [Intro], [Verse 1], [Chorus], [Bridge], [Verse 2], [Outro], etc
-      3. Coloque cada linha em uma linha separada
-      4. Mantenha a ordem exata das palavras cantadas
-      5. Se houver partes instrumentais longas, marque como [Instrumental]
-      6. Transcreva em PORTUGUÊS mesmo que a música seja em outro idioma
-      
-      FORMATO DE SAÍDA:
-      [Nome da seção]
-      Linha 1 da letra
-      Linha 2 da letra
-      
-      [Próxima seção]
-      ...
-      
-      Agora, transcreva a letra completa do arquivo de áudio fornecido.`;
+      const prompt = `Você recebeu um arquivo de áudio MP3. Sua tarefa é transcrever TODA a letra da música cantada neste áudio.
+
+IMPORTANTE: Ouça com atenção e transcreva CADA palavra cantada.
+
+FORMATO:
+[Intro]
+(transcreva se houver letra cantada)
+
+[Verse 1]
+linha 1
+linha 2
+linha 3
+
+[Chorus]
+refrão linha 1
+refrão linha 2
+
+[Verse 2]
+...
+
+Continue transcrevendo TODA a música até o final.
+
+REGRAS:
+- Transcreva palavra por palavra o que é cantado
+- Use [Instrumental] apenas se não houver voz
+- Mantenha a estrutura original da música
+- Se a música for em outro idioma, transcreva no idioma original
+
+Agora transcreva COMPLETAMENTE a letra:`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
-        file_urls: [file_url]
+        file_urls: [file_url],
+        add_context_from_internet: false
       });
 
-      if (!response || response.trim().length < 10) {
-        throw new Error("Letra não encontrada ou muito curta");
+      if (!response || response.trim().length < 20) {
+        setShowManualInput(true);
+        toast.error("Não foi possível extrair automaticamente. Use a opção manual abaixo.", { id: 'extract' });
+        return;
       }
 
       setLyrics(response.trim());
       toast.success("Letra extraída com sucesso!", { id: 'extract' });
     } catch (error) {
       console.error("Erro na extração:", error);
-      toast.error("Erro ao extrair letra. Tente outro arquivo MP3.", { id: 'extract' });
-      setLyrics("Não foi possível extrair a letra deste arquivo. Certifique-se de que é um arquivo MP3 com música cantada.");
+      setShowManualInput(true);
+      toast.error("Erro ao extrair letra. Use a opção manual abaixo.", { id: 'extract' });
     } finally {
       setIsExtracting(false);
     }
+  };
+
+  const saveManualLyrics = () => {
+    if (!manualLyrics.trim()) {
+      toast.error("Digite a letra da música");
+      return;
+    }
+    setLyrics(manualLyrics.trim());
+    setShowManualInput(false);
+    toast.success("Letra salva!");
   };
 
   const copyLyrics = () => {
@@ -194,33 +217,87 @@ export default function Mp3Extractor() {
           </CardContent>
         </Card>
 
+        {/* Manual Input Option */}
+        {showManualInput && !lyrics && (
+          <Card className="bg-[#121214] border-[#27272a] mb-6 border-orange-500/30">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-orange-500/20">
+                  <Music className="w-5 h-5 text-orange-400" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold mb-1">Cole a Letra Manualmente</h2>
+                  <p className="text-sm text-gray-400">A extração automática não funcionou. Cole a letra manualmente abaixo:</p>
+                </div>
+              </div>
+              
+              <Textarea
+                value={manualLyrics}
+                onChange={(e) => setManualLyrics(e.target.value)}
+                placeholder="Cole a letra completa da música aqui..."
+                className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[200px] mb-4"
+              />
+              
+              <div className="flex gap-2">
+                <Button
+                  onClick={saveManualLyrics}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
+                >
+                  Salvar Letra
+                </Button>
+                <Button
+                  onClick={() => setShowManualInput(false)}
+                  variant="outline"
+                  className="border-[#27272a]"
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Lyrics Output */}
         {lyrics && (
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Letra Extraída</h2>
-                <Button
-                  onClick={copyLyrics}
-                  variant="outline"
-                  size="sm"
-                  className="border-purple-500/30 text-purple-300 hover:bg-purple-500/20"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copiar
-                    </>
-                  )}
-                </Button>
+                <h2 className="text-xl font-bold">Letra da Música</h2>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={copyLyrics}
+                    variant="outline"
+                    size="sm"
+                    className="border-purple-500/30 text-purple-300 hover:bg-purple-500/20"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copiar
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setLyrics("");
+                      setManualLyrics("");
+                      setShowManualInput(true);
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="border-[#27272a] text-gray-400"
+                  >
+                    Editar
+                  </Button>
+                </div>
               </div>
 
-              <div className="bg-[#09090b] rounded-xl p-6 font-mono text-sm whitespace-pre-wrap max-h-[500px] overflow-y-auto">
+              <div className="bg-[#09090b] rounded-xl p-6 text-sm whitespace-pre-wrap max-h-[500px] overflow-y-auto">
                 {lyrics}
               </div>
             </CardContent>
