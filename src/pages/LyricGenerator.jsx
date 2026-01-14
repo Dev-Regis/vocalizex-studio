@@ -404,11 +404,11 @@ Requisitos CRÍTICOS:
                 <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-4 space-y-6 max-h-[400px] overflow-y-auto mb-4">
                   {lyricsParts.map((part, idx) => (
                     <div key={idx} className="border-l-2 border-purple-500 pl-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-bold text-purple-400">[{part.section} • {part.startTime}]</span>
-                        <span className="text-pink-400">{part.tag}</span>
+                      <div className="mb-2">
+                        <div className="font-bold text-purple-400 mb-1">[{part.section} • {part.startTime}]</div>
+                        <div className="text-pink-400 text-sm">{part.tag}</div>
                       </div>
-                      <p className="text-gray-200 text-sm whitespace-pre-wrap">{part.lyrics}</p>
+                      <p className="text-gray-200 text-sm whitespace-pre-wrap">{part.lyrics.split(' / ').join('\n')}</p>
                     </div>
                   ))}
                 </div>
