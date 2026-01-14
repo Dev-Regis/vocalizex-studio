@@ -60,9 +60,11 @@ export default function LyricGenerator() {
   const [concept, setConcept] = useState("");
   const [musicStyle, setMusicStyle] = useState("");
   const [vocalStyle, setVocalStyle] = useState("");
+  const [selectedVoices, setSelectedVoices] = useState([]);
+  const [duration, setDuration] = useState(3);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
-  const [lyrics, setLyrics] = useState("");
+  const [lyricsParts, setLyricsParts] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateLyrics = async () => {
