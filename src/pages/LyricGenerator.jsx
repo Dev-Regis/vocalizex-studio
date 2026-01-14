@@ -404,7 +404,7 @@ Requisitos:
               </div>
             )}
 
-            {!lyrics && !title && (
+            {lyricsParts.length === 0 && !title && (
               <div className="bg-[#121214] border border-[#27272a] rounded-xl p-12 text-center h-full flex items-center justify-center">
                 <div>
                   <p className="text-gray-400 mb-2">Preencha os campos à esquerda</p>
