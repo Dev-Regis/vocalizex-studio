@@ -46,49 +46,17 @@ export default function Mp3Extractor() {
 
       toast.loading("Analisando e transcrevendo áudio... Isso pode levar alguns minutos.", { id: 'extract' });
       
-      const prompt = `Você recebeu um arquivo de áudio MP3. Sua tarefa é transcrever TODA a letra da música cantada neste áudio.
-
-IMPORTANTE: Ouça com atenção e transcreva CADA palavra cantada.
-
-FORMATO:
-[Intro]
-(transcreva se houver letra cantada)
-
-[Verse 1]
-linha 1
-linha 2
-linha 3
-
-[Chorus]
-refrão linha 1
-refrão linha 2
-
-[Verse 2]
-...
-
-Continue transcrevendo TODA a música até o final.
-
-REGRAS:
-- Transcreva palavra por palavra o que é cantado
-- Use [Instrumental] apenas se não houver voz
-- Mantenha a estrutura original da música
-- Se a música for em outro idioma, transcreva no idioma original
-
-Agora transcreva COMPLETAMENTE a letra:`;
-
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        file_urls: [file_url],
-        add_context_from_internet: false
+      const response = await base44.functions.invoke('extractMusicLyrics', {
+        file_url
       });
 
-      if (!response || response.trim().length < 20) {
+      if (!response.success || !response.lyrics) {
         setShowManualInput(true);
         toast.error("Não foi possível extrair automaticamente. Use a opção manual abaixo.", { id: 'extract' });
         return;
       }
 
-      setLyrics(response.trim());
+      setLyrics(response.lyrics);
       toast.success("Letra extraída com sucesso!", { id: 'extract' });
     } catch (error) {
       console.error("Erro na extração:", error);
