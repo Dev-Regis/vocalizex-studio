@@ -30,11 +30,12 @@ export default function BatchImages() {
       for (let i = 0; i < 10; i++) {
         const enhancedPrompt = `${prompt}. Variação ${i + 1}, estilo único e criativo.`;
         
-        const { file_url } = await base44.integrations.Core.GenerateImage({
+        const response = await base44.integrations.Core.GenerateImage({
           prompt: enhancedPrompt
         });
 
-        generatedImages.push(file_url);
+        const imageUrl = response.url || response.file_url || response;
+        generatedImages.push(imageUrl);
         setImages([...generatedImages]);
         setProgress(((i + 1) / 10) * 100);
       }

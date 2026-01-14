@@ -71,25 +71,37 @@ export default function ImageChat() {
     setIsGenerating(true);
 
     try {
-      const prompt = `O usuário quer criar uma imagem com as seguintes especificações: ${input}. 
-      ${files.length > 0 ? `O usuário enviou ${files.length} foto(s) como referência.` : ""}
-      Descreva em detalhes como a imagem deve ser gerada (seja extremamente detalhado com cores, estilo, composição, iluminação).`;
+      let enhancedPrompt = input;
+      
+      if (files.length > 0) {
+        enhancedPrompt += ` Use as ${files.length} foto(s) fornecidas como referência para inspiração, estilo ou composição.`;
+      }
+      
+      enhancedPrompt += ` Crie uma imagem artística, de alta qualidade, com cores vibrantes e composição profissional.`;
 
-      const { file_url } = await base44.integrations.Core.GenerateImage({
-        prompt,
-        existing_image_urls: files.map(f => f.url)
+      const response = await base44.integrations.Core.GenerateImage({
+        prompt: enhancedPrompt,
+        existing_image_urls: files.length > 0 ? files.map(f => f.url) : undefined
       });
+
+      const imageUrl = response.url || response.file_url || response;
 
       const aiMessage = {
         role: "assistant",
-        content: "Imagem gerada com sucesso!",
-        image: file_url
+        content: "Aqui está sua imagem gerada:",
+        image: imageUrl
       };
 
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       toast.error("Erro ao gerar imagem");
       console.error(error);
+      
+      const errorMessage = {
+        role: "assistant",
+        content: "Desculpe, ocorreu um erro ao gerar a imagem. Tente novamente."
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsGenerating(false);
     }

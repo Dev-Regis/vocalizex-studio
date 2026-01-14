@@ -70,12 +70,13 @@ export default function LyricsImage() {
 
       prompt += `\n\nEstilo: artístico, profissional, alta qualidade, cores vibrantes, composição dinâmica.`;
 
-      const { file_url } = await base44.integrations.Core.GenerateImage({
+      const response = await base44.integrations.Core.GenerateImage({
         prompt,
-        existing_image_urls: photos.map(p => p.url)
+        existing_image_urls: photos.length > 0 ? photos.map(p => p.url) : undefined
       });
 
-      setGeneratedImage(file_url);
+      const imageUrl = response.url || response.file_url || response;
+      setGeneratedImage(imageUrl);
       toast.success("Imagem gerada com sucesso!");
     } catch (error) {
       toast.error("Erro ao gerar imagem");
