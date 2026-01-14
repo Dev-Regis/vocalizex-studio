@@ -396,7 +396,7 @@ Requisitos CRÍTICOS:
               </div>
             )}
 
-            {lyricsParts.length > 0 && (
+            {!isGenerating && lyricsParts.length > 0 && (
               <div className="bg-[#121214] border border-[#27272a] rounded-xl p-6">
                 <label className="block text-sm font-semibold mb-3 uppercase text-gray-300">
                   Letra Gerada
