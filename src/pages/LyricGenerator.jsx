@@ -97,25 +97,31 @@ DURAÇÃO: ${duration} minutos
 VOZES/GÊNEROS: ${voicesTags}
 
 Estrutura obrigatória (use EXATAMENTE este formato):
-[Intro] [tag] 0:00-0:XX
-[Verso 1] [tag] 0:XX-0:XX
-[Verso 2] [tag] 0:XX-0:XX
-[Pré-Refrão] [tag] 0:XX-0:XX
-[Refrão A] [tag] 0:XX-0:XX
-[Verso 3] [tag] 0:XX-0:XX
-[Refrão B] [tag] 0:XX-0:XX
-[Ponte (call & response)] [tag] 0:XX-0:XX
-[Break/Paradinha 150] [tag] 0:XX-0:XX
-[Ponte final] [tag] 0:XX-0:XX
-[Outro] [tag] 0:XX-0:XX
+[Intro] [tag] 0:00-0:XX - Introdução instrumental/vocal (2-3 linhas)
+[Verso 1] [tag] 0:XX-0:XX - Apresentação do tema (3-4 linhas)
+[Verso 2] [tag] 0:XX-0:XX - Desenvolvimento da história (3-4 linhas)
+[Pré-Refrão] [tag] 0:XX-0:XX - Ponte melódica (2-3 linhas)
+[Refrão A] [tag] 0:XX-0:XX - Gancho principal, pegajoso (3-4 linhas)
+[Verso 3] [tag] 0:XX-0:XX - Aprofundamento (3-4 linhas)
+[Verso 4] [tag] 0:XX-0:XX - Continuação (3-4 linhas)
+[Pré-Refrão 2] [tag] 0:XX-0:XX - Ponte melódica (2-3 linhas)
+[Refrão B] [tag] 0:XX-0:XX - Variação do refrão (3-4 linhas)
+[Ponte (call & response)] [tag] 0:XX-0:XX - Interação vocal criativa (3-4 linhas)
+[Break/Paradinha] [tag] 0:XX-0:XX - Momento climático (2-3 linhas)
+[Verso Final] [tag] 0:XX-0:XX - Ênfase final (3-4 linhas)
+[Ponte final] [tag] 0:XX-0:XX - Transição para conclusão (2-3 linhas)
+[Outro] [tag] 0:XX-0:XX - Encerramento/fade out (2-3 linhas)
 
-Requisitos:
-1. A letra DEVE ser uma música INÉDITA e original
-2. Crie um título ÚNICO e criativo
-3. Distribua os timecodes para atingir aprox. ${duration} minutos no total
-4. Escolha as tags: ${voicesTags}
-5. A letra deve ser bem estruturada e fluida
-6. Retorne EXATAMENTE no formato JSON abaixo:
+Requisitos CRÍTICOS:
+1. A letra DEVE ser uma música INÉDITA, ORIGINAL e CRIATIVA que NÃO EXISTE
+2. MÍNIMO 50-60 linhas de letra no total (bem detalhada)
+3. Crie um título ÚNICO e criativo
+4. Cada seção deve ter 2-4 linhas de letra significativa
+5. Distribua os timecodes para atingir aprox. ${duration} minutos no total
+6. Use as tags: ${voicesTags}
+7. A letra deve ser bem estruturada, fluida e profissional
+8. Crie TODAS as 14 seções listadas acima
+9. Retorne EXATAMENTE no formato JSON abaixo:
 
 {
   "title": "Título da música",
