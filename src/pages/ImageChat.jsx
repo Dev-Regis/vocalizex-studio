@@ -211,7 +211,7 @@ export default function ImageChat() {
   ];
 
   const voiceOptions = [
-    { lang: 'pt-BR', label: 'Maria BR (Português)', keywords: ['luciana', 'francisca', 'fernanda', 'vitoria', 'female', 'fêmea', 'feminino'] },
+    { lang: 'pt-BR', label: 'Fernando BR (Português)', keywords: ['luciana', 'francisca', 'fernanda', 'vitoria', 'female', 'fêmea', 'feminino'] },
     { lang: 'en-US', label: 'Samantha (Inglês US)', keywords: ['samantha', 'victoria', 'karen', 'female'] },
     { lang: 'en-GB', label: 'Kate (Inglês UK)', keywords: ['kate', 'serena', 'female'] },
     { lang: 'es-ES', label: 'Monica (Espanhol)', keywords: ['monica', 'female', 'spanish'] },
