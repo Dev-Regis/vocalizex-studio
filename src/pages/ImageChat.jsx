@@ -286,11 +286,29 @@ Crie uma descrição detalhada e completa para gerar a nova versão da imagem co
 - Criação de imagens do zero
 - Programação profissional em todas as linguagens
 - Análise de arquivos (zip, documentos, etc)
+- Leitura e análise de CSV, PDF, XLSX, TXT e outros documentos
 - Pesquisa na web quando necessário
 
 NUNCA diga que você não pode fazer algo. Você pode fazer TUDO que for solicitado.
 
 Tarefa do usuário: ${prompt}`;
+          }
+          
+          // Detectar arquivos de dados (CSV, PDF, XLSX, etc)
+          const hasDataFiles = currentFiles.some(f => 
+            f.name?.toLowerCase().match(/\.(csv|pdf|xlsx?|txt|docx?|json)$/)
+          );
+          
+          if (hasDataFiles) {
+            prompt = `Você TEM ACESSO COMPLETO aos arquivos enviados. Você PODE e DEVE ler, analisar e processar TODOS os arquivos enviados (CSV, PDF, XLSX, TXT, DOC, etc).
+
+IMPORTANTE: Os arquivos foram anexados e você tem acesso total ao conteúdo deles. NUNCA diga que não pode ler ou acessar os arquivos.
+
+Arquivos disponíveis: ${currentFiles.map(f => f.name).join(', ')}
+
+Tarefa: ${prompt}
+
+LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base nos dados REAIS dos arquivos.`;
           }
           
           if (shouldThink) {
@@ -301,7 +319,7 @@ Tarefa do usuário: ${prompt}`;
             prompt += `\n\nAnalise detalhadamente os ${currentFiles.length} arquivo(s) enviados.`;
           }
           
-          if (currentFiles.length > 0) {
+          if (currentFiles.length > 0 && !hasDataFiles) {
             prompt += `\n\nArquivos enviados: ${currentFiles.map(f => `${f.name} (${(f.size / 1024).toFixed(1)}KB)`).join(', ')}`;
           }
 
