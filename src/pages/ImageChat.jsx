@@ -191,6 +191,23 @@ export default function ImageChat() {
       return;
     }
 
+    // Verificar se a mensagem faz referência a algo anterior (sem anexar novos arquivos)
+    const referencePhrases = /\b(esta|essa|este|esse|a foto|o arquivo|a imagem|o documento|dele|dela|nisso|nela|nele)\b/i;
+    const isReferencingPrevious = files.length === 0 && referencePhrases.test(input);
+    
+    // Se está referenciando algo anterior, buscar arquivos das mensagens anteriores
+    let contextFiles = [...files];
+    if (isReferencingPrevious) {
+      // Pegar todos os arquivos das mensagens anteriores do usuário
+      const previousFiles = messages
+        .filter(m => m.role === 'user' && m.files && m.files.length > 0)
+        .flatMap(m => m.files);
+      
+      if (previousFiles.length > 0) {
+        contextFiles = [...previousFiles, ...files];
+      }
+    }
+
     const userMessage = {
       role: "user",
       content: input,
@@ -199,7 +216,7 @@ export default function ImageChat() {
 
     setMessages(prev => [...prev, userMessage]);
     const currentInput = input;
-    const currentFiles = [...files];
+    const currentFiles = [...contextFiles];
     setInput("");
     setFiles([]);
     setIsGenerating(true);
