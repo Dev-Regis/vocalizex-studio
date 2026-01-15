@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { jsPDF } from "jspdf";
 import {
@@ -13,6 +13,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ImageChat() {
   const [messages, setMessages] = useState(() => {
@@ -26,6 +40,15 @@ export default function ImageChat() {
   const [selectedModes, setSelectedModes] = useState(() => {
     const saved = localStorage.getItem('imageChat_modes');
     return saved ? JSON.parse(saved) : [];
+  });
+  const [showSettings, setShowSettings] = useState(false);
+  const [autoRead, setAutoRead] = useState(() => {
+    const saved = localStorage.getItem('imageChat_autoRead');
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [selectedVoice, setSelectedVoice] = useState(() => {
+    const saved = localStorage.getItem('imageChat_voice');
+    return saved || 'pt-BR-Francisca';
   });
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -46,6 +69,14 @@ export default function ImageChat() {
   useEffect(() => {
     localStorage.setItem('imageChat_modes', JSON.stringify(selectedModes));
   }, [selectedModes]);
+
+  useEffect(() => {
+    localStorage.setItem('imageChat_autoRead', JSON.stringify(autoRead));
+  }, [autoRead]);
+
+  useEffect(() => {
+    localStorage.setItem('imageChat_voice', selectedVoice);
+  }, [selectedVoice]);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -117,6 +148,31 @@ export default function ImageChat() {
     { id: 'agent', label: 'Modo agente', icon: '🤖' },
     { id: 'extract', label: 'Extrair Dados', icon: '📊' }
   ];
+
+  const voices = [
+    { id: 'pt-BR-Francisca', label: 'Maria BR (Português)', lang: 'pt-BR' },
+    { id: 'en-US-female', label: 'Samantha (Inglês US)', lang: 'en-US' },
+    { id: 'en-GB-female', label: 'Kate (Inglês UK)', lang: 'en-GB' },
+    { id: 'es-ES-female', label: 'Monica (Espanhol)', lang: 'es-ES' },
+    { id: 'fr-FR-female', label: 'Amelie (Francês)', lang: 'fr-FR' },
+    { id: 'de-DE-female', label: 'Anna (Alemão)', lang: 'de-DE' },
+    { id: 'it-IT-female', label: 'Alice (Italiano)', lang: 'it-IT' },
+    { id: 'ja-JP-female', label: 'Kyoko (Japonês)', lang: 'ja-JP' },
+    { id: 'zh-CN-female', label: 'Ting-Ting (Chinês)', lang: 'zh-CN' },
+  ];
+
+  const speakText = (text) => {
+    if (!autoRead || !text) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voice = voices.find(v => v.id === selectedVoice);
+    utterance.lang = voice?.lang || 'pt-BR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handleFileSelect = async (e, fileType = 'all') => {
     const selectedFiles = Array.from(e.target.files);
@@ -354,6 +410,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           };
 
           setMessages(prev => [...prev, aiMessage]);
+          speakText(response);
         }
       }
     } catch (error) {
@@ -421,22 +478,32 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
             <span>Voltar</span>
           </Link>
           <h1 className="text-xl font-bold">Chat IA Completo</h1>
-          <Button
-            onClick={() => {
-              if (confirm("Limpar todo o histórico?")) {
-                setMessages([]);
-                setFiles([]);
-                localStorage.removeItem('imageChat_messages');
-                toast.success("Histórico limpo!");
-              }
-            }}
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-white"
-          >
-            <X className="w-4 h-4 mr-1" />
-            Limpar
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowSettings(true)}
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-white"
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (confirm("Limpar todo o histórico?")) {
+                  setMessages([]);
+                  setFiles([]);
+                  localStorage.removeItem('imageChat_messages');
+                  toast.success("Histórico limpo!");
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-white"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Limpar
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -700,6 +767,59 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           </p>
         </div>
       </div>
+
+      {/* Settings Dialog */}
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="bg-[#121214] border-[#27272a] text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <Settings className="w-5 h-5 text-purple-400" />
+              Configurações
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Auto Read Toggle */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold">Leitura Automática</h3>
+                  <p className="text-sm text-gray-400">Ler respostas em voz alta</p>
+                </div>
+                <Switch
+                  checked={autoRead}
+                  onCheckedChange={setAutoRead}
+                />
+              </div>
+            </div>
+
+            {/* Voice Selection */}
+            {autoRead && (
+              <div className="space-y-3 pt-3 border-t border-[#27272a]">
+                <div>
+                  <h3 className="font-semibold mb-2">Selecionar Voz</h3>
+                  <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+                    <SelectTrigger className="bg-[#18181b] border-[#27272a] text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#121214] border-[#27272a]">
+                      {voices.map((voice) => (
+                        <SelectItem 
+                          key={voice.id} 
+                          value={voice.id}
+                          className="text-white hover:bg-purple-500/20 cursor-pointer"
+                        >
+                          {voice.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
