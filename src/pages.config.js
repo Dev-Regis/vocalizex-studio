@@ -16,6 +16,6 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "ImageChat",
+    mainPage: "BatchImages",
     Pages: PAGES,
 };
