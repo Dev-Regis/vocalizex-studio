@@ -270,16 +270,17 @@ export default function ImageChat() {
           // Modo de edição/transformação de imagens
           const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
           
-          const editPrompt = `${currentInput}
+          // Criar prompt otimizado para edição
+          const editPrompt = `TAREFA: ${currentInput}
 
-INSTRUÇÕES TÉCNICAS PARA GERAÇÃO:
-- Mantenha o elemento principal da imagem original (logotipo, objeto, pessoa, etc)
-- Aplique EXATAMENTE as modificações pedidas pelo usuário
-- Se pedirem para trocar/mudar fundo: remova o fundo original e coloque a cor/estilo solicitado
-- Se pedirem para adicionar elemento: mantenha a imagem original e adicione o elemento
-- Se pedirem para mudar cor: altere apenas a cor especificada
-- Mantenha a qualidade e resolução alta
-- Crie uma imagem profissional e bem acabada`;
+IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicitadas.
+- Mantenha TODOS os elementos principais da imagem original (logotipos, objetos, pessoas)
+- Aplique EXATAMENTE a modificação pedida
+- Se for trocar fundo: remova o fundo atual e substitua pela cor/estilo solicitado (branco, preto, transparente, gradiente, etc)
+- Se for adicionar elementos: mantenha a imagem e adicione o novo elemento
+- Se for remover elementos: mantenha o resto e remova apenas o especificado
+- Qualidade profissional e alta resolução
+- Resultado limpo e bem acabado`;
 
           const response = await base44.integrations.Core.GenerateImage({
             prompt: editPrompt,
@@ -290,7 +291,7 @@ INSTRUÇÕES TÉCNICAS PARA GERAÇÃO:
 
           const aiMessage = {
             role: "assistant",
-            content: "Aqui está a imagem editada:",
+            content: "Aqui está sua imagem com as modificações aplicadas:",
             image: imageUrl
           };
 
