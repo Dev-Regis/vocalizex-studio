@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Loader2, Copy, Download, Music } from "lucide-react";
+import { ArrowLeft, Loader2, Copy, Download, Music, Save, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import {
   Select,
@@ -220,6 +220,29 @@ Requisitos CRÍTICOS:
     toast.success("Resultado limpo!");
   };
 
+  const saveLyrics = async () => {
+    if (!title || lyricsParts.length === 0) {
+      toast.error("Nenhuma letra para salvar");
+      return;
+    }
+
+    try {
+      await base44.entities.Song.create({
+        title,
+        musicStyle,
+        vocalStyle,
+        duration,
+        concept,
+        details,
+        lyrics: JSON.stringify(lyricsParts)
+      });
+      toast.success("Letra salva com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+      toast.error("Erro ao salvar letra");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">
       <div className="fixed inset-0 pointer-events-none">
@@ -227,13 +250,21 @@ Requisitos CRÍTICOS:
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
-        <Link 
-          to={createPageUrl("Home")} 
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Voltar</span>
-        </Link>
+        <div className="flex items-center justify-between mb-8">
+          <Link 
+            to={createPageUrl("Home")} 
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Voltar</span>
+          </Link>
+          <Link to={createPageUrl("Dashboard")}>
+            <Button className="bg-blue-600 hover:bg-blue-500">
+              <LayoutDashboard className="w-4 h-4 mr-2" />
+              Dashboard
+            </Button>
+          </Link>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Panel - Controles */}
@@ -423,6 +454,13 @@ Requisitos CRÍTICOS:
                   ))}
                 </div>
                 <div className="flex gap-3">
+                  <Button
+                    onClick={saveLyrics}
+                    className="flex-1 bg-green-600 hover:bg-green-500"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Salvar
+                  </Button>
                   <Button
                     onClick={copyLyrics}
                     className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800"
