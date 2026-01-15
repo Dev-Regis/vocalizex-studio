@@ -264,7 +264,7 @@ export default function ImageChat() {
         
         // Detectar se o usuário quer EDITAR, MODIFICAR ou TRANSFORMAR uma imagem
         const hasImages = currentFiles.some(f => f.type?.startsWith('image/'));
-        const isImageEditRequest = hasImages && /\b(edit|edita|edite|modifica|modifica|modifique|transforma|transforme|altera|altere|muda|mude|troca|troque|ajusta|ajuste|coloca|coloque|adiciona|adicione|remove|remova|tira|tire|fundo|background|cor|color|filtro|filter)\b/i.test(currentInput);
+        const isImageEditRequest = hasImages && /\b(edit|edita|edite|modifica|modifica|modifique|transforma|transforme|altera|altere|muda|mude|troca|troque|ajusta|ajuste|coloca|coloque|adiciona|adicione|remove|remova|tira|tire|fundo|background|cor|color|filtro|filter|branco|branca|preto|preta|azul|vermelho|verde|amarelo|rosa|roxo|cinza)\b/i.test(currentInput);
         
         if (isImageEditRequest) {
           // Modo de edição/transformação de imagens
