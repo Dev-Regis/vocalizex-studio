@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown, Settings, Menu, MessageSquare, Pencil, Trash2, Check } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown, Settings, Menu, MessageSquare, Pencil, Trash2, Check, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { jsPDF } from "jspdf";
 import {
@@ -707,6 +707,15 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
             </div>
             <h1 className="text-xl font-bold">Chat IA Completo</h1>
             <div className="flex gap-2">
+              <Button
+                onClick={() => setAutoRead(!autoRead)}
+                variant="ghost"
+                size="icon"
+                className={`${autoRead ? 'text-purple-400' : 'text-gray-400'} hover:text-white`}
+                title={autoRead ? 'Desmutar voz' : 'Mutar voz'}
+              >
+                {autoRead ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+              </Button>
               <Button
                 onClick={() => setShowSettings(true)}
                 variant="ghost"
