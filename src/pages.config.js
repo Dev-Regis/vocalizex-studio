@@ -1,13 +1,21 @@
-import GerarLetras from './pages/GerarLetras';
-import Dashboard from './pages/Dashboard';
+import BatchImages from './pages/BatchImages';
+import Home from './pages/Home';
+import ImageChat from './pages/ImageChat';
+import ImageCreator from './pages/ImageCreator';
+import LyricGenerator from './pages/LyricGenerator';
+import LyricsImage from './pages/LyricsImage';
 
 
 export const PAGES = {
-    "GerarLetras": GerarLetras,
-    "Dashboard": Dashboard,
+    "BatchImages": BatchImages,
+    "Home": Home,
+    "ImageChat": ImageChat,
+    "ImageCreator": ImageCreator,
+    "LyricGenerator": LyricGenerator,
+    "LyricsImage": LyricsImage,
 }
 
 export const pagesConfig = {
-    mainPage: "GerarLetras",
+    mainPage: "ImageChat",
     Pages: PAGES,
 };
