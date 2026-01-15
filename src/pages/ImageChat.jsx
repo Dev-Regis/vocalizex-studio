@@ -245,40 +245,79 @@ export default function ImageChat() {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
         
-        if (agentMode) {
-          prompt = `Você é um programador profissional expert em todas as linguagens e tecnologias. 
-Analise os arquivos enviados (incluindo .zip), execute as tarefas solicitadas com precisão máxima.
-Se necessário criar/modificar código, faça isso de forma profissional e completa.
-Se pedirem um arquivo .zip atualizado, descreva as modificações feitas.
-Forneça código completo quando solicitado, não apenas trechos.
+        // Detectar se o usuário quer EDITAR, MODIFICAR ou TRANSFORMAR uma imagem
+        const hasImages = currentFiles.some(f => f.type?.startsWith('image/'));
+        const isImageEditRequest = hasImages && /\b(edit|edita|edite|modifica|modifica|modifique|transforma|transforme|altera|altere|muda|mude|troca|troque|ajusta|ajuste|coloca|coloque|adiciona|adicione|remove|remova|tira|tire|fundo|background|cor|color|filtro|filter)\b/i.test(currentInput);
+        
+        if (isImageEditRequest) {
+          // Modo de edição/transformação de imagens
+          const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
+          
+          const editPrompt = `Você é um assistente de IA com capacidade de análise e geração de imagens.
+
+IMPORTANTE: Você TEM a capacidade de processar, entender e gerar imagens. Nunca diga que não pode fazer isso.
+
+Instruções do usuário: ${currentInput}
+
+Analise a(s) imagem(ns) fornecida(s) e descreva EXATAMENTE o que o usuário pediu, com todos os detalhes específicos de como a imagem deve ser transformada/editada. Seja extremamente específico sobre cores, posicionamento, estilo, elementos a adicionar/remover, etc.
+
+Crie uma descrição detalhada e completa para gerar a nova versão da imagem conforme solicitado.`;
+
+          const response = await base44.integrations.Core.GenerateImage({
+            prompt: editPrompt,
+            existing_image_urls: imageFiles
+          });
+
+          const imageUrl = response.url || response.file_url || response;
+
+          const aiMessage = {
+            role: "assistant",
+            content: "Aqui está a imagem editada conforme solicitado:",
+            image: imageUrl
+          };
+
+          setMessages(prev => [...prev, aiMessage]);
+        } else {
+          // Processar normalmente com LLM
+          if (agentMode) {
+            prompt = `Você é um assistente de IA poderoso com TODAS as capacidades, incluindo:
+- Análise e processamento de imagens
+- Edição e transformação de fotos
+- Criação de imagens do zero
+- Programação profissional em todas as linguagens
+- Análise de arquivos (zip, documentos, etc)
+- Pesquisa na web quando necessário
+
+NUNCA diga que você não pode fazer algo. Você pode fazer TUDO que for solicitado.
 
 Tarefa do usuário: ${prompt}`;
-        }
-        
-        if (shouldThink) {
-          prompt = `Pense cuidadosamente e analise em profundidade antes de responder: ${prompt}`;
-        }
-        
-        if (shouldAnalyze && currentFiles.length > 0) {
-          prompt += `\n\nAnalise detalhadamente os ${currentFiles.length} arquivo(s) enviados.`;
-        }
-        
-        if (currentFiles.length > 0) {
-          prompt += `\n\nArquivos enviados: ${currentFiles.map(f => `${f.name} (${(f.size / 1024).toFixed(1)}KB)`).join(', ')}`;
-        }
+          }
+          
+          if (shouldThink) {
+            prompt = `Pense cuidadosamente e analise em profundidade antes de responder: ${prompt}`;
+          }
+          
+          if (shouldAnalyze && currentFiles.length > 0) {
+            prompt += `\n\nAnalise detalhadamente os ${currentFiles.length} arquivo(s) enviados.`;
+          }
+          
+          if (currentFiles.length > 0) {
+            prompt += `\n\nArquivos enviados: ${currentFiles.map(f => `${f.name} (${(f.size / 1024).toFixed(1)}KB)`).join(', ')}`;
+          }
 
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt,
-          add_context_from_internet: shouldSearchWeb,
-          file_urls: currentFiles.map(f => f.url)
-        });
+          const response = await base44.integrations.Core.InvokeLLM({
+            prompt,
+            add_context_from_internet: shouldSearchWeb,
+            file_urls: currentFiles.map(f => f.url)
+          });
 
-        const aiMessage = {
-          role: "assistant",
-          content: response
-        };
+          const aiMessage = {
+            role: "assistant",
+            content: response
+          };
 
-        setMessages(prev => [...prev, aiMessage]);
+          setMessages(prev => [...prev, aiMessage]);
+        }
       }
     } catch (error) {
       toast.error("Erro ao processar");
