@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Mic } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Mic, Video } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -42,8 +42,15 @@ export default function Home() {
       link: "LyricGenerator",
       color: "bg-pink-500"
     },
+    {
+      icon: Video,
+      title: "Criar Videoclipes ou Shorts",
+      description: "Transforme músicas em videoclipes profissionais com sincronização labial",
+      link: "VideoClipForm",
+      color: "bg-red-500"
+    },
 
-  ];
+    ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">

@@ -5,6 +5,8 @@ import ImageChat from './pages/ImageChat';
 import ImageCreator from './pages/ImageCreator';
 import LyricGenerator from './pages/LyricGenerator';
 import LyricsImage from './pages/LyricsImage';
+import VideoClipForm from './pages/VideoClipForm';
+import VideoClipPreview from './pages/VideoClipPreview';
 
 
 export const PAGES = {
@@ -15,6 +17,8 @@ export const PAGES = {
     "ImageCreator": ImageCreator,
     "LyricGenerator": LyricGenerator,
     "LyricsImage": LyricsImage,
+    "VideoClipForm": VideoClipForm,
+    "VideoClipPreview": VideoClipPreview,
 }
 
 export const pagesConfig = {
