@@ -48,8 +48,13 @@ export default function ImageChat() {
   });
   const [selectedVoice, setSelectedVoice] = useState(() => {
     const saved = localStorage.getItem('imageChat_voice');
-    return saved || 'pt-BR-Francisca';
+    return saved || 'pt-BR';
   });
+  const [voiceRate, setVoiceRate] = useState(() => {
+    const saved = localStorage.getItem('imageChat_voiceRate');
+    return saved ? parseFloat(saved) : 1.0;
+  });
+  const [availableVoices, setAvailableVoices] = useState([]);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -77,6 +82,22 @@ export default function ImageChat() {
   useEffect(() => {
     localStorage.setItem('imageChat_voice', selectedVoice);
   }, [selectedVoice]);
+
+  useEffect(() => {
+    localStorage.setItem('imageChat_voiceRate', voiceRate.toString());
+  }, [voiceRate]);
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      setAvailableVoices(voices);
+    };
+
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }, []);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -149,28 +170,45 @@ export default function ImageChat() {
     { id: 'extract', label: 'Extrair Dados', icon: '📊' }
   ];
 
-  const voices = [
-    { id: 'pt-BR-Francisca', label: 'Maria BR (Português)', lang: 'pt-BR' },
-    { id: 'en-US-female', label: 'Samantha (Inglês US)', lang: 'en-US' },
-    { id: 'en-GB-female', label: 'Kate (Inglês UK)', lang: 'en-GB' },
-    { id: 'es-ES-female', label: 'Monica (Espanhol)', lang: 'es-ES' },
-    { id: 'fr-FR-female', label: 'Amelie (Francês)', lang: 'fr-FR' },
-    { id: 'de-DE-female', label: 'Anna (Alemão)', lang: 'de-DE' },
-    { id: 'it-IT-female', label: 'Alice (Italiano)', lang: 'it-IT' },
-    { id: 'ja-JP-female', label: 'Kyoko (Japonês)', lang: 'ja-JP' },
-    { id: 'zh-CN-female', label: 'Ting-Ting (Chinês)', lang: 'zh-CN' },
+  const voiceOptions = [
+    { lang: 'pt-BR', label: 'Maria BR (Português)', keywords: ['Luciana', 'Francisca', 'pt-BR', 'Portuguese', 'Brazil', 'female'] },
+    { lang: 'en-US', label: 'Samantha (Inglês US)', keywords: ['Samantha', 'en-US', 'English', 'United States', 'female'] },
+    { lang: 'en-GB', label: 'Kate (Inglês UK)', keywords: ['Kate', 'en-GB', 'English', 'United Kingdom', 'female'] },
+    { lang: 'es-ES', label: 'Monica (Espanhol)', keywords: ['Monica', 'es-ES', 'Spanish', 'Spain', 'female'] },
+    { lang: 'fr-FR', label: 'Amelie (Francês)', keywords: ['Amelie', 'fr-FR', 'French', 'France', 'female'] },
+    { lang: 'de-DE', label: 'Anna (Alemão)', keywords: ['Anna', 'de-DE', 'German', 'Germany', 'female'] },
+    { lang: 'it-IT', label: 'Alice (Italiano)', keywords: ['Alice', 'it-IT', 'Italian', 'Italy', 'female'] },
+    { lang: 'ja-JP', label: 'Kyoko (Japonês)', keywords: ['Kyoko', 'ja-JP', 'Japanese', 'Japan', 'female'] },
+    { lang: 'zh-CN', label: 'Ting-Ting (Chinês)', keywords: ['Ting-Ting', 'zh-CN', 'Chinese', 'China', 'female'] },
   ];
 
   const speakText = (text) => {
     if (!autoRead || !text) return;
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voice = voices.find(v => v.id === selectedVoice);
-    utterance.lang = voice?.lang || 'pt-BR';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    
     window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = selectedVoice;
+    utterance.rate = voiceRate;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    
+    // Buscar voz feminina específica para o idioma selecionado
+    const voiceOption = voiceOptions.find(v => v.lang === selectedVoice);
+    if (voiceOption && availableVoices.length > 0) {
+      const matchedVoice = availableVoices.find(v => {
+        const nameLower = v.name.toLowerCase();
+        const langMatch = v.lang.startsWith(selectedVoice) || v.lang === selectedVoice;
+        const keywordMatch = voiceOption.keywords.some(kw => nameLower.includes(kw.toLowerCase()));
+        const isFemale = !nameLower.includes('male') && (nameLower.includes('female') || keywordMatch);
+        return langMatch && isFemale;
+      });
+      
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+    }
+    
     window.speechSynthesis.speak(utterance);
   };
 
@@ -795,7 +833,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
 
             {/* Voice Selection */}
             {autoRead && (
-              <div className="space-y-3 pt-3 border-t border-[#27272a]">
+              <div className="space-y-4 pt-3 border-t border-[#27272a]">
                 <div>
                   <h3 className="font-semibold mb-2">Selecionar Voz</h3>
                   <Select value={selectedVoice} onValueChange={setSelectedVoice}>
@@ -803,10 +841,10 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#121214] border-[#27272a]">
-                      {voices.map((voice) => (
+                      {voiceOptions.map((voice) => (
                         <SelectItem 
-                          key={voice.id} 
-                          value={voice.id}
+                          key={voice.lang} 
+                          value={voice.lang}
                           className="text-white hover:bg-purple-500/20 cursor-pointer"
                         >
                           {voice.label}
@@ -814,6 +852,29 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Voice Speed */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">Velocidade da Voz</h3>
+                    <span className="text-sm text-purple-400">{voiceRate.toFixed(1)}x</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="3"
+                    step="0.1"
+                    value={voiceRate}
+                    onChange={(e) => setVoiceRate(parseFloat(e.target.value))}
+                    className="w-full h-2 bg-[#27272a] rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0.5x</span>
+                    <span>1.0x</span>
+                    <span>2.0x</span>
+                    <span>3.0x</span>
+                  </div>
                 </div>
               </div>
             )}
