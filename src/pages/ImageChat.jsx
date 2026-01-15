@@ -4,7 +4,7 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown, Settings } from "lucide-react";
+import { ArrowLeft, Plus, Send, Image as ImageIcon, X, Loader2, Download, Mic, MicOff, FileText, Music, File, FileDown, Settings, Menu, MessageSquare, Pencil, Trash2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { jsPDF } from "jspdf";
 import {
@@ -27,21 +27,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function ImageChat() {
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('imageChat_messages');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const queryClient = useQueryClient();
+  const [currentConversationId, setCurrentConversationId] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [files, setFiles] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [selectedModes, setSelectedModes] = useState(() => {
-    const saved = localStorage.getItem('imageChat_modes');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [selectedModes, setSelectedModes] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState("");
   const [autoRead, setAutoRead] = useState(() => {
     const saved = localStorage.getItem('imageChat_autoRead');
     return saved ? JSON.parse(saved) : false;
@@ -59,6 +60,41 @@ export default function ImageChat() {
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
+  const { data: conversations = [] } = useQuery({
+    queryKey: ['conversations'],
+    queryFn: () => base44.entities.Conversation.list('-updated_date'),
+  });
+
+  const createConversationMutation = useMutation({
+    mutationFn: (data) => base44.entities.Conversation.create(data),
+    onSuccess: (newConv) => {
+      queryClient.invalidateQueries(['conversations']);
+      setCurrentConversationId(newConv.id);
+      setMessages([]);
+      setFiles([]);
+      toast.success("Nova conversa criada!");
+    },
+  });
+
+  const updateConversationMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Conversation.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['conversations']);
+    },
+  });
+
+  const deleteConversationMutation = useMutation({
+    mutationFn: (id) => base44.entities.Conversation.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['conversations']);
+      if (currentConversationId === deleteConversationMutation.variables) {
+        setCurrentConversationId(null);
+        setMessages([]);
+      }
+      toast.success("Conversa excluída!");
+    },
+  });
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -68,12 +104,16 @@ export default function ImageChat() {
   }, [messages]);
 
   useEffect(() => {
-    localStorage.setItem('imageChat_messages', JSON.stringify(messages));
+    if (currentConversationId && messages.length > 0) {
+      updateConversationMutation.mutate({
+        id: currentConversationId,
+        data: {
+          messages: JSON.stringify(messages),
+          last_message_date: new Date().toISOString()
+        }
+      });
+    }
   }, [messages]);
-
-  useEffect(() => {
-    localStorage.setItem('imageChat_modes', JSON.stringify(selectedModes));
-  }, [selectedModes]);
 
   useEffect(() => {
     localStorage.setItem('imageChat_autoRead', JSON.stringify(autoRead));
@@ -171,15 +211,15 @@ export default function ImageChat() {
   ];
 
   const voiceOptions = [
-    { lang: 'pt-BR', label: 'Maria BR (Português)', keywords: ['Luciana', 'Francisca', 'pt-BR', 'Portuguese', 'Brazil', 'female'] },
-    { lang: 'en-US', label: 'Samantha (Inglês US)', keywords: ['Samantha', 'en-US', 'English', 'United States', 'female'] },
-    { lang: 'en-GB', label: 'Kate (Inglês UK)', keywords: ['Kate', 'en-GB', 'English', 'United Kingdom', 'female'] },
-    { lang: 'es-ES', label: 'Monica (Espanhol)', keywords: ['Monica', 'es-ES', 'Spanish', 'Spain', 'female'] },
-    { lang: 'fr-FR', label: 'Amelie (Francês)', keywords: ['Amelie', 'fr-FR', 'French', 'France', 'female'] },
-    { lang: 'de-DE', label: 'Anna (Alemão)', keywords: ['Anna', 'de-DE', 'German', 'Germany', 'female'] },
-    { lang: 'it-IT', label: 'Alice (Italiano)', keywords: ['Alice', 'it-IT', 'Italian', 'Italy', 'female'] },
-    { lang: 'ja-JP', label: 'Kyoko (Japonês)', keywords: ['Kyoko', 'ja-JP', 'Japanese', 'Japan', 'female'] },
-    { lang: 'zh-CN', label: 'Ting-Ting (Chinês)', keywords: ['Ting-Ting', 'zh-CN', 'Chinese', 'China', 'female'] },
+    { lang: 'pt-BR', label: 'Maria BR (Português)', keywords: ['luciana', 'francisca', 'fernanda', 'vitoria', 'female', 'fêmea', 'feminino'] },
+    { lang: 'en-US', label: 'Samantha (Inglês US)', keywords: ['samantha', 'victoria', 'karen', 'female'] },
+    { lang: 'en-GB', label: 'Kate (Inglês UK)', keywords: ['kate', 'serena', 'female'] },
+    { lang: 'es-ES', label: 'Monica (Espanhol)', keywords: ['monica', 'female', 'spanish'] },
+    { lang: 'fr-FR', label: 'Amelie (Francês)', keywords: ['amelie', 'female', 'french'] },
+    { lang: 'de-DE', label: 'Anna (Alemão)', keywords: ['anna', 'female', 'german'] },
+    { lang: 'it-IT', label: 'Alice (Italiano)', keywords: ['alice', 'female', 'italian'] },
+    { lang: 'ja-JP', label: 'Kyoko (Japonês)', keywords: ['kyoko', 'female', 'japanese'] },
+    { lang: 'zh-CN', label: 'Ting-Ting (Chinês)', keywords: ['ting-ting', 'female', 'chinese'] },
   ];
 
   const speakText = (text) => {
@@ -190,26 +230,64 @@ export default function ImageChat() {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = selectedVoice;
     utterance.rate = voiceRate;
-    utterance.pitch = 1.0;
+    utterance.pitch = 1.2;
     utterance.volume = 1.0;
     
-    // Buscar voz feminina específica para o idioma selecionado
+    // Buscar voz feminina específica
     const voiceOption = voiceOptions.find(v => v.lang === selectedVoice);
     if (voiceOption && availableVoices.length > 0) {
-      const matchedVoice = availableVoices.find(v => {
+      const femaleVoices = availableVoices.filter(v => {
         const nameLower = v.name.toLowerCase();
-        const langMatch = v.lang.startsWith(selectedVoice) || v.lang === selectedVoice;
-        const keywordMatch = voiceOption.keywords.some(kw => nameLower.includes(kw.toLowerCase()));
-        const isFemale = !nameLower.includes('male') && (nameLower.includes('female') || keywordMatch);
-        return langMatch && isFemale;
+        const langMatch = v.lang.startsWith(selectedVoice);
+        const hasKeyword = voiceOption.keywords.some(kw => nameLower.includes(kw));
+        const notMale = !nameLower.includes('male') || nameLower.includes('female');
+        return langMatch && (hasKeyword || notMale);
       });
       
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
+      if (femaleVoices.length > 0) {
+        utterance.voice = femaleVoices[0];
       }
     }
     
     window.speechSynthesis.speak(utterance);
+  };
+
+  const loadConversation = (conv) => {
+    setCurrentConversationId(conv.id);
+    setMessages(conv.messages ? JSON.parse(conv.messages) : []);
+    setFiles([]);
+    setShowSidebar(false);
+  };
+
+  const createNewChat = () => {
+    createConversationMutation.mutate({
+      title: "Nova Conversa",
+      messages: JSON.stringify([]),
+      last_message_date: new Date().toISOString()
+    });
+    setShowSidebar(false);
+  };
+
+  const startEditTitle = (conv) => {
+    setEditingId(conv.id);
+    setEditingTitle(conv.title);
+  };
+
+  const saveTitle = () => {
+    if (editingId && editingTitle.trim()) {
+      updateConversationMutation.mutate({
+        id: editingId,
+        data: { title: editingTitle.trim() }
+      });
+      setEditingId(null);
+      setEditingTitle("");
+    }
+  };
+
+  const deleteConversation = (id) => {
+    if (confirm("Deseja excluir esta conversa?")) {
+      deleteConversationMutation.mutate(id);
+    }
   };
 
   const handleFileSelect = async (e, fileType = 'all') => {
@@ -504,49 +582,160 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
   };
 
   return (
-    <div className="min-h-screen bg-[#050506] text-white flex flex-col">
-      {/* Header */}
-      <header className="border-b border-[#27272a] bg-[#121214] sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link 
-            to={createPageUrl("Home")} 
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Voltar</span>
-          </Link>
-          <h1 className="text-xl font-bold">Chat IA Completo</h1>
-          <div className="flex gap-2">
+    <div className="min-h-screen bg-[#050506] text-white flex">
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-30 w-80 bg-[#0a0a0b] border-r border-[#27272a] transform transition-transform duration-300 ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full">
+          <div className="p-4 border-b border-[#27272a] flex items-center justify-between">
+            <h2 className="text-lg font-bold text-cyan-400">Chat History</h2>
             <Button
-              onClick={() => setShowSettings(true)}
+              onClick={() => setShowSidebar(false)}
               variant="ghost"
-              size="sm"
+              size="icon"
               className="text-gray-400 hover:text-white"
             >
-              <Settings className="w-4 h-4" />
-            </Button>
-            <Button
-              onClick={() => {
-                if (confirm("Limpar todo o histórico?")) {
-                  setMessages([]);
-                  setFiles([]);
-                  localStorage.removeItem('imageChat_messages');
-                  toast.success("Histórico limpo!");
-                }
-              }}
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-white"
-            >
-              <X className="w-4 h-4 mr-1" />
-              Limpar
+              <X className="w-5 h-5" />
             </Button>
           </div>
-        </div>
-      </header>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+          <div className="p-3">
+            <Button
+              onClick={createNewChat}
+              className="w-full bg-[#18181b] border border-[#27272a] hover:bg-[#27272a] text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Chat
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {conversations.map((conv) => (
+              <div
+                key={conv.id}
+                className={`p-3 rounded-lg border transition-all ${
+                  currentConversationId === conv.id
+                    ? 'bg-purple-600/20 border-purple-500/50'
+                    : 'bg-[#18181b] border-[#27272a] hover:border-[#3f3f46]'
+                }`}
+              >
+                {editingId === conv.id ? (
+                  <div className="flex gap-2">
+                    <Input
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && saveTitle()}
+                      className="bg-[#0a0a0b] border-[#27272a] text-white text-sm"
+                      autoFocus
+                    />
+                    <Button
+                      onClick={saveTitle}
+                      size="icon"
+                      className="bg-green-600 hover:bg-green-500 flex-shrink-0"
+                    >
+                      <Check className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => loadConversation(conv)}
+                      className="w-full text-left"
+                    >
+                      <div className="flex items-start gap-2">
+                        <MessageSquare className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{conv.title}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(conv.last_message_date || conv.created_date).toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                    <div className="flex gap-1 mt-2">
+                      <Button
+                        onClick={() => startEditTitle(conv)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-400 hover:text-white h-7"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        onClick={() => deleteConversation(conv.id)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-400 hover:text-red-300 h-7"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="border-b border-[#27272a] bg-[#121214] sticky top-0 z-10">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setShowSidebar(true)}
+                variant="ghost"
+                size="icon"
+                className="text-gray-400 hover:text-white"
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
+              <Link 
+                to={createPageUrl("Home")} 
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Voltar</span>
+              </Link>
+            </div>
+            <h1 className="text-xl font-bold">Chat IA Completo</h1>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowSettings(true)}
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-white"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (confirm("Limpar conversa atual?")) {
+                    setMessages([]);
+                    setFiles([]);
+                    toast.success("Conversa limpa!");
+                  }
+                }}
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-4 h-4 mr-1" />
+                Limpar
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-20">
@@ -649,10 +838,10 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           )}
           <div ref={messagesEndRef} />
         </div>
-      </div>
+        </div>
 
-      {/* Input Area */}
-      <div className="border-t border-[#27272a] bg-[#121214] sticky bottom-0">
+        {/* Input Area */}
+        <div className="border-t border-[#27272a] bg-[#121214] sticky bottom-0">
         <div className="container mx-auto px-4 py-4 max-w-4xl">
           {/* File Preview */}
           {files.length > 0 && (
@@ -804,9 +993,9 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
             {files.length}/10 arquivos (até 20MB cada) • Pressione Enter para enviar • Modo agente: programador profissional
           </p>
         </div>
-      </div>
+        </div>
 
-      {/* Settings Dialog */}
+        {/* Settings Dialog */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent className="bg-[#121214] border-[#27272a] text-white max-w-md">
           <DialogHeader>
@@ -881,6 +1070,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
