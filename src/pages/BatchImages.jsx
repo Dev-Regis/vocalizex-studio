@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Wand2, Loader2, Download, Image as ImageIcon, X } from "lucide-react";
+import { ArrowLeft, Wand2, Loader2, Download, Image as ImageIcon, X, StopCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BatchImages() {
@@ -16,6 +16,8 @@ export default function BatchImages() {
   const [images, setImages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [numImages, setNumImages] = useState(5);
+  const [shouldStop, setShouldStop] = useState(false);
 
   const handlePhotoSelect = async (e, gender) => {
     const file = e.target.files[0];
@@ -49,6 +51,7 @@ export default function BatchImages() {
     setIsGenerating(true);
     setImages([]);
     setProgress(0);
+    setShouldStop(false);
 
     const generatedImages = [];
 
@@ -58,7 +61,11 @@ export default function BatchImages() {
       const hasShe = lyrics.includes('[Ela]');
       const hasBoth = lyrics.includes('[Ambos]');
 
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < numImages; i++) {
+        if (shouldStop) {
+          toast.info(`Geração interrompida. ${i} de ${numImages} imagens geradas.`);
+          break;
+        }
         let enhancedPrompt = `FOTOGRAFIA PROFISSIONAL ULTRA REALISTA de alta qualidade. Baseado nesta letra: "${lyrics}". `;
         
         const photosToUse = [];
@@ -106,16 +113,35 @@ export default function BatchImages() {
         const imageUrl = response.url || response.file_url || response;
         generatedImages.push(imageUrl);
         setImages([...generatedImages]);
-        setProgress(((i + 1) / 10) * 100);
+        setProgress(((i + 1) / numImages) * 100);
       }
 
-      toast.success("10 imagens fotorealistas geradas!");
+      if (!shouldStop) {
+        toast.success(`${numImages} imagens fotorealistas geradas!`);
+      }
     } catch (error) {
       toast.error("Erro ao gerar imagens");
       console.error(error);
     } finally {
       setIsGenerating(false);
+      setShouldStop(false);
     }
+  };
+
+  const stopGeneration = () => {
+    setShouldStop(true);
+    toast.info("Parando geração...");
+  };
+
+  const clearAll = () => {
+    setPrompt("");
+    setLyrics("");
+    setPhotoMan(null);
+    setPhotoWoman(null);
+    setImages([]);
+    setNumImages(5);
+    setProgress(0);
+    toast.success("Tudo limpo!");
   };
 
   const downloadImage = async (url, index) => {
@@ -273,23 +299,57 @@ export default function BatchImages() {
               </p>
             </div>
 
-            <Button
-              onClick={generateImages}
-              disabled={isGenerating || !lyrics.trim()}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500"
-            >
+            {/* Number of Images Slider */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Número de Imagens: {numImages}
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={numImages}
+                onChange={(e) => setNumImages(parseInt(e.target.value))}
+                disabled={isGenerating}
+                className="w-full h-2 bg-[#27272a] rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <span>1</span>
+                <span>5</span>
+                <span>10</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
               {isGenerating ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Gerando {Math.floor(progress / 10)}/10 imagens...
-                </>
+                <Button
+                  onClick={stopGeneration}
+                  className="flex-1 bg-red-600 hover:bg-red-500"
+                >
+                  <StopCircle className="w-5 h-5 mr-2" />
+                  Stop ({Math.ceil(progress / 10)}/{numImages})
+                </Button>
               ) : (
-                <>
+                <Button
+                  onClick={generateImages}
+                  disabled={!lyrics.trim()}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500"
+                >
                   <Wand2 className="w-5 h-5 mr-2" />
-                  Gerar 10 Imagens
-                </>
+                  Gerar {numImages} Imagens
+                </Button>
               )}
-            </Button>
+              
+              <Button
+                onClick={clearAll}
+                disabled={isGenerating}
+                variant="outline"
+                className="border-red-500/30 text-red-400 hover:bg-red-500/10 px-6"
+              >
+                <Trash2 className="w-5 h-5" />
+              </Button>
+            </div>
 
             {isGenerating && (
               <div className="mt-4">
