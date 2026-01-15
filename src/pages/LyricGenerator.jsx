@@ -220,6 +220,18 @@ Requisitos CRÍTICOS:
     toast.success("Resultado limpo!");
   };
 
+  const clearAll = () => {
+    setConcept("");
+    setMusicStyle("");
+    setVocalStyle("");
+    setSelectedVoices([]);
+    setDuration(3);
+    setTitle("");
+    setDetails("");
+    setLyricsParts([]);
+    toast.success("Tudo limpo!");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">
       <div className="fixed inset-0 pointer-events-none">
@@ -351,20 +363,30 @@ Requisitos CRÍTICOS:
               />
             </div>
 
-            <Button
-              onClick={generateLyrics}
-              disabled={isGenerating || !concept.trim() || !musicStyle || !vocalStyle}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 py-6 text-lg"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Criando letra viral...
-                </>
-              ) : (
-                "Criar Letra Viral"
-              )}
-            </Button>
+            <div className="space-y-3">
+              <Button
+                onClick={generateLyrics}
+                disabled={isGenerating || !concept.trim() || !musicStyle || !vocalStyle}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 py-6 text-lg"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Criando letra viral...
+                  </>
+                ) : (
+                  "Criar Letra Viral"
+                )}
+              </Button>
+              <Button
+                onClick={clearAll}
+                disabled={isGenerating}
+                variant="outline"
+                className="w-full border-gray-500/30 text-gray-400 hover:bg-gray-500/10"
+              >
+                Limpar
+              </Button>
+            </div>
           </div>
 
           {/* Right Panel - Resultado */}
