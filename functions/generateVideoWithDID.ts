@@ -35,7 +35,10 @@ Deno.serve(async (req) => {
         const videoClip = videoClips[0];
 
         const DID_API_KEY = Deno.env.get('DID_API_KEY');
+        console.log('🔑 DID_API_KEY:', DID_API_KEY ? 'Configurada ✅' : 'NÃO ENCONTRADA ❌');
+        
         if (!DID_API_KEY) {
+            console.error('❌ DID_API_KEY não configurada');
             return Response.json({ error: 'DID_API_KEY não configurada' }, { status: 500 });
         }
 
@@ -75,26 +78,35 @@ Deno.serve(async (req) => {
             body: JSON.stringify(didPayload)
         });
 
-        console.log('Status D-ID:', createResponse.status);
+        console.log('📊 Status D-ID:', createResponse.status);
 
         if (!createResponse.ok) {
             const error = await createResponse.text();
+            console.error('❌ Erro D-ID:', error);
             return Response.json({ 
                 error: 'Erro ao criar vídeo na D-ID',
-                details: error
+                details: error,
+                status_code: createResponse.status
             }, { status: createResponse.status });
         }
 
         const createData = await createResponse.json();
+        console.log('📋 Resposta D-ID:', JSON.stringify(createData, null, 2));
         const talkId = createData.id;
+        console.log('✅ Talk ID criado:', talkId);
 
         // Aguardar o processamento do vídeo (polling)
         let videoUrl = null;
         let attempts = 0;
         const maxAttempts = 60; // 5 minutos máximo
 
+        console.log('⏳ Iniciando polling do status...');
+
         while (attempts < maxAttempts && !videoUrl) {
             await new Promise(resolve => setTimeout(resolve, 5000)); // Aguardar 5 segundos
+            attempts++;
+
+            console.log(`⏳ Tentativa ${attempts}/${maxAttempts} - Verificando status...`);
 
             const statusResponse = await fetch(`https://api.d-id.com/talks/${talkId}`, {
                 headers: {
@@ -103,36 +115,46 @@ Deno.serve(async (req) => {
             });
 
             if (!statusResponse.ok) {
+                console.error('❌ Erro ao verificar status:', statusResponse.status);
                 return Response.json({ 
-                    error: 'Erro ao verificar status do vídeo' 
+                    error: 'Erro ao verificar status do vídeo',
+                    status_code: statusResponse.status
                 }, { status: statusResponse.status });
             }
 
             const statusData = await statusResponse.json();
+            console.log(`📊 Status atual: ${statusData.status}`);
 
             if (statusData.status === 'done') {
                 videoUrl = statusData.result_url;
+                console.log('🎉 Vídeo pronto! URL:', videoUrl);
             } else if (statusData.status === 'error') {
+                console.error('❌ Erro no processamento:', statusData.error);
                 return Response.json({ 
                     error: 'Erro no processamento do vídeo',
-                    details: statusData.error
+                    details: statusData.error || statusData
                 }, { status: 500 });
+            } else {
+                console.log(`⏳ Status: ${statusData.status} - Aguardando...`);
             }
-
-            attempts++;
         }
 
         if (!videoUrl) {
+            console.error('❌ Timeout após', attempts, 'tentativas');
             return Response.json({ 
-                error: 'Timeout: vídeo não foi processado a tempo' 
+                error: 'Timeout: vídeo não foi processado a tempo',
+                attempts: attempts
             }, { status: 408 });
         }
 
         // Atualizar o VideoClip com o URL do vídeo
+        console.log('💾 Atualizando VideoClip no banco...');
         await base44.asServiceRole.entities.VideoClip.update(videoClipId, {
             videoUrl: videoUrl,
             status: 'completed'
         });
+
+        console.log('✅ Sucesso! VideoClip atualizado');
 
         return Response.json({ 
             success: true,
@@ -141,8 +163,11 @@ Deno.serve(async (req) => {
         });
 
     } catch (error) {
+        console.error('❌ ERRO FATAL:', error);
+        console.error('❌ Stack:', error.stack);
         return Response.json({ 
-            error: error.message 
+            error: error.message,
+            stack: error.stack
         }, { status: 500 });
     }
 });
