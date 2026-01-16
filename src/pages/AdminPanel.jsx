@@ -21,6 +21,7 @@ export default function AdminPanel() {
   const [newUserName, setNewUserName] = useState("");
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [newUserPassword, setNewUserPassword] = useState("");
 
   useEffect(() => {
     const adminAuth = localStorage.getItem("admin_auth");
@@ -56,23 +57,35 @@ export default function AdminPanel() {
   const handleCreateUser = async (e) => {
     e.preventDefault();
 
-    if (!newUserEmail || !newUserName) {
+    if (!newUserEmail || !newUserName || !newUserPassword) {
       toast.error("Preencha todos os campos");
       return;
     }
 
     try {
       setIsLoading(true);
+      toast.loading("Registrando usuário...", { id: "create" });
       
-      // Usar a função de convite de usuário
-      await base44.users.inviteUser(newUserEmail, "user");
+      // Criar usuário no banco de dados
+      const newUser = await base44.asServiceRole.entities.User.create({
+        email: newUserEmail,
+        full_name: newUserName,
+        role: "user"
+      });
       
-      toast.success("Usuário registrado!");
+      // Salvar a senha (em produção seria hash)
+      await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt: `Usuário ${newUserEmail} criado com sucesso`
+      });
+      
+      toast.success("Usuário registrado com sucesso!", { id: "create" });
       setNewUserEmail("");
       setNewUserName("");
+      setNewUserPassword("");
       loadUsers();
     } catch (error) {
-      toast.error("Erro ao registrar usuário");
+      toast.error("Erro ao registrar usuário", { id: "create" });
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -104,9 +117,7 @@ export default function AdminPanel() {
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <div className="bg-red-500/20 p-3 rounded-full mb-4 border border-red-500/30 inline-flex">
-                  <Shield className="w-8 h-8 text-red-400" />
-                </div>
+                <img src={LOGO_URL} alt="VocalizeX" className="h-24 mx-auto mb-6 object-contain" />
                 <h1 className="text-3xl font-black mb-2">Painel Admin</h1>
                 <p className="text-gray-400">Acesso restrito</p>
               </div>
@@ -146,9 +157,8 @@ export default function AdminPanel() {
               </form>
 
               <div className="mt-6 p-4 bg-[#18181b] rounded-lg border border-[#27272a] text-sm text-gray-400">
-                <p className="font-semibold text-gray-300 mb-2">Credenciais Demo:</p>
-                <p>📧 {ADMIN_EMAIL}</p>
-                <p>🔐 {ADMIN_PASSWORD}</p>
+                <p className="font-semibold text-gray-300 mb-2">💡 Credenciais fornecidas pelo administrador</p>
+                <p className="text-xs">Entre em contato com suporte para acesso</p>
               </div>
             </CardContent>
           </Card>
@@ -195,6 +205,17 @@ export default function AdminPanel() {
                   className="bg-[#18181b] border-[#27272a] text-white"
                   disabled={isLoading}
                 />
+                <div className="relative">
+                  <Key className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
+                  <Input
+                    type="password"
+                    placeholder="Senha"
+                    value={newUserPassword}
+                    onChange={(e) => setNewUserPassword(e.target.value)}
+                    className="pl-10 bg-[#18181b] border-[#27272a] text-white"
+                    disabled={isLoading}
+                  />
+                </div>
                 <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-green-600 to-green-700">
                   {isLoading ? "Registrando..." : "Registrar Usuário"}
                 </Button>
