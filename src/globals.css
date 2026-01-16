@@ -1,0 +1,17 @@
+/* Scrollbar customizada para SelectContent */
+[data-radix-select-content]::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-radix-select-content]::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+[data-radix-select-content]::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+[data-radix-select-content]::-webkit-scrollbar-thumb:hover {
+  background: #e0e0e0;
+}
