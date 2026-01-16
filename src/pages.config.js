@@ -33,6 +33,7 @@ import Following from './pages/Following';
 import Mentorship from './pages/Mentorship';
 import SavedStyles from './pages/SavedStyles';
 import Settings from './pages/Settings';
+import AdminPanel from './pages/AdminPanel';
 
 
 export const PAGES = {
@@ -71,6 +72,7 @@ export const PAGES = {
     "Mentorship": Mentorship,
     "SavedStyles": SavedStyles,
     "Settings": Settings,
+    "AdminPanel": AdminPanel,
 }
 
 export const pagesConfig = {
