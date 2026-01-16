@@ -37,7 +37,23 @@ Deno.serve(async (req) => {
 
         // Baixar a imagem
         const imageResponse = await fetch(imageUrl);
+        if (!imageResponse.ok) {
+            return Response.json({ 
+                error: 'Erro ao baixar a imagem',
+                details: `Não foi possível baixar a imagem: ${imageUrl}`,
+                status_code: imageResponse.status
+            }, { status: 400 });
+        }
         const imageBlob = await imageResponse.blob();
+        
+        // Validar se é uma imagem válida
+        if (!imageBlob.type.startsWith('image/')) {
+            return Response.json({ 
+                error: 'Arquivo inválido',
+                details: 'O arquivo não é uma imagem válida',
+                status_code: 400
+            }, { status: 400 });
+        }
         
         // Criar FormData
         const formData = new FormData();
@@ -61,13 +77,31 @@ Deno.serve(async (req) => {
             const errorText = await response.text();
             console.error('❌ Erro Stability AI:', errorText);
             
+            // Erro 404 - endpoint não encontrado ou imagem inválida
+            if (response.status === 404) {
+                return Response.json({ 
+                    error: 'Recurso não encontrado na Stability AI',
+                    details: 'Verifique se a imagem é válida e se a API está acessível. O serviço pode estar temporariamente indisponível.',
+                    status_code: 404
+                }, { status: 404 });
+            }
+            
             // Verificar se é erro de créditos
-            if (errorText.includes('credits') || errorText.includes('insufficient')) {
+            if (errorText.includes('credits') || errorText.includes('insufficient') || response.status === 402) {
                 return Response.json({ 
                     error: 'Créditos insuficientes na Stability AI',
                     details: 'Você precisa adicionar créditos em https://platform.stability.ai/account/credits',
                     status_code: response.status,
                     needsCredits: true
+                }, { status: response.status });
+            }
+            
+            // Erro de autorização
+            if (response.status === 401 || response.status === 403) {
+                return Response.json({ 
+                    error: 'Erro de autorização',
+                    details: 'Verifique se a STABILITY_API_KEY está correta',
+                    status_code: response.status
                 }, { status: response.status });
             }
             
@@ -110,6 +144,16 @@ Deno.serve(async (req) => {
             }
 
             if (!statusResponse.ok) {
+                // Se for 404, a geração pode ter expirado ou falhado
+                if (statusResponse.status === 404) {
+                    console.error('❌ Geração não encontrada (ID:', generationId, ')');
+                    return Response.json({ 
+                        error: 'Geração não encontrada',
+                        details: 'A geração do vídeo expirou ou falhou. Tente novamente.',
+                        status_code: 404
+                    }, { status: 404 });
+                }
+                
                 const errorText = await statusResponse.text();
                 console.error('❌ Erro ao checar status:', errorText);
                 return Response.json({ 

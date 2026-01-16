@@ -187,13 +187,29 @@ export default function VideoClipPreview() {
           toast.error("💳 Créditos insuficientes na Stability AI", { id: "video" });
         } else {
           const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
+          const errorDetails = response.data?.details || '';
+
           console.error('❌ ERRO DETALHADO:', {
             error: response.data?.error,
             details: response.data?.details,
             status: response.status,
             completo: response.data
           });
-          toast.error("❌ ERRO: " + errorMsg, { id: "video", duration: 10000 });
+
+          // Mostrar mensagem de erro mais amigável
+          let userMessage = errorMsg;
+          if (response.data?.status_code === 404) {
+            userMessage = "Serviço temporariamente indisponível. Tente novamente em alguns minutos.";
+          } else if (response.data?.status_code === 401 || response.data?.status_code === 403) {
+            userMessage = "Erro de autenticação. Verifique sua API Key.";
+          }
+
+          toast.error("❌ " + userMessage, { id: "video", duration: 8000 });
+
+          // Mostrar detalhes no console
+          if (errorDetails) {
+            console.log('📝 Detalhes:', errorDetails);
+          }
         }
       }
 
