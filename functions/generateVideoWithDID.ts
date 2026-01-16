@@ -54,17 +54,12 @@ Deno.serve(async (req) => {
                 fluent: true,
                 pad_audio: 0,
                 stitch: true,
-                result_format: videoClip.orientation === 'vertical' ? '1080x1920' : '1920x1080'
-            }
+                result_format: 'mp4'
+            },
+            driver_url: "bank://lively"
         };
 
-        // Adicionar marca d'água se fornecida
-        if (videoClip.watermark) {
-            didPayload.config.logo = {
-                url: "data:text/plain;base64," + btoa(videoClip.watermark),
-                position: [10, 10]
-            };
-        }
+        console.log('📐 Orientação:', videoClip.orientation);
 
         console.log('Enviando para D-ID:', JSON.stringify(didPayload, null, 2));
 
