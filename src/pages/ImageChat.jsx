@@ -44,6 +44,8 @@ export default function ImageChat() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
+  const [markedMessages, setMarkedMessages] = useState({});
+  const [showMarked, setShowMarked] = useState(false);
   const [autoRead, setAutoRead] = useState(() => {
     const saved = localStorage.getItem('imageChat_autoRead');
     return saved ? JSON.parse(saved) : false;
@@ -559,6 +561,29 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
     }
   };
 
+  const toggleMarkMessage = (index, comment = "") => {
+    setMarkedMessages(prev => {
+      if (prev[index]) {
+        const newMarked = { ...prev };
+        delete newMarked[index];
+        return newMarked;
+      } else {
+        return { ...prev, [index]: { message: messages[index], comment } };
+      }
+    });
+  };
+
+  const updateMarkedComment = (index, comment) => {
+    setMarkedMessages(prev => ({
+      ...prev,
+      [index]: { ...prev[index], comment }
+    }));
+  };
+
+  const clearMarkedMessages = () => {
+    setMarkedMessages({});
+  };
+
   const downloadTextAsPDF = (text) => {
     try {
       const doc = new jsPDF();
@@ -726,6 +751,20 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                 {autoRead ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
               </Button>
               <Button
+                onClick={() => setShowMarked(!showMarked)}
+                variant="ghost"
+                size="sm"
+                className={`relative ${Object.keys(markedMessages).length > 0 ? "text-yellow-400" : "text-gray-400"} hover:text-white`}
+                title="Ver marcados"
+              >
+                <span className="text-lg">⭐</span>
+                {Object.keys(markedMessages).length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {Object.keys(markedMessages).length}
+                  </span>
+                )}
+              </Button>
+              <Button
                 onClick={() => setShowSettings(true)}
                 variant="ghost"
                 size="sm"
@@ -766,15 +805,29 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} group`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl p-4 ${
+                    className={`max-w-[80%] rounded-2xl p-4 relative ${
                       msg.role === "user"
                         ? "bg-purple-600 text-white"
                         : "bg-[#121214] border border-[#27272a]"
-                    }`}
+                    } ${markedMessages[index] ? "ring-2 ring-yellow-500" : ""}`}
                   >
+                    {msg.role === "assistant" && (
+                      <Button
+                        onClick={() => toggleMarkMessage(index)}
+                        size="sm"
+                        variant="ghost"
+                        className={`absolute -left-12 top-2 opacity-0 group-hover:opacity-100 transition-opacity ${
+                          markedMessages[index] ? "text-yellow-500" : "text-gray-400"
+                        }`}
+                        title="Marcar para comentar"
+                      >
+                        <span className="text-xl">{markedMessages[index] ? "⭐" : "☆"}</span>
+                      </Button>
+                    )}
+                  
                     {msg.content && (
                       <div className="relative group">
                         <p className="mb-2 whitespace-pre-wrap">{msg.content}</p>
@@ -1086,6 +1139,98 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
               </div>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Marked Messages Panel */}
+      <Dialog open={showMarked} onOpenChange={setShowMarked}>
+        <DialogContent className="bg-[#121214] border-[#27272a] text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <span className="text-2xl">⭐</span>
+              Marcados para Comentar ({Object.keys(markedMessages).length})
+            </DialogTitle>
+          </DialogHeader>
+          
+          {Object.keys(markedMessages).length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <p>Nenhuma mensagem marcada ainda</p>
+              <p className="text-sm mt-2">Clique na estrela das mensagens para marcar</p>
+            </div>
+          ) : (
+            <div className="space-y-4 py-4">
+              {Object.entries(markedMessages).map(([index, data]) => (
+                <div key={index} className="bg-[#18181b] border border-[#27272a] rounded-lg p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 text-sm text-gray-400">
+                      <p className="font-semibold text-white mb-2">Mensagem:</p>
+                      <div className="bg-[#0a0a0b] p-2 rounded text-xs max-h-24 overflow-y-auto">
+                        {data.message.content && (
+                          <p className="mb-2">{data.message.content.substring(0, 200)}...</p>
+                        )}
+                        {data.message.image && (
+                          <img src={data.message.image} alt="marcado" className="w-full h-20 object-cover rounded" />
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => toggleMarkMessage(index)}
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-400 hover:text-red-300 flex-shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-semibold mb-2 block">Seu comentário:</label>
+                    <Textarea
+                      value={data.comment}
+                      onChange={(e) => updateMarkedComment(index, e.target.value)}
+                      placeholder="Adicione suas notas, ideias ou instruções..."
+                      className="bg-[#0a0a0b] border-[#27272a] text-white text-sm min-h-[80px] resize-none"
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        const fullText = `${data.message.content || ''}\n\nComentário: ${data.comment}`;
+                        downloadTextAsPDF(fullText);
+                      }}
+                      size="sm"
+                      variant="outline"
+                      className="border-[#27272a] text-purple-300 hover:bg-purple-500/10 flex-1"
+                    >
+                      <FileDown className="w-3 h-3 mr-1" />
+                      Baixar
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const fullText = `${data.message.content || ''}\n\nComentário: ${data.comment}`;
+                        navigator.clipboard.writeText(fullText);
+                        toast.success("Copiado!");
+                      }}
+                      size="sm"
+                      variant="outline"
+                      className="border-[#27272a] text-blue-300 hover:bg-blue-500/10 flex-1"
+                    >
+                      Copiar
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              
+              <Button
+                onClick={clearMarkedMessages}
+                variant="outline"
+                className="w-full border-red-500/50 text-red-400 hover:bg-red-500/10"
+              >
+                Limpar Todos
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
       </div>
