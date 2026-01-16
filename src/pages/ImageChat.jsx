@@ -452,22 +452,20 @@ export default function ImageChat() {
            setGeneratingStatus("processando imagem...");
            const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
 
-           // Detectar se é uma solicitação de combinação/blending/extração de múltiplas imagens
-           const isBlendRequest = imageFiles.length >= 2 && /\b(junta|junte|junto|combina|combine|mistura|misture|mescla|mescle|blend|funde|funda|une|una|coloca.*junto|com.*junto|pega.*foto|extrai|extraia|tira.*de|tira.*coloca|remove.*coloca)\b/i.test(currentInput);
+           // Detectar se é uma solicitação de combinação/blending de múltiplas imagens
+           const isBlendRequest = /\b(junta|junte|junto|combina|combine|mistura|misture|mescla|mescle|blend|funde|funda|une|una|coloca.*junto|com.*junto)\b/i.test(currentInput) && imageFiles.length >= 2;
 
            // Criar prompt otimizado para edição/blending
            const editPrompt = isBlendRequest ? 
-             `TAREFA CRÍTICA DE COMPOSIÇÃO: ${currentInput}
+             `TAREFA: ${currentInput}
 
-        INSTRUÇÕES PRECISAS PARA BLENDING/COMPOSIÇÃO:
-        1. Você RECEBEU MÚLTIPLAS IMAGENS para EXTRAIR ELEMENTOS e COMBINAR
-        2. EXTRAIA EXATAMENTE o que foi solicitado (pessoa, objeto, elemento específico) de cada imagem
-        3. COLOQUE o elemento extraído na posição/contexto solicitado
-        4. Mantenha a qualidade, proporções e iluminação natural
-        5. A composição final deve parecer PROFISSIONAL e REALISTA
-        6. Se pedir para colocar pessoa A com pessoa B, COLOQUE AMBAS na composição
-        7. Integre os elementos de forma natural e bem proporcionada
-        8. Alta resolução, resultado limpo e bem acabado` :
+        IMPORTANTE: Você tem múltiplas imagens para COMBINAR/BLENDER.
+        - Extraia elementos específicos de cada imagem conforme solicitado
+        - Combine/mescle as imagens de forma natural e profissional
+        - Mantenha proporções e qualidade visual
+        - A composição final deve parecer natural e bem integrada
+        - Qualidade profissional e alta resolução
+        - Resultado limpo e bem acabado` :
              `TAREFA: ${currentInput}
 
         IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicitadas.
