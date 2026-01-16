@@ -443,42 +443,55 @@ export default function ImageChat() {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
         
-        // Detectar se o usuário quer EDITAR, MODIFICAR ou TRANSFORMAR uma imagem
-        const hasImages = currentFiles.some(f => f.type?.startsWith('image/'));
-        const isImageEditRequest = hasImages && /\b(edit|edita|edite|modifica|modifica|modifique|transforma|transforme|altera|altere|muda|mude|troca|troque|ajusta|ajuste|coloca|coloque|adiciona|adicione|remove|remova|tira|tire|fundo|background|cor|color|filtro|filter|branco|branca|preto|preta|azul|vermelho|verde|amarelo|rosa|roxo|cinza)\b/i.test(currentInput);
+        // Detectar se o usuário quer EDITAR, MODIFICAR, TRANSFORMAR ou COMBINAR imagens
+         const hasImages = currentFiles.some(f => f.type?.startsWith('image/'));
+         const isImageEditRequest = hasImages && /\b(edit|edita|edite|modifica|modifica|modifique|transforma|transforme|altera|altere|muda|mude|troca|troque|ajusta|ajuste|coloca|coloque|adiciona|adicione|remove|remova|tira|tire|fundo|background|cor|color|filtro|filter|branco|branca|preto|preta|azul|vermelho|verde|amarelo|rosa|roxo|cinza|junta|junte|junto|combina|combine|combine|mistura|misture|mescla|mescle|blend|funde|funda|une|una|coloca|junto)\b/i.test(currentInput);
         
         if (isImageEditRequest) {
-          // Modo de edição/transformação de imagens
-          setGeneratingStatus("editando imagem...");
-          const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
-          
-          // Criar prompt otimizado para edição
-          const editPrompt = `TAREFA: ${currentInput}
+           // Modo de edição/transformação de imagens
+           setGeneratingStatus("processando imagem...");
+           const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
 
-IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicitadas.
-- Mantenha TODOS os elementos principais da imagem original (logotipos, objetos, pessoas)
-- Aplique EXATAMENTE a modificação pedida
-- Se for trocar fundo: remova o fundo atual e substitua pela cor/estilo solicitado (branco, preto, transparente, gradiente, etc)
-- Se for adicionar elementos: mantenha a imagem e adicione o novo elemento
-- Se for remover elementos: mantenha o resto e remova apenas o especificado
-- Qualidade profissional e alta resolução
-- Resultado limpo e bem acabado`;
+           // Detectar se é uma solicitação de combinação/blending de múltiplas imagens
+           const isBlendRequest = /\b(junta|junte|junto|combina|combine|mistura|misture|mescla|mescle|blend|funde|funda|une|una|coloca.*junto|com.*junto)\b/i.test(currentInput) && imageFiles.length >= 2;
 
-          const response = await base44.integrations.Core.GenerateImage({
-            prompt: editPrompt,
-            existing_image_urls: imageFiles
-          });
+           // Criar prompt otimizado para edição/blending
+           const editPrompt = isBlendRequest ? 
+             `TAREFA: ${currentInput}
 
-          const imageUrl = response.url || response.file_url || response;
+        IMPORTANTE: Você tem múltiplas imagens para COMBINAR/BLENDER.
+        - Extraia elementos específicos de cada imagem conforme solicitado
+        - Combine/mescle as imagens de forma natural e profissional
+        - Mantenha proporções e qualidade visual
+        - A composição final deve parecer natural e bem integrada
+        - Qualidade profissional e alta resolução
+        - Resultado limpo e bem acabado` :
+             `TAREFA: ${currentInput}
 
-          const aiMessage = {
-            role: "assistant",
-            content: "Aqui está sua imagem com as modificações aplicadas:",
-            image: imageUrl
-          };
+        IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicitadas.
+        - Mantenha TODOS os elementos principais da imagem original (logotipos, objetos, pessoas)
+        - Aplique EXATAMENTE a modificação pedida
+        - Se for trocar fundo: remova o fundo atual e substitua pela cor/estilo solicitado (branco, preto, transparente, gradiente, etc)
+        - Se for adicionar elementos: mantenha a imagem e adicione o novo elemento
+        - Se for remover elementos: mantenha o resto e remova apenas o especificado
+        - Qualidade profissional e alta resolução
+        - Resultado limpo e bem acabado`;
 
-          setMessages(prev => [...prev, aiMessage]);
-          setGeneratingStatus("salvando...");
+           const response = await base44.integrations.Core.GenerateImage({
+             prompt: editPrompt,
+             existing_image_urls: imageFiles
+           });
+
+           const imageUrl = response.url || response.file_url || response;
+
+           const aiMessage = {
+             role: "assistant",
+             content: isBlendRequest ? "Aqui está a composição final com suas imagens combinadas:" : "Aqui está sua imagem com as modificações aplicadas:",
+             image: imageUrl
+           };
+
+           setMessages(prev => [...prev, aiMessage]);
+           setGeneratingStatus("salvando...");
         } else {
           // Processar normalmente com LLM
           setGeneratingStatus("buscando resposta...");
