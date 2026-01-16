@@ -8,6 +8,11 @@ import LyricsImage from './pages/LyricsImage';
 import VideoClipForm from './pages/VideoClipForm';
 import VideoClipPreview from './pages/VideoClipPreview';
 import ImageEditor from './pages/ImageEditor';
+import ImageRemix from './pages/ImageRemix';
+import TemplateGallery from './pages/TemplateGallery';
+import CreationHistory from './pages/CreationHistory';
+import Collections from './pages/Collections';
+import PublicFeed from './pages/PublicFeed';
 
 
 export const PAGES = {
@@ -21,6 +26,11 @@ export const PAGES = {
     "VideoClipForm": VideoClipForm,
     "VideoClipPreview": VideoClipPreview,
     "ImageEditor": ImageEditor,
+    "ImageRemix": ImageRemix,
+    "TemplateGallery": TemplateGallery,
+    "CreationHistory": CreationHistory,
+    "Collections": Collections,
+    "PublicFeed": PublicFeed,
 }
 
 export const pagesConfig = {
