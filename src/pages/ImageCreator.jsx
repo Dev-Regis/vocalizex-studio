@@ -11,20 +11,29 @@ export default function ImageCreator() {
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
   const [imageCount, setImageCount] = useState(1);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (uploadedImages.length >= 2) {
+      toast.error("Máximo de 2 imagens permitidas");
+      return;
+    }
+
     try {
       const response = await base44.integrations.Core.UploadFile({ file });
-      setUploadedImage(response.file_url);
+      setUploadedImages([...uploadedImages, response.file_url]);
       toast.success("Imagem importada!");
     } catch (error) {
       toast.error("Erro ao importar imagem");
     }
+  };
+
+  const removeUploadedImage = (index) => {
+    setUploadedImages(uploadedImages.filter((_, i) => i !== index));
   };
 
   const generateImage = async () => {
@@ -41,7 +50,7 @@ export default function ImageCreator() {
       for (let i = 0; i < imageCount; i++) {
         const response = await base44.integrations.Core.GenerateImage({
           prompt: prompt + " Crie uma imagem de alta qualidade, profissional e realista.",
-          existing_image_urls: uploadedImage ? [uploadedImage] : undefined
+          existing_image_urls: uploadedImages.length > 0 ? uploadedImages : undefined
         });
 
         const imageUrl = response.url || response.file_url || response;
@@ -116,33 +125,49 @@ export default function ImageCreator() {
 
           {/* Upload Imagem */}
           <div className="mb-4 p-4 bg-[#18181b] border border-[#27272a] rounded-lg">
-            <label className="block text-xs font-semibold text-gray-300 mb-3 uppercase">Importar Imagem (Opcional)</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={isGenerating}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#27272a] border border-dashed border-[#3f3f46] rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors"
-              >
-                <Upload className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-400">Clique para importar uma imagem</span>
-              </label>
+            <label className="block text-xs font-semibold text-gray-300 mb-3 uppercase">Importar Imagens (Opcional - Máx 2)</label>
+            
+            {/* Upload Buttons */}
+            <div className="flex gap-2 mb-4">
+              {[0, 1].map((idx) => (
+                <div key={idx} className="flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isGenerating || (uploadedImages.length >= 2 && !uploadedImages[idx])}
+                    className="hidden"
+                    id={`image-upload-${idx}`}
+                  />
+                  <label
+                    htmlFor={`image-upload-${idx}`}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-[#27272a] border border-dashed border-[#3f3f46] rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors"
+                  >
+                    <Upload className="w-4 h-4 text-gray-400" />
+                    <span className="text-xs text-gray-400">Foto {idx + 1}</span>
+                  </label>
+                </div>
+              ))}
             </div>
-            {uploadedImage && (
-              <div className="mt-3 flex items-center gap-2">
-                <div className="flex-1 text-xs text-green-400">✓ Imagem importada</div>
-                <button
-                  onClick={() => setUploadedImage(null)}
-                  className="text-xs text-red-400 hover:text-red-300"
-                >
-                  Remover
-                </button>
+
+            {/* Imported Images Preview */}
+            {uploadedImages.length > 0 && (
+              <div className="grid grid-cols-2 gap-3">
+                {uploadedImages.map((imgUrl, idx) => (
+                  <div key={idx} className="relative group">
+                    <img
+                      src={imgUrl}
+                      alt={`Imported ${idx + 1}`}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => removeUploadedImage(idx)}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
