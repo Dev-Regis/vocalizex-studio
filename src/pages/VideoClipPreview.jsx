@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, RefreshCw, Video, Loader2, Download, Play } from "lucide-react";
+import { ArrowLeft, RefreshCw, Video, Loader2, Download, Play, CreditCard, ExternalLink, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function VideoClipPreview() {
@@ -19,6 +19,7 @@ export default function VideoClipPreview() {
   const [isRegeneratingMan, setIsRegeneratingMan] = useState(false);
   const [isRegeneratingWoman, setIsRegeneratingWoman] = useState(false);
   const [isRegeneratingBoth, setIsRegeneratingBoth] = useState(false);
+  const [creditError, setCreditError] = useState(null);
 
   useEffect(() => {
     loadVideoClip();
@@ -182,8 +183,8 @@ export default function VideoClipPreview() {
       } else {
         // Verificar se é erro de créditos
         if (response.data?.needsCredits) {
-          toast.error("💳 Créditos insuficientes na Runway ML", { id: "video", duration: 8000 });
-          alert('⚠️ CRÉDITOS INSUFICIENTES\n\n' + response.data.details + '\n\nAdicione créditos em: https://app.runwayml.com/account');
+          setCreditError(response.data);
+          toast.error("💳 Créditos insuficientes na Runway ML", { id: "video" });
         } else {
           const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
           console.error('❌ ERRO DETALHADO:', {
@@ -418,6 +419,39 @@ export default function VideoClipPreview() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Banner de Erro de Créditos */}
+        {creditError && (
+          <Card className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border-2 border-yellow-600/50 mb-6">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="bg-yellow-600 rounded-full p-3">
+                  <CreditCard className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-yellow-400 mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Créditos Insuficientes
+                  </h3>
+                  <p className="text-gray-300 mb-4">
+                    Sua conta Runway ML não possui créditos suficientes para gerar vídeos. 
+                    Adicione créditos para continuar criando videoclipes incríveis!
+                  </p>
+                  <a
+                    href="https://app.runwayml.com/account"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Adicionar Créditos
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Botão Gerar */}
         <Button
