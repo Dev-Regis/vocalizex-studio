@@ -158,29 +158,32 @@ export default function VideoClipPreview() {
     setIsGeneratingVideo(true);
     
     try {
-      toast.loading("Gerando videoclipe com D-ID...", { id: "video" });
+      toast.loading("Iniciando geração do videoclipe...", { id: "video" });
 
       // Chamar a função backend que integra com a D-ID
       const response = await base44.functions.invoke('generateVideoWithDID', {
         videoClipId: videoClip.id
       });
 
-      if (response.data.success) {
+      console.log('Response:', response);
+
+      if (response.data?.success) {
         toast.success("Videoclipe gerado com sucesso!", { id: "video" });
         
-        // Atualizar o videoClip local com a URL do vídeo
-        setVideoClip({
-          ...videoClip,
-          videoUrl: response.data.videoUrl,
-          status: "completed"
-        });
+        // Recarregar o videoClip atualizado do banco
+        const clips = await base44.entities.VideoClip.filter({ id: videoClip.id });
+        if (clips.length > 0) {
+          setVideoClip(clips[0]);
+        }
       } else {
-        toast.error("Erro ao gerar vídeo: " + response.data.error, { id: "video" });
+        const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
+        toast.error("Erro: " + errorMsg, { id: "video", duration: 5000 });
+        console.error('Erro completo:', response.data);
       }
 
     } catch (error) {
-      toast.error("Erro ao gerar vídeo: " + error.message, { id: "video" });
-      console.error(error);
+      toast.error("Erro ao gerar vídeo: " + (error.response?.data?.error || error.message), { id: "video", duration: 5000 });
+      console.error('Erro completo:', error);
     } finally {
       setIsGeneratingVideo(false);
     }
@@ -412,15 +415,7 @@ export default function VideoClipPreview() {
           )}
         </Button>
 
-        {/* Aviso sobre API */}
-        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 text-sm text-yellow-200">
-          <p className="font-semibold mb-2">⚠️ Nota Importante:</p>
-          <p>
-            A geração real de videoclipes com sincronização labial requer integração com APIs especializadas como:
-            <strong> Runway ML, D-ID, Synthesia, Pika Labs</strong> ou similares. 
-            Esta é uma versão demo que mostra a interface e fluxo do sistema.
-          </p>
-        </div>
+
 
         {/* Vídeo Demo (quando disponível) */}
         {videoClip.videoUrl && videoClip.status === "completed" && (

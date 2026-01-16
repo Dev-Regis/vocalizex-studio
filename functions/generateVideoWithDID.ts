@@ -53,6 +53,8 @@ Deno.serve(async (req) => {
             };
         }
 
+        console.log('Enviando para D-ID:', JSON.stringify(didPayload, null, 2));
+
         // Criar o vídeo na D-ID
         const createResponse = await fetch('https://api.d-id.com/talks', {
             method: 'POST',
@@ -62,6 +64,8 @@ Deno.serve(async (req) => {
             },
             body: JSON.stringify(didPayload)
         });
+
+        console.log('Status D-ID:', createResponse.status);
 
         if (!createResponse.ok) {
             const error = await createResponse.text();
