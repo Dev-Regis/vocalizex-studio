@@ -112,13 +112,22 @@ export default function AdminPanel() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white flex items-center justify-center p-4">
         <div className="container mx-auto px-4 max-w-md">
+          <div className="mb-4">
+            <Button
+              onClick={() => window.location.href = createPageUrl("Home")}
+              variant="outline"
+              className="border-gray-500/30 text-gray-300 hover:bg-gray-500/10"
+            >
+              ← Voltar ao Menu
+            </Button>
+          </div>
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <img src={LOGO_URL} alt="VocalizeX" className="h-24 mx-auto mb-6 object-contain" />
-                <h1 className="text-3xl font-black mb-2">Painel Admin</h1>
+                <img src={LOGO_URL} alt="VocalizeX" className="h-24 mx-auto mb-6 object-contain bg-transparent" />
+                <h1 className="text-3xl font-black mb-2 text-white">Painel Admin</h1>
                 <p className="text-gray-400">Acesso restrito</p>
               </div>
 
