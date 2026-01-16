@@ -30,6 +30,8 @@ import SocialContentGenerator from './pages/SocialContentGenerator';
 import ThumbnailGenerator from './pages/ThumbnailGenerator';
 import BioGenerator from './pages/BioGenerator';
 import BestPostingTimes from './pages/BestPostingTimes';
+import ComposerHelper from './pages/ComposerHelper';
+import LyricIdentifier from './pages/LyricIdentifier';
 
 
 export const PAGES = {
@@ -65,6 +67,8 @@ export const PAGES = {
     "ThumbnailGenerator": ThumbnailGenerator,
     "BioGenerator": BioGenerator,
     "BestPostingTimes": BestPostingTimes,
+    "ComposerHelper": ComposerHelper,
+    "LyricIdentifier": LyricIdentifier,
 }
 
 export const pagesConfig = {
