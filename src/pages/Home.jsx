@@ -15,6 +15,20 @@ export default function Home() {
       color: "bg-purple-500"
     },
     {
+      icon: MessageSquare,
+      title: "Assistente 24/7",
+      description: "IA para ajudar com qualquer dúvida",
+      link: "Chatbot",
+      color: "bg-blue-500"
+    },
+    {
+      icon: Sparkles,
+      title: "Auto Melhorador",
+      description: "Melhore seus prompts automaticamente",
+      link: "AutoPromptImprove",
+      color: "bg-green-500"
+    },
+    {
       icon: Image,
       title: "Criar Imagens",
       description: "Gere imagens incríveis com IA a partir de descrições",
