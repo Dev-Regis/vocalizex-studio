@@ -221,7 +221,7 @@ export default function AlbumCoverGenerator() {
 
               {/* Cor */}
               <div>
-                <label className="block text-sm font-medium mb-2">Cor da Letra</label>
+                <label className="block text-sm font-medium mb-2 text-white">Cor da Letra</label>
                 <div className="grid grid-cols-4 gap-2">
                   {colors.map((color) => (
                     <button
