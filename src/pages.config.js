@@ -27,6 +27,12 @@ import Credits from './pages/Credits';
 import Marketplace from './pages/Marketplace';
 import Ranking from './pages/Ranking';
 import Badges from './pages/Badges';
+import Analytics from './pages/Analytics';
+import Portfolio from './pages/Portfolio';
+import Following from './pages/Following';
+import Mentorship from './pages/Mentorship';
+import SavedStyles from './pages/SavedStyles';
+import Settings from './pages/Settings';
 
 
 export const PAGES = {
@@ -59,6 +65,12 @@ export const PAGES = {
     "Marketplace": Marketplace,
     "Ranking": Ranking,
     "Badges": Badges,
+    "Analytics": Analytics,
+    "Portfolio": Portfolio,
+    "Following": Following,
+    "Mentorship": Mentorship,
+    "SavedStyles": SavedStyles,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {
