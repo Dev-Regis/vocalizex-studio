@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2, FileText, AlertCircle, Share2, User, Clock, ImageIcon, Search } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2, FileText, AlertCircle, Share2, User, Clock, ImageIcon } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -49,13 +49,7 @@ export default function Home() {
       link: "ComposerHelper",
       color: "bg-pink-500"
     },
-    {
-      icon: Search,
-      title: "Identificador de Letras",
-      description: "Identifique se a letra já existe",
-      link: "LyricIdentifier",
-      color: "bg-blue-500"
-    },
+
     {
       icon: Sparkles,
       title: "Editor de Imagens IA",

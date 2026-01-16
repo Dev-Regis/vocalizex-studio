@@ -18,7 +18,6 @@ import ImageRemix from './pages/ImageRemix';
 import ImageUpscaler from './pages/ImageUpscaler';
 import LyricChecker from './pages/LyricChecker';
 import LyricGenerator from './pages/LyricGenerator';
-import LyricIdentifier from './pages/LyricIdentifier';
 import LyricsImage from './pages/LyricsImage';
 import PromptTranslator from './pages/PromptTranslator';
 import ScriptWriter from './pages/ScriptWriter';
@@ -55,7 +54,6 @@ export const PAGES = {
     "ImageUpscaler": ImageUpscaler,
     "LyricChecker": LyricChecker,
     "LyricGenerator": LyricGenerator,
-    "LyricIdentifier": LyricIdentifier,
     "LyricsImage": LyricsImage,
     "PromptTranslator": PromptTranslator,
     "ScriptWriter": ScriptWriter,
