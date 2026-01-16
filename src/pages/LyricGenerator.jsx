@@ -317,7 +317,7 @@ Requisitos CRÍTICOS:
                        <SelectTrigger className="bg-[#18181b] border-[#27272a]">
                          <SelectValue placeholder="Selecione um estilo" />
                        </SelectTrigger>
-                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[280px] overflow-y-scroll" style={{scrollbarWidth: 'thin', scrollbarColor: '#a855f7 #18181b'}}>
+                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[280px] overflow-y-scroll" style={{scrollbarWidth: 'thin', scrollbarColor: '#ffffff #1a1a1a'}}>
                          {styles.map((style) => (
                            <SelectItem key={style} value={style} className="text-white">
                              {style}
