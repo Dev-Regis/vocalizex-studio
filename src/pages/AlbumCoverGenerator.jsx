@@ -115,9 +115,9 @@ export default function AlbumCoverGenerator() {
             <CardContent className="space-y-6">
               {/* Tipo de Capa */}
               <div>
-                <label className="block text-sm font-medium mb-2">Tipo de Capa</label>
+                <label className="block text-sm font-medium mb-2 text-white">Tipo de Capa</label>
                 <Select value={coverType} onValueChange={setCoverType}>
-                  <SelectTrigger className="bg-[#1a1a1c] border-[#27272a]">
+                  <SelectTrigger className="bg-[#1a1a1c] border-[#27272a] text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
