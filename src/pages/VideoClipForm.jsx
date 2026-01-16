@@ -345,7 +345,7 @@ export default function VideoClipForm() {
                   Tipo de Vídeo
                 </Label>
                 <Select value={type} onValueChange={setType}>
-                  <SelectTrigger className="bg-[#18181b] border-[#27272a]">
+                  <SelectTrigger className="bg-[#18181b] border-[#27272a] text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#121214] border-[#27272a]">
@@ -360,7 +360,7 @@ export default function VideoClipForm() {
                   Orientação
                 </Label>
                 <Select value={orientation} onValueChange={setOrientation}>
-                  <SelectTrigger className="bg-[#18181b] border-[#27272a]">
+                  <SelectTrigger className="bg-[#18181b] border-[#27272a] text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#121214] border-[#27272a]">
@@ -375,7 +375,7 @@ export default function VideoClipForm() {
                   Idioma
                 </Label>
                 <Select value={language} onValueChange={setLanguage}>
-                  <SelectTrigger className="bg-[#18181b] border-[#27272a]">
+                  <SelectTrigger className="bg-[#18181b] border-[#27272a] text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#121214] border-[#27272a]">
