@@ -16,11 +16,13 @@ Deno.serve(async (req) => {
         }
 
         // Buscar os dados do VideoClip
-        const videoClip = await base44.entities.VideoClip.get(videoClipId);
+        const videoClips = await base44.entities.VideoClip.filter({ id: videoClipId });
 
-        if (!videoClip) {
+        if (videoClips.length === 0) {
             return Response.json({ error: 'VideoClip não encontrado' }, { status: 404 });
         }
+
+        const videoClip = videoClips[0];
 
         const DID_API_KEY = Deno.env.get('DID_API_KEY');
         if (!DID_API_KEY) {
