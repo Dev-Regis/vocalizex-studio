@@ -37,6 +37,7 @@ export default function ImageChat() {
   const [input, setInput] = useState("");
   const [files, setFiles] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingStatus, setGeneratingStatus] = useState(""); // "gerando", "salvando", etc
   const [isListening, setIsListening] = useState(false);
   const [selectedModes, setSelectedModes] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
@@ -392,6 +393,7 @@ export default function ImageChat() {
     setInput("");
     setFiles([]);
     setIsGenerating(true);
+    setGeneratingStatus("processando...");
 
     try {
       // Detectar funcionalidades pelos modos selecionados ou palavras
@@ -407,6 +409,7 @@ export default function ImageChat() {
 
       if (shouldGenerateImage && !hasNonImageFiles) {
         // Gerar imagem
+        setGeneratingStatus("gerando imagem...");
         let enhancedPrompt = currentInput;
         const imagesToUse = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
         
@@ -430,6 +433,7 @@ export default function ImageChat() {
         };
 
         setMessages(prev => [...prev, aiMessage]);
+        setGeneratingStatus("salvando...");
       } else {
         // Processar com LLM (com ou sem busca na web)
         let prompt = currentInput;
@@ -440,6 +444,7 @@ export default function ImageChat() {
         
         if (isImageEditRequest) {
           // Modo de edição/transformação de imagens
+          setGeneratingStatus("editando imagem...");
           const imageFiles = currentFiles.filter(f => f.type?.startsWith('image/')).map(f => f.url);
           
           // Criar prompt otimizado para edição
@@ -468,8 +473,10 @@ IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicit
           };
 
           setMessages(prev => [...prev, aiMessage]);
+          setGeneratingStatus("salvando...");
         } else {
           // Processar normalmente com LLM
+          setGeneratingStatus("buscando resposta...");
           if (agentMode) {
             prompt = `Você é um assistente de IA poderoso com TODAS as capacidades, incluindo:
 - Análise e processamento de imagens
@@ -526,6 +533,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           };
 
           setMessages(prev => [...prev, aiMessage]);
+          setGeneratingStatus("salvando...");
           speakText(response);
         }
       }
@@ -540,6 +548,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsGenerating(false);
+      setGeneratingStatus("");
     }
   };
 
@@ -838,7 +847,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                   <div className="bg-[#121214] border border-[#27272a] rounded-2xl p-4">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                      <span className="text-gray-400">Pensando...</span>
+                      <span className="text-gray-400">{generatingStatus || "Pensando..."}</span>
                     </div>
                   </div>
                 </div>
