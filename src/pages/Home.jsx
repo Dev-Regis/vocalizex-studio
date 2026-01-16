@@ -42,6 +42,13 @@ export default function Home() {
       link: "LyricGenerator",
       color: "bg-pink-500"
     },
+    {
+      icon: Sparkles,
+      title: "Editor de Imagens IA",
+      description: "Remova fundo, altere cores e adicione elementos às suas imagens",
+      link: "ImageEditor",
+      color: "bg-purple-500"
+    },
 
     ];
 

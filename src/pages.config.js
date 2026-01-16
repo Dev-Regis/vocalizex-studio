@@ -7,6 +7,7 @@ import LyricGenerator from './pages/LyricGenerator';
 import LyricsImage from './pages/LyricsImage';
 import VideoClipForm from './pages/VideoClipForm';
 import VideoClipPreview from './pages/VideoClipPreview';
+import ImageEditor from './pages/ImageEditor';
 
 
 export const PAGES = {
@@ -19,6 +20,7 @@ export const PAGES = {
     "LyricsImage": LyricsImage,
     "VideoClipForm": VideoClipForm,
     "VideoClipPreview": VideoClipPreview,
+    "ImageEditor": ImageEditor,
 }
 
 export const pagesConfig = {
