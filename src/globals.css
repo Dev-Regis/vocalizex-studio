@@ -1,17 +1,24 @@
+css
 /* Scrollbar customizada para SelectContent */
+[data-radix-select-content] {
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff #1a1a1a;
+}
+
 [data-radix-select-content]::-webkit-scrollbar {
-  width: 8px;
+  width: 10px !important;
 }
 
 [data-radix-select-content]::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #1a1a1a !important;
 }
 
 [data-radix-select-content]::-webkit-scrollbar-thumb {
-  background: #ffffff;
+  background: #ffffff !important;
   border-radius: 4px;
+  min-height: 40px;
 }
 
 [data-radix-select-content]::-webkit-scrollbar-thumb:hover {
-  background: #e0e0e0;
+  background: #e0e0e0 !important;
 }
