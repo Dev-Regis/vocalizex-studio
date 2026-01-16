@@ -13,10 +13,12 @@ export default function VideoClipPreview() {
   const [videoClip, setVideoClip] = useState(null);
   const [manSceneUrl, setManSceneUrl] = useState(null);
   const [womanSceneUrl, setWomanSceneUrl] = useState(null);
+  const [bothSceneUrl, setBothSceneUrl] = useState(null);
   const [isGeneratingScenes, setIsGeneratingScenes] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [isRegeneratingMan, setIsRegeneratingMan] = useState(false);
   const [isRegeneratingWoman, setIsRegeneratingWoman] = useState(false);
+  const [isRegeneratingBoth, setIsRegeneratingBoth] = useState(false);
 
   useEffect(() => {
     loadVideoClip();
@@ -43,7 +45,7 @@ export default function VideoClipPreview() {
       const clip = clips[0];
       setVideoClip(clip);
 
-      if (!clip.photoMan && !clip.photoWoman) {
+      if (!clip.photoMan && !clip.photoWoman && !clip.photoBoth) {
         toast.error("Nenhuma foto encontrada");
         return;
       }
@@ -59,13 +61,13 @@ export default function VideoClipPreview() {
   const generateScenes = async (clip = videoClip) => {
     setIsGeneratingScenes(true);
     try {
-      // Criar prompt baseado na letra
-      const scenePrompt = `Cenário fotorrealista profissional para videoclipe. ${clip.sceneDescription || 'Cenário moderno e cinematográfico'}. Baseado na letra: ${clip.lyrics.substring(0, 200)}. Iluminação profissional, alta qualidade, 8K, cinematográfico.`;
+      // Criar prompt para MANTER as pessoas EXATAMENTE IGUAIS, apenas trocar o fundo
+      const scenePrompt = `IMPORTANTE: Mantenha as PESSOAS EXATAMENTE COMO ESTÃO na foto original. NÃO modifique rostos, corpo, roupas ou poses. APENAS troque o fundo/cenário. Novo cenário: ${clip.sceneDescription || 'palco de show profissional moderno e cinematográfico'}. Baseado na letra: ${clip.lyrics.substring(0, 200)}. Iluminação profissional de palco, 8K, fotorrealista.`;
 
       // Gerar cena para homem
       if (clip.photoMan && !manSceneUrl) {
         const manResponse = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} Homem em destaque, corpo completo, expressão profissional.`,
+          prompt: `${scenePrompt} MANTENHA o homem EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário de palco/show profissional.`,
           existing_image_urls: [clip.photoMan]
         });
         const manUrl = manResponse.url || manResponse.file_url || manResponse;
@@ -75,11 +77,21 @@ export default function VideoClipPreview() {
       // Gerar cena para mulher
       if (clip.photoWoman && !womanSceneUrl) {
         const womanResponse = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} Mulher em destaque, corpo completo, expressão profissional.`,
+          prompt: `${scenePrompt} MANTENHA a mulher EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário de palco/show profissional.`,
           existing_image_urls: [clip.photoWoman]
         });
         const womanUrl = womanResponse.url || womanResponse.file_url || womanResponse;
         setWomanSceneUrl(womanUrl);
+      }
+
+      // Gerar cena para ambos
+      if (clip.photoBoth && !bothSceneUrl) {
+        const bothResponse = await base44.integrations.Core.GenerateImage({
+          prompt: `${scenePrompt} MANTENHA TODAS as pessoas EXATAMENTE IGUAIS à foto original (mesmas pessoas, mesmas poses, mesmas roupas). Apenas substitua o fundo por um cenário de palco/show profissional. Preserve TODAS as pessoas que aparecem na foto.`,
+          existing_image_urls: [clip.photoBoth]
+        });
+        const bothUrl = bothResponse.url || bothResponse.file_url || bothResponse;
+        setBothSceneUrl(bothUrl);
       }
 
       toast.success("Cenas geradas com sucesso!");
@@ -91,41 +103,53 @@ export default function VideoClipPreview() {
     }
   };
 
-  const regenerateScene = async (gender) => {
-    if (gender === "man") {
+  const regenerateScene = async (type) => {
+    if (type === "man") {
       setIsRegeneratingMan(true);
-    } else {
+    } else if (type === "woman") {
       setIsRegeneratingWoman(true);
+    } else {
+      setIsRegeneratingBoth(true);
     }
 
     try {
-      const scenePrompt = `Cenário fotorrealista profissional para videoclipe. ${videoClip.sceneDescription || 'Cenário moderno e cinematográfico'}. Baseado na letra: ${videoClip.lyrics.substring(0, 200)}. Iluminação profissional, alta qualidade, 8K, cinematográfico. VARIAÇÃO ÚNICA E DIFERENTE.`;
+      const scenePrompt = `IMPORTANTE: Mantenha as PESSOAS EXATAMENTE COMO ESTÃO na foto original. NÃO modifique rostos, corpo, roupas ou poses. APENAS troque o fundo/cenário. Novo cenário: ${videoClip.sceneDescription || 'palco de show profissional moderno e cinematográfico'}. Baseado na letra: ${videoClip.lyrics.substring(0, 200)}. Iluminação profissional de palco, 8K, fotorrealista. VARIAÇÃO ÚNICA DO CENÁRIO.`;
 
-      if (gender === "man") {
+      if (type === "man") {
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} Homem em destaque, corpo completo, expressão profissional.`,
+          prompt: `${scenePrompt} MANTENHA o homem EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário diferente de palco/show profissional.`,
           existing_image_urls: [videoClip.photoMan]
         });
         const url = response.url || response.file_url || response;
         setManSceneUrl(url);
         toast.success("Cena do homem regenerada!");
-      } else {
+      } else if (type === "woman") {
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} Mulher em destaque, corpo completo, expressão profissional.`,
+          prompt: `${scenePrompt} MANTENHA a mulher EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário diferente de palco/show profissional.`,
           existing_image_urls: [videoClip.photoWoman]
         });
         const url = response.url || response.file_url || response;
         setWomanSceneUrl(url);
         toast.success("Cena da mulher regenerada!");
+      } else {
+        const response = await base44.integrations.Core.GenerateImage({
+          prompt: `${scenePrompt} MANTENHA TODAS as pessoas EXATAMENTE IGUAIS à foto original (mesmas pessoas, mesmas poses, mesmas roupas). Apenas substitua o fundo por um cenário diferente de palco/show profissional. Preserve TODAS as pessoas que aparecem na foto.`,
+          existing_image_urls: [videoClip.photoBoth]
+        });
+        const url = response.url || response.file_url || response;
+        setBothSceneUrl(url);
+        toast.success("Cena regenerada!");
       }
     } catch (error) {
       toast.error("Erro ao regenerar cena");
       console.error(error);
     } finally {
-      if (gender === "man") {
+      if (type === "man") {
         setIsRegeneratingMan(false);
-      } else {
+      } else if (type === "woman") {
         setIsRegeneratingWoman(false);
+      } else {
+        setIsRegeneratingBoth(false);
       }
     }
   };
@@ -198,7 +222,7 @@ export default function VideoClipPreview() {
           </div>
         </header>
 
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Cena do Homem */}
           {videoClip.photoMan && (
             <Card className="bg-[#121214] border-[#27272a]">
@@ -262,6 +286,43 @@ export default function VideoClipPreview() {
                       className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-500"
                     >
                       {isRegeneratingWoman ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Cena Ambos */}
+          {videoClip.photoBoth && (
+            <Card className="bg-[#121214] border-[#27272a]">
+              <CardContent className="p-6">
+                <Label className="text-sm font-bold uppercase text-white mb-4 block">
+                  Cena Ambos
+                </Label>
+
+                {isGeneratingScenes && !bothSceneUrl ? (
+                  <div className="flex items-center justify-center h-64 bg-[#18181b] rounded-lg">
+                    <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
+                  </div>
+                ) : bothSceneUrl ? (
+                  <div className="relative">
+                    <img
+                      src={bothSceneUrl}
+                      alt="Cena ambos"
+                      className="w-full h-64 object-contain bg-[#18181b] rounded-lg"
+                    />
+                    <Button
+                      onClick={() => regenerateScene("both")}
+                      disabled={isRegeneratingBoth}
+                      size="sm"
+                      className="absolute bottom-2 right-2 bg-purple-600 hover:bg-purple-500"
+                    >
+                      {isRegeneratingBoth ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <RefreshCw className="w-4 h-4" />
@@ -341,7 +402,7 @@ export default function VideoClipPreview() {
         {/* Botão Gerar */}
         <Button
           onClick={generateVideo}
-          disabled={isGeneratingVideo || isGeneratingScenes || !manSceneUrl && !womanSceneUrl}
+          disabled={isGeneratingVideo || isGeneratingScenes || (!manSceneUrl && !womanSceneUrl && !bothSceneUrl)}
           className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 py-6 text-lg mb-4"
         >
           {isGeneratingVideo ? (

@@ -16,6 +16,7 @@ export default function VideoClipForm() {
   const navigate = useNavigate();
   const [photoMan, setPhotoMan] = useState(null);
   const [photoWoman, setPhotoWoman] = useState(null);
+  const [photoBoth, setPhotoBoth] = useState(null);
   const [musicFile, setMusicFile] = useState(null);
   const [type, setType] = useState("videoclipe");
   const [orientation, setOrientation] = useState("vertical");
@@ -29,9 +30,10 @@ export default function VideoClipForm() {
 
   const manInputRef = useRef(null);
   const womanInputRef = useRef(null);
+  const bothInputRef = useRef(null);
   const musicInputRef = useRef(null);
 
-  const handlePhotoUpload = async (e, gender) => {
+  const handlePhotoUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -48,12 +50,15 @@ export default function VideoClipForm() {
     try {
       setIsUploading(true);
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      if (gender === "man") {
+      if (type === "man") {
         setPhotoMan({ url: file_url, name: file.name });
         toast.success("Foto do homem enviada!");
-      } else {
+      } else if (type === "woman") {
         setPhotoWoman({ url: file_url, name: file.name });
         toast.success("Foto da mulher enviada!");
+      } else {
+        setPhotoBoth({ url: file_url, name: file.name });
+        toast.success("Foto enviada!");
       }
     } catch (error) {
       toast.error("Erro ao enviar foto");
@@ -89,8 +94,8 @@ export default function VideoClipForm() {
   };
 
   const handleSubmit = async () => {
-    if (!photoMan && !photoWoman) {
-      toast.error("Adicione pelo menos uma foto (homem ou mulher)");
+    if (!photoMan && !photoWoman && !photoBoth) {
+      toast.error("Adicione pelo menos uma foto");
       return;
     }
 
@@ -113,6 +118,7 @@ export default function VideoClipForm() {
       const data = {
         photoMan: photoMan?.url,
         photoWoman: photoWoman?.url,
+        photoBoth: photoBoth?.url,
         musicUrl: musicFile.url,
         type,
         orientation,
@@ -161,10 +167,10 @@ export default function VideoClipForm() {
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
               <Label className="text-sm font-bold uppercase text-white mb-4 block">
-                Fotos (Obrigatório: Homem e/ou Mulher)
+                Fotos (Obrigatório: Escolha pelo menos uma opção)
               </Label>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Foto do Homem */}
                 <div>
                   <input
@@ -241,6 +247,46 @@ export default function VideoClipForm() {
                       <ImageIcon className="w-8 h-8 mx-auto mb-2 text-pink-400" />
                       <p className="text-sm font-semibold">Foto da Mulher</p>
                       <p className="text-xs text-gray-500 mt-1">Clique para adicionar</p>
+                    </button>
+                  )}
+                </div>
+
+                {/* Foto Ambos */}
+                <div>
+                  <input
+                    ref={bothInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoUpload(e, "both")}
+                    className="hidden"
+                  />
+
+                  {photoBoth ? (
+                    <div className="relative">
+                      <img
+                        src={photoBoth.url}
+                        alt="Ambos"
+                        className="w-full h-48 object-contain bg-[#18181b] rounded-lg border-2 border-purple-500"
+                      />
+                      <button
+                        onClick={() => setPhotoBoth(null)}
+                        className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-xs">
+                        Ambos
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => bothInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="w-full border-2 border-dashed border-[#27272a] rounded-lg p-8 hover:border-purple-500 transition-colors"
+                    >
+                      <ImageIcon className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+                      <p className="text-sm font-semibold">Foto Ambos</p>
+                      <p className="text-xs text-gray-500 mt-1">Múltiplas pessoas</p>
                     </button>
                   )}
                 </div>
@@ -429,7 +475,7 @@ export default function VideoClipForm() {
           {/* Botão */}
           <Button
             onClick={handleSubmit}
-            disabled={isUploading || !photoMan && !photoWoman || !musicFile || !lyrics.trim()}
+            disabled={isUploading || (!photoMan && !photoWoman && !photoBoth) || !musicFile || !lyrics.trim()}
             className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 py-6 text-lg"
           >
             <Video className="w-5 h-5 mr-2" />
