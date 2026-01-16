@@ -61,13 +61,13 @@ export default function VideoClipPreview() {
   const generateScenes = async (clip = videoClip) => {
     setIsGeneratingScenes(true);
     try {
-      // Criar prompt para MANTER as pessoas EXATAMENTE IGUAIS, apenas trocar o fundo
-      const scenePrompt = `IMPORTANTE: Mantenha as PESSOAS EXATAMENTE COMO ESTÃO na foto original. NÃO modifique rostos, corpo, roupas ou poses. APENAS troque o fundo/cenário. Novo cenário: ${clip.sceneDescription || 'palco de show profissional moderno e cinematográfico'}. Baseado na letra: ${clip.lyrics.substring(0, 200)}. Iluminação profissional de palco, 8K, fotorrealista.`;
+      // Criar prompt que MANTÉM A IDENTIDADE mas VARIA pose/posição/expressão
+      const scenePrompt = `Cenário de videoclipe profissional: ${clip.sceneDescription || 'palco de show moderno com luzes e efeitos'}. Baseado na letra: ${clip.lyrics.substring(0, 200)}. Iluminação de palco profissional, alta qualidade, 8K, cinematográfico.`;
 
       // Gerar cena para homem
       if (clip.photoMan && !manSceneUrl) {
         const manResponse = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA o homem EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário de palco/show profissional.`,
+          prompt: `${scenePrompt} Mostre o MESMO homem da foto de referência (mesma identidade, mesmo rosto, mesmas características físicas) em uma NOVA POSE dinâmica para videoclipe - cantando, dançando, ou pose expressiva. Ângulo e posição diferentes da foto original. Corpo completo ou meio corpo, expressão artística para show.`,
           existing_image_urls: [clip.photoMan]
         });
         const manUrl = manResponse.url || manResponse.file_url || manResponse;
@@ -77,7 +77,7 @@ export default function VideoClipPreview() {
       // Gerar cena para mulher
       if (clip.photoWoman && !womanSceneUrl) {
         const womanResponse = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA a mulher EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário de palco/show profissional.`,
+          prompt: `${scenePrompt} Mostre a MESMA mulher da foto de referência (mesma identidade, mesmo rosto, mesmas características físicas) em uma NOVA POSE dinâmica para videoclipe - cantando, dançando, ou pose expressiva. Ângulo e posição diferentes da foto original. Corpo completo ou meio corpo, expressão artística para show.`,
           existing_image_urls: [clip.photoWoman]
         });
         const womanUrl = womanResponse.url || womanResponse.file_url || womanResponse;
@@ -87,7 +87,7 @@ export default function VideoClipPreview() {
       // Gerar cena para ambos
       if (clip.photoBoth && !bothSceneUrl) {
         const bothResponse = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA TODAS as pessoas EXATAMENTE IGUAIS à foto original (mesmas pessoas, mesmas poses, mesmas roupas). Apenas substitua o fundo por um cenário de palco/show profissional. Preserve TODAS as pessoas que aparecem na foto.`,
+          prompt: `${scenePrompt} Mostre as MESMAS pessoas da foto de referência (mesmas identidades, mesmos rostos, mesmas características físicas) em NOVAS POSES dinâmicas para videoclipe - cantando juntos, dançando, ou poses expressivas. Ângulos e posições diferentes da foto original. Interação entre as pessoas, clima de show/performance.`,
           existing_image_urls: [clip.photoBoth]
         });
         const bothUrl = bothResponse.url || bothResponse.file_url || bothResponse;
@@ -113,11 +113,11 @@ export default function VideoClipPreview() {
     }
 
     try {
-      const scenePrompt = `IMPORTANTE: Mantenha as PESSOAS EXATAMENTE COMO ESTÃO na foto original. NÃO modifique rostos, corpo, roupas ou poses. APENAS troque o fundo/cenário. Novo cenário: ${videoClip.sceneDescription || 'palco de show profissional moderno e cinematográfico'}. Baseado na letra: ${videoClip.lyrics.substring(0, 200)}. Iluminação profissional de palco, 8K, fotorrealista. VARIAÇÃO ÚNICA DO CENÁRIO.`;
+      const scenePrompt = `Cenário de videoclipe profissional: ${videoClip.sceneDescription || 'palco de show moderno com luzes e efeitos'}. Baseado na letra: ${videoClip.lyrics.substring(0, 200)}. Iluminação de palco profissional, alta qualidade, 8K, cinematográfico. VARIAÇÃO DIFERENTE da anterior.`;
 
       if (type === "man") {
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA o homem EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário diferente de palco/show profissional.`,
+          prompt: `${scenePrompt} Mostre o MESMO homem da foto de referência (mesma identidade, mesmo rosto) em uma NOVA POSE diferente - cantando, dançando, ou pose expressiva diferente. Ângulo e posição VARIADOS.`,
           existing_image_urls: [videoClip.photoMan]
         });
         const url = response.url || response.file_url || response;
@@ -125,7 +125,7 @@ export default function VideoClipPreview() {
         toast.success("Cena do homem regenerada!");
       } else if (type === "woman") {
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA a mulher EXATAMENTE IGUAL à foto original. Apenas substitua o fundo por um cenário diferente de palco/show profissional.`,
+          prompt: `${scenePrompt} Mostre a MESMA mulher da foto de referência (mesma identidade, mesmo rosto) em uma NOVA POSE diferente - cantando, dançando, ou pose expressiva diferente. Ângulo e posição VARIADOS.`,
           existing_image_urls: [videoClip.photoWoman]
         });
         const url = response.url || response.file_url || response;
@@ -133,7 +133,7 @@ export default function VideoClipPreview() {
         toast.success("Cena da mulher regenerada!");
       } else {
         const response = await base44.integrations.Core.GenerateImage({
-          prompt: `${scenePrompt} MANTENHA TODAS as pessoas EXATAMENTE IGUAIS à foto original (mesmas pessoas, mesmas poses, mesmas roupas). Apenas substitua o fundo por um cenário diferente de palco/show profissional. Preserve TODAS as pessoas que aparecem na foto.`,
+          prompt: `${scenePrompt} Mostre as MESMAS pessoas da foto de referência (mesmas identidades, mesmos rostos) em NOVAS POSES diferentes - cantando juntos, dançando, ou poses expressivas variadas. Ângulos e posições VARIADOS.`,
           existing_image_urls: [videoClip.photoBoth]
         });
         const url = response.url || response.file_url || response;
