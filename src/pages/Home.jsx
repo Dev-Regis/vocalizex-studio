@@ -84,14 +84,11 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-6">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span className="text-sm text-purple-300">Plataforma de IA Completa</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-            Crie, Converse e Imagine
-          </h1>
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/f0c5d4c0e_ChatGPTImage16dejande202600_29_33.png" alt="VocalizeX" className="h-32 mx-auto mb-8" />
+
+              <h1 className="text-5xl md:text-7xl font-bold mb-6">
+                VocalizeX
+              </h1>
           
           <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
             Uma plataforma completa de IA para criar imagens, conversar com assistente inteligente e transformar suas ideias em realidade
@@ -154,7 +151,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-[#27272a] mt-20 py-8">
         <div className="container mx-auto px-4 text-center text-gray-500">
-          <p>Plataforma de IA • Criado com Base44</p>
+          <p>Plataforma de IA • VocalizeX</p>
         </div>
       </footer>
     </div>
