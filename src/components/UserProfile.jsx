@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { User, Mail, Lock, Settings, LogOut, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function UserProfile({ user, onClose }) {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(user?.full_name || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -46,7 +48,7 @@ export default function UserProfile({ user, onClose }) {
 
   const handleLogout = async () => {
     await base44.auth.logout();
-    window.location.href = "/";
+    navigate("/");
   };
 
   return (
