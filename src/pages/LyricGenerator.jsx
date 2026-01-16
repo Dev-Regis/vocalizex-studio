@@ -26,6 +26,10 @@ const musicStyles = {
     "Soul",
     "Indie",
     "Alternativo",
+    "Reggae",
+    "K-Pop",
+    "Música Latina",
+    "Country",
   ],
   "Estilos Brasileiros": [
     "Funk Carioca",

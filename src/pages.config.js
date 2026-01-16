@@ -17,6 +17,7 @@ import ImageInpainting from './pages/ImageInpainting';
 import ImageRemix from './pages/ImageRemix';
 import ImageUpscaler from './pages/ImageUpscaler';
 import LyricChecker from './pages/LyricChecker';
+import LyricGenerator from './pages/LyricGenerator';
 import LyricsImage from './pages/LyricsImage';
 import PromptTranslator from './pages/PromptTranslator';
 import ScriptWriter from './pages/ScriptWriter';
@@ -30,7 +31,6 @@ import VideoClipPreview from './pages/VideoClipPreview';
 import VoiceIsolator from './pages/VoiceIsolator';
 import VoiceToText from './pages/VoiceToText';
 import VoiceTranslator from './pages/VoiceTranslator';
-import LyricGenerator from './pages/LyricGenerator';
 
 
 export const PAGES = {
@@ -53,6 +53,7 @@ export const PAGES = {
     "ImageRemix": ImageRemix,
     "ImageUpscaler": ImageUpscaler,
     "LyricChecker": LyricChecker,
+    "LyricGenerator": LyricGenerator,
     "LyricsImage": LyricsImage,
     "PromptTranslator": PromptTranslator,
     "ScriptWriter": ScriptWriter,
@@ -66,7 +67,6 @@ export const PAGES = {
     "VoiceIsolator": VoiceIsolator,
     "VoiceToText": VoiceToText,
     "VoiceTranslator": VoiceTranslator,
-    "LyricGenerator": LyricGenerator,
 }
 
 export const pagesConfig = {
