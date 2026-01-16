@@ -562,9 +562,13 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
     }
   };
 
-  const addReply = (messageIndex) => {
+  const addReply = async (messageIndex) => {
     if (!replyText.trim()) return;
     
+    const message = messages[messageIndex];
+    const hasImage = message.image;
+    
+    // Adicionar comentário
     setMessageReplies(prev => ({
       ...prev,
       [messageIndex]: [...(prev[messageIndex] || []), {
@@ -572,8 +576,48 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
         timestamp: new Date().toISOString()
       }]
     }));
+
+    // Se tiver imagem, processar com IA
+    if (hasImage) {
+      try {
+        setProcessing(true);
+        toast.loading("Processando edição...");
+
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt: `Edite esta imagem conforme solicitado: ${replyText}. Use a imagem fornecida como base e aplique as modificações solicitadas.`,
+          file_urls: [hasImage]
+        });
+
+        if (result) {
+          // Gerar nova imagem com edição
+          const editedImage = await base44.integrations.Core.GenerateImage({
+            prompt: `Editar imagem existente: ${replyText}`,
+            existing_image_urls: [hasImage]
+          });
+
+          if (editedImage?.url) {
+            // Adicionar como nova mensagem de imagem editada
+            setMessages(prev => [...prev, {
+              role: "assistant",
+              content: `Imagem editada: ${replyText}`,
+              image: editedImage.url,
+              type: "edited_image"
+            }]);
+
+            toast.dismiss();
+            toast.success("Imagem editada com sucesso!");
+          }
+        }
+      } catch (error) {
+        toast.dismiss();
+        toast.error("Erro ao editar imagem");
+        console.error(error);
+      } finally {
+        setProcessing(false);
+      }
+    }
+
     setReplyText("");
-    toast.success("Comentário adicionado!");
   };
 
   const downloadTextAsPDF = (text) => {
@@ -1167,21 +1211,23 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                 <Textarea
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Adicione um comentário..."
+                  placeholder="Adicione um comentário ou edição..."
                   className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] flex-1"
+                  disabled={processing}
                 />
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={() => addReply(selectedMessageIndex)}
-                    disabled={!replyText.trim()}
+                    disabled={!replyText.trim() || processing}
                     className="bg-purple-600 hover:bg-purple-500 flex-shrink-0"
                   >
-                    <Send className="w-4 h-4" />
+                    {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   </Button>
                   <Button
                     onClick={() => setSelectedMessageIndex(null)}
                     variant="outline"
                     className="border-[#27272a] flex-shrink-0"
+                    disabled={processing}
                   >
                     <X className="w-4 h-4" />
                   </Button>
