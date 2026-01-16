@@ -31,7 +31,6 @@ import VideoClipPreview from './pages/VideoClipPreview';
 import VoiceIsolator from './pages/VoiceIsolator';
 import VoiceToText from './pages/VoiceToText';
 import VoiceTranslator from './pages/VoiceTranslator';
-import AlbumCoverGenerator from './pages/AlbumCoverGenerator';
 
 
 export const PAGES = {
@@ -68,7 +67,6 @@ export const PAGES = {
     "VoiceIsolator": VoiceIsolator,
     "VoiceToText": VoiceToText,
     "VoiceTranslator": VoiceTranslator,
-    "AlbumCoverGenerator": AlbumCoverGenerator,
 }
 
 export const pagesConfig = {
