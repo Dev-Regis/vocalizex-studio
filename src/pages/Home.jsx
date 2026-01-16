@@ -224,18 +224,29 @@ export default function Home() {
           </p>
           
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to={createPageUrl("ImageChat")}>
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-500 text-lg px-8">
-                Começar Agora
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <Link to={createPageUrl("ImageCreator")}>
-              <Button size="lg" variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 text-lg px-8">
-                Criar Imagens
-              </Button>
-            </Link>
-          </div>
+                  <Link to={createPageUrl("ImageChat")}>
+                    <Button size="lg" className="bg-purple-600 hover:bg-purple-500 text-lg px-8">
+                      Começar Agora
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                  <Link to={createPageUrl("ImageCreator")}>
+                    <Button size="lg" variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 text-lg px-8">
+                      Criar Imagens
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="flex gap-4 justify-center flex-wrap mt-4">
+                  <Button size="sm" variant="outline" className="border-blue-500/30 text-blue-300 hover:bg-blue-500/10">
+                    🔐 Login Usuário
+                  </Button>
+                  <Link to={createPageUrl("AdminPanel")}>
+                    <Button size="sm" className="bg-red-600 hover:bg-red-500">
+                      ⚙️ Painel Admin
+                    </Button>
+                  </Link>
+                </div>
         </div>
 
         {/* Features Grid */}
