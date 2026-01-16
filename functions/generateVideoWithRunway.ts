@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
             promptText: prompt,
             model: 'gen3a_turbo',
             duration: 5,
-            ratio: videoClip.orientation === 'vertical' ? '9:16' : '16:9'
+            ratio: videoClip.orientation === 'vertical' ? '768:1280' : '1280:768'
         };
 
         console.log('📤 Enviando para Runway:', JSON.stringify(runwayPayload, null, 2));
