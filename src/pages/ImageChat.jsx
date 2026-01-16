@@ -459,15 +459,17 @@ export default function ImageChat() {
            const editPrompt = isBlendRequest ? 
              `TAREFA CRÍTICA DE COMPOSIÇÃO: ${currentInput}
 
-        INSTRUÇÕES PRECISAS PARA BLENDING/COMPOSIÇÃO:
-        1. Você RECEBEU MÚLTIPLAS IMAGENS para EXTRAIR ELEMENTOS e COMBINAR
-        2. EXTRAIA EXATAMENTE o que foi solicitado (pessoa, objeto, elemento específico) de cada imagem
-        3. COLOQUE o elemento extraído na posição/contexto solicitado
-        4. Mantenha a qualidade, proporções e iluminação natural
-        5. A composição final deve parecer PROFISSIONAL e REALISTA
-        6. Se pedir para colocar pessoa A com pessoa B, COLOQUE AMBAS na composição
-        7. Integre os elementos de forma natural e bem proporcionada
-        8. Alta resolução, resultado limpo e bem acabado` :
+           INSTRUÇÕES PRECISAS PARA BLENDING/COMPOSIÇÃO:
+           1. Você RECEBEU MÚLTIPLAS IMAGENS para EXTRAIR ELEMENTOS e COMBINAR
+           2. EXTRAIA EXATAMENTE o que foi solicitado (pessoa, objeto, elemento específico) de cada imagem
+           3. COLOQUE o elemento extraído na posição/contexto solicitado
+           4. Mantenha a qualidade, proporções e iluminação natural
+           5. A composição final deve parecer PROFISSIONAL e REALISTA
+           6. Se pedir para colocar pessoa A com pessoa B, COLOQUE AMBAS na composição PRÓXIMAS E AGARRADAS (abraçadas) naturalmente - a menos que peça outra posição
+           7. POSICIONAMENTO: Pessoas devem estar JUNTAS, ABRAÇADAS ou em contato físico natural (mão na cintura, abraço, lado a lado abraçados, etc)
+           8. APENAS mude posição se o usuário pedir explicitamente (ex: "mais afastados", "sentados", "em pé", etc)
+           9. Integre os elementos de forma natural e bem proporcionada
+           10. Alta resolução, resultado limpo e bem acabado` :
              `TAREFA: ${currentInput}
 
         IMPORTANTE: Use a imagem fornecida como base e aplique as modificações solicitadas.
