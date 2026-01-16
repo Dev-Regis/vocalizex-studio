@@ -1,41 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video } from "lucide-react";
-import LoginModal from "../components/LoginModal";
 
 export default function Home() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [pendingPageUrl, setPendingPageUrl] = useState(null);
-
-  useEffect(() => {
-    const userAuth = localStorage.getItem("user_auth");
-    if (userAuth) {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const handleFeatureClick = (pageUrl) => {
-    if (!isLoggedIn) {
-      setPendingPageUrl(pageUrl);
-      setLoginModalOpen(true);
-      return false;
-    }
-    return true;
-  };
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-    if (pendingPageUrl) {
-      navigate(pendingPageUrl);
-      setPendingPageUrl(null);
-    }
-  };
-
   const features = [
     {
       icon: MessageSquare,
@@ -240,7 +210,6 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto mb-20">
-          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/4e228c678_ChatGPTImage16dejande202600_29_33.png" alt="VocalizeX" className="h-32 mx-auto mb-8 object-contain" />
           <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-6">
             <Sparkles className="w-4 h-4 text-purple-400" />
             <span className="text-sm text-purple-300">Plataforma de IA Completa</span>
@@ -255,42 +224,24 @@ export default function Home() {
           </p>
           
           <div className="flex gap-4 justify-center flex-wrap">
-                  <Link to={createPageUrl("ImageChat")}>
-                    <Button size="lg" className="bg-purple-600 hover:bg-purple-500 text-lg px-8">
-                      Começar Agora
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  </Link>
-                  <Link to={createPageUrl("ImageCreator")}>
-                    <Button size="lg" variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 text-lg px-8">
-                      Criar Imagens
-                    </Button>
-                  </Link>
-                </div>
-
-                <div className="flex gap-4 justify-center flex-wrap mt-4">
-                  <Button size="sm" variant="outline" className="border-blue-500/30 text-blue-300 hover:bg-blue-500/10">
-                    🔐 Login Usuário
-                  </Button>
-                  <Link to={createPageUrl("AdminPanel")}>
-                    <Button size="sm" className="bg-red-600 hover:bg-red-500">
-                      ⚙️ Painel Admin
-                    </Button>
-                  </Link>
-                </div>
+            <Link to={createPageUrl("ImageChat")}>
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-500 text-lg px-8">
+                Começar Agora
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl("ImageCreator")}>
+              <Button size="lg" variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 text-lg px-8">
+                Criar Imagens
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <div 
-              key={index} 
-              onClick={() => {
-                if (handleFeatureClick(createPageUrl(feature.link))) {
-                  navigate(createPageUrl(feature.link));
-                }
-              }}
-            >
+            <Link key={index} to={createPageUrl(feature.link)}>
               <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
                 <CardHeader>
                   <div className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}>
@@ -302,16 +253,9 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-            </div>
+            </Link>
           ))}
         </div>
-
-        {/* Login Modal */}
-        <LoginModal 
-          isOpen={loginModalOpen} 
-          onClose={() => setLoginModalOpen(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
 
         {/* Stats Section */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
