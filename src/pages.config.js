@@ -7,7 +7,6 @@ import ComposerHelper from './pages/ComposerHelper';
 import Dashboard from './pages/Dashboard';
 import GifGenerator from './pages/GifGenerator';
 import GrammarImprover from './pages/GrammarImprover';
-import Home from './pages/Home';
 import ImageAnalyzer from './pages/ImageAnalyzer';
 import ImageBlender from './pages/ImageBlender';
 import ImageChat from './pages/ImageChat';
@@ -31,6 +30,7 @@ import VideoClipPreview from './pages/VideoClipPreview';
 import VoiceIsolator from './pages/VoiceIsolator';
 import VoiceToText from './pages/VoiceToText';
 import VoiceTranslator from './pages/VoiceTranslator';
+import Home from './pages/Home';
 
 
 export const PAGES = {
@@ -43,7 +43,6 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "GifGenerator": GifGenerator,
     "GrammarImprover": GrammarImprover,
-    "Home": Home,
     "ImageAnalyzer": ImageAnalyzer,
     "ImageBlender": ImageBlender,
     "ImageChat": ImageChat,
@@ -67,6 +66,7 @@ export const PAGES = {
     "VoiceIsolator": VoiceIsolator,
     "VoiceToText": VoiceToText,
     "VoiceTranslator": VoiceTranslator,
+    "Home": Home,
 }
 
 export const pagesConfig = {
