@@ -47,6 +47,7 @@ export default function ImageChat() {
   const [selectedMessageIndex, setSelectedMessageIndex] = useState(null);
   const [messageReplies, setMessageReplies] = useState({});
   const [replyText, setReplyText] = useState("");
+  const [processing, setProcessing] = useState(false);
   const [autoRead, setAutoRead] = useState(() => {
     const saved = localStorage.getItem('imageChat_autoRead');
     return saved ? JSON.parse(saved) : false;
