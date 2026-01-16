@@ -78,46 +78,11 @@ export default function Home() {
       color: "bg-teal-500"
     },
     {
-      icon: Wand2,
-      title: "Desenho → Realista",
-      description: "Transforme desenhos em imagens reais",
-      link: "SketchToImage",
-      color: "bg-pink-500"
-    },
-    {
       icon: Sparkles,
       title: "Avatar 3D",
       description: "Crie avatares 3D personalizados",
       link: "Avatar3D",
       color: "bg-purple-500"
-    },
-    {
-      icon: Zap,
-      title: "Gerar GIF Animado",
-      description: "Crie animações GIF com IA",
-      link: "GifGenerator",
-      color: "bg-yellow-500"
-    },
-    {
-      icon: Volume2,
-      title: "Isolar Vozes",
-      description: "Extraia vocais de músicas",
-      link: "VoiceIsolator",
-      color: "bg-blue-500"
-    },
-    {
-      icon: Mic,
-      title: "Transcrever Áudio",
-      description: "Converta áudio em texto automático",
-      link: "AudioTranscription",
-      color: "bg-green-500"
-    },
-    {
-      icon: Globe,
-      title: "Tradutor de Voz",
-      description: "Traduza voz para vários idiomas",
-      link: "VoiceTranslator",
-      color: "bg-cyan-500"
     },
     {
       icon: CheckCircle2,
@@ -167,13 +132,6 @@ export default function Home() {
       description: "Crie thumbnails para vídeos",
       link: "ThumbnailGenerator",
       color: "bg-red-500"
-    },
-    {
-      icon: User,
-      title: "Gerador de Bio",
-      description: "Bios para todas as redes",
-      link: "BioGenerator",
-      color: "bg-purple-500"
     },
     {
       icon: Clock,
