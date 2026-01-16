@@ -268,7 +268,7 @@ export default function AlbumCoverGenerator() {
           {/* Preview */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardHeader>
-              <CardTitle>Preview</CardTitle>
+              <CardTitle className="text-white">Preview</CardTitle>
             </CardHeader>
             <CardContent>
               {generatedCover ? (
