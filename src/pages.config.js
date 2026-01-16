@@ -20,6 +20,13 @@ import VoiceToText from './pages/VoiceToText';
 import ImageUpscaler from './pages/ImageUpscaler';
 import ImageInpainting from './pages/ImageInpainting';
 import ImageBlender from './pages/ImageBlender';
+import ImageOutpainting from './pages/ImageOutpainting';
+import VideoGenerator from './pages/VideoGenerator';
+import ImageCompare from './pages/ImageCompare';
+import Credits from './pages/Credits';
+import Marketplace from './pages/Marketplace';
+import Ranking from './pages/Ranking';
+import Badges from './pages/Badges';
 
 
 export const PAGES = {
@@ -45,6 +52,13 @@ export const PAGES = {
     "ImageUpscaler": ImageUpscaler,
     "ImageInpainting": ImageInpainting,
     "ImageBlender": ImageBlender,
+    "ImageOutpainting": ImageOutpainting,
+    "VideoGenerator": VideoGenerator,
+    "ImageCompare": ImageCompare,
+    "Credits": Credits,
+    "Marketplace": Marketplace,
+    "Ranking": Ranking,
+    "Badges": Badges,
 }
 
 export const pagesConfig = {
