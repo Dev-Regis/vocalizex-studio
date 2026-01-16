@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
 
         console.log('📤 Enviando para Runway:', JSON.stringify(runwayPayload, null, 2));
 
-        const createResponse = await fetch('https://api.runwayml.com/v1/image_to_video', {
+        const createResponse = await fetch('https://api.dev.runwayml.com/v1/image_to_video', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${RUNWAY_API_KEY}`,
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
 
             console.log(`⏳ Tentativa ${attempts}/${maxAttempts}`);
 
-            const statusResponse = await fetch(`https://api.runwayml.com/v1/tasks/${taskId}`, {
+            const statusResponse = await fetch(`https://api.dev.runwayml.com/v1/tasks/${taskId}`, {
                 headers: {
                     'Authorization': `Bearer ${RUNWAY_API_KEY}`,
                     'X-Runway-Version': '2024-11-06'
