@@ -48,6 +48,7 @@ export default function ImageChat() {
   const [messageReplies, setMessageReplies] = useState({});
   const [replyText, setReplyText] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [processingMessageIndex, setProcessingMessageIndex] = useState(null);
   const [autoRead, setAutoRead] = useState(() => {
     const saved = localStorage.getItem('imageChat_autoRead');
     return saved ? JSON.parse(saved) : false;
@@ -585,7 +586,8 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
     if (hasImage) {
       try {
         setProcessing(true);
-        toast.loading("Processando edição...");
+        setProcessingMessageIndex(messageIndex);
+        toast.loading("Criando imagem...");
 
         const result = await base44.integrations.Core.InvokeLLM({
           prompt: `Edite esta imagem conforme solicitado: ${replyText}. Use a imagem fornecida como base e aplique as modificações solicitadas.`,
@@ -613,16 +615,15 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
           }
         }
       } catch (error) {
-        toast.dismiss();
-        toast.error("Erro ao editar imagem");
-        console.error(error);
+       toast.dismiss();
+       toast.error("Erro ao editar imagem");
+       console.error(error);
       } finally {
-        setProcessing(false);
+       setProcessing(false);
+       setProcessingMessageIndex(null);
       }
-    }
-
-    setReplyText("");
-  };
+      }
+      };
 
   const downloadTextAsPDF = (text) => {
     try {
@@ -934,6 +935,17 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
                       <span className="text-gray-400">{generatingStatus || "Pensando..."}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {processing && (
+                <div className="flex justify-start">
+                  <div className="bg-[#121214] border border-[#27272a] rounded-2xl p-4">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+                      <span className="text-gray-400">Criando imagem editada...</span>
                     </div>
                   </div>
                 </div>
