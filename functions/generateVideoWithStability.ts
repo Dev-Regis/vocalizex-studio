@@ -64,8 +64,8 @@ Deno.serve(async (req) => {
 
         console.log('📤 Enviando para Stability AI...');
 
-        // Chamar API da Stability AI - Stable Video Diffusion
-        const response = await fetch('https://api.stability.ai/v2beta/image-to-video', {
+        // Chamar API da Stability AI - Image to Video (v2alpha)
+        const response = await fetch('https://api.stability.ai/v2alpha/generation/image-to-video', {
             method: 'POST',
             headers: {
                 'authorization': `Bearer ${apiKey}`,
@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
             console.log(`⏳ Tentativa ${attempts}/${maxAttempts} - Checando status...`);
 
             const statusResponse = await fetch(
-                `https://api.stability.ai/v2beta/image-to-video/result/${generationId}`,
+                `https://api.stability.ai/v2alpha/generation/image-to-video/result/${generationId}`,
                 {
                     method: 'GET',
                     headers: {
