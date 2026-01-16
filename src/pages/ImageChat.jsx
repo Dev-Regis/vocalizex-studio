@@ -578,6 +578,9 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
       }]
     }));
 
+    setReplyText("");
+    setSelectedMessageIndex(null);
+
     // Se tiver imagem, processar com IA
     if (hasImage) {
       try {
