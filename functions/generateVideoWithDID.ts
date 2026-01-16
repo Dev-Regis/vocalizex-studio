@@ -2,18 +2,28 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
+        console.log('🚀 Função iniciada');
         const base44 = createClientFromRequest(req);
         const user = await base44.auth.me();
 
+        console.log('👤 Usuário:', user?.email);
+
         if (!user) {
+            console.error('❌ Usuário não autenticado');
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { videoClipId } = await req.json();
+        const body = await req.json();
+        console.log('📦 Body recebido:', body);
+        
+        const { videoClipId } = body;
 
         if (!videoClipId) {
+            console.error('❌ videoClipId não fornecido');
             return Response.json({ error: 'videoClipId é obrigatório' }, { status: 400 });
         }
+
+        console.log('🔍 Buscando VideoClip ID:', videoClipId);
 
         // Buscar os dados do VideoClip
         const videoClips = await base44.entities.VideoClip.filter({ id: videoClipId });

@@ -158,6 +158,7 @@ export default function VideoClipPreview() {
     setIsGeneratingVideo(true);
     
     try {
+      console.log('🎬 Iniciando geração - VideoClip ID:', videoClip.id);
       toast.loading("Iniciando geração do videoclipe...", { id: "video" });
 
       // Chamar a função backend que integra com a D-ID
@@ -165,10 +166,13 @@ export default function VideoClipPreview() {
         videoClipId: videoClip.id
       });
 
-      console.log('Response:', response);
+      console.log('📦 Resposta completa:', JSON.stringify(response, null, 2));
+      console.log('✅ Status:', response.status);
+      console.log('📄 Data:', response.data);
 
       if (response.data?.success) {
         toast.success("Videoclipe gerado com sucesso!", { id: "video" });
+        console.log('🎉 Vídeo URL:', response.data.videoUrl);
         
         // Recarregar o videoClip atualizado do banco
         const clips = await base44.entities.VideoClip.filter({ id: videoClip.id });
@@ -177,13 +181,27 @@ export default function VideoClipPreview() {
         }
       } else {
         const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
-        toast.error("Erro: " + errorMsg, { id: "video", duration: 5000 });
-        console.error('Erro completo:', response.data);
+        console.error('❌ ERRO DETALHADO:', {
+          error: response.data?.error,
+          details: response.data?.details,
+          status: response.status,
+          completo: response.data
+        });
+        toast.error("❌ ERRO: " + errorMsg, { id: "video", duration: 10000 });
+        alert('ERRO COMPLETO: ' + JSON.stringify(response.data, null, 2));
       }
 
     } catch (error) {
-      toast.error("Erro ao gerar vídeo: " + (error.response?.data?.error || error.message), { id: "video", duration: 5000 });
-      console.error('Erro completo:', error);
+      console.error('❌ ERRO NA CHAMADA:', error);
+      console.error('❌ Error.response:', error.response);
+      console.error('❌ Error.message:', error.message);
+      const errorMsg = error.response?.data?.error || error.message || 'Erro desconhecido';
+      toast.error("❌ Erro ao gerar vídeo: " + errorMsg, { id: "video", duration: 10000 });
+      alert('ERRO COMPLETO: ' + JSON.stringify({
+        message: error.message,
+        response: error.response?.data,
+        stack: error.stack
+      }, null, 2));
     } finally {
       setIsGeneratingVideo(false);
     }
