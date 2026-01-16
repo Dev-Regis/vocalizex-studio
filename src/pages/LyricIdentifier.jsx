@@ -20,10 +20,10 @@ export default function LyricIdentifier() {
 
     setIsProcessing(true);
     try {
-      toast.loading("Buscando na internet...", { id: 'identify' });
+      toast.loading("Buscando no Google...", { id: 'identify' });
       
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Identifique se esta letra pertence a uma música já existente:\n\n"${lyrics}"\n\nResponda em JSON com este formato:\n{\n  "found": true/false,\n  "songTitle": "Título da música (ou null)",\n  "artist": "Nome do artista (ou null)",\n  "socialMedia": {\n    "instagram": "@handle (ou null)",\n    "spotify": "link (ou null)",\n    "youtube": "link (ou null)",\n    "twitter": "@handle (ou null)"\n  },\n  "similarity": "percentual de certeza"\n}\n\nSe não encontrar, use "found": false.`,
+        prompt: `BUSQUE NO GOOGLE esta letra de música exatamente como está e identifique qual artista/música é:\n\n"${lyrics}"\n\nProcure por:\n1. A letra exata no Google\n2. Resultados do Genius, AZLyrics ou Letras\n3. Vídeos do YouTube\n4. Spotify\n\nRetorne em JSON:\n{\n  "found": true ou false,\n  "songTitle": "nome exato da música",\n  "artist": "nome do artista",\n  "socialMedia": {\n    "instagram": "link ou @",\n    "spotify": "link da música",\n    "youtube": "link do vídeo",\n    "twitter": "link ou @"\n  },\n  "similarity": "100% ou percentual"\n}\n\nSe NÃO encontrar absolutamente nada após buscar, retorne: {"found": false}`,
         add_context_from_internet: true
       });
 
@@ -35,11 +35,13 @@ export default function LyricIdentifier() {
         } else {
           toast.info("Nenhuma música encontrada", { id: 'identify' });
         }
-      } catch {
+      } catch (e) {
+        console.error("Erro ao parsear:", e);
         toast.error("Erro ao processar resultado", { id: 'identify' });
       }
     } catch (error) {
-      toast.error("Erro na busca", { id: 'identify' });
+      console.error("Erro:", error);
+      toast.error("Erro na busca - tente novamente", { id: 'identify' });
     } finally {
       setIsProcessing(false);
     }
