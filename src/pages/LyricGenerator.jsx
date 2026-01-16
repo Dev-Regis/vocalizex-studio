@@ -317,13 +317,12 @@ Requisitos CRÍTICOS:
                        <SelectTrigger className="bg-[#18181b] border-[#27272a]">
                          <SelectValue placeholder="Selecione um estilo" />
                        </SelectTrigger>
-                       <SelectContent className="bg-[#121214] border-[#27272a]"><div className="max-h-[250px] overflow-y-auto">
+                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[250px] overflow-y-auto">
                          {styles.map((style) => (
                            <SelectItem key={style} value={style} className="text-white">
                              {style}
                            </SelectItem>
                          ))}
-                       </div>
                        </SelectContent>
                      </Select>
                   </div>
