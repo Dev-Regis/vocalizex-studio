@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2 } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -76,6 +76,55 @@ export default function Home() {
       description: "IA descreve o que vê nas imagens",
       link: "ImageAnalyzer",
       color: "bg-teal-500"
+    },
+    {
+      icon: Wand2,
+      title: "Desenho → Realista",
+      description: "Transforme desenhos em imagens reais",
+      link: "SketchToImage",
+      color: "bg-pink-500"
+    },
+    {
+      icon: Sparkles,
+      title: "Avatar 3D",
+      description: "Crie avatares 3D personalizados",
+      link: "Avatar3D",
+      color: "bg-purple-500"
+    },
+    {
+      icon: Zap,
+      title: "Gerar GIF Animado",
+      description: "Crie animações GIF com IA",
+      link: "GifGenerator",
+      color: "bg-yellow-500"
+    },
+    {
+      icon: Volume2,
+      title: "Isolar Vozes",
+      description: "Extraia vocais de músicas",
+      link: "VoiceIsolator",
+      color: "bg-blue-500"
+    },
+    {
+      icon: Mic,
+      title: "Transcrever Áudio",
+      description: "Converta áudio em texto automático",
+      link: "AudioTranscription",
+      color: "bg-green-500"
+    },
+    {
+      icon: Globe,
+      title: "Tradutor de Voz",
+      description: "Traduza voz para vários idiomas",
+      link: "VoiceTranslator",
+      color: "bg-cyan-500"
+    },
+    {
+      icon: CheckCircle2,
+      title: "Melhorador Gramática",
+      description: "Melhore sua escrita com IA",
+      link: "GrammarImprover",
+      color: "bg-emerald-500"
     }
     ];
 

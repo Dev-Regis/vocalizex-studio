@@ -15,6 +15,13 @@ import VideoClipForm from './pages/VideoClipForm';
 import VideoClipPreview from './pages/VideoClipPreview';
 import VoiceToText from './pages/VoiceToText';
 import Home from './pages/Home';
+import SketchToImage from './pages/SketchToImage';
+import Avatar3D from './pages/Avatar3D';
+import GifGenerator from './pages/GifGenerator';
+import VoiceIsolator from './pages/VoiceIsolator';
+import AudioTranscription from './pages/AudioTranscription';
+import VoiceTranslator from './pages/VoiceTranslator';
+import GrammarImprover from './pages/GrammarImprover';
 
 
 export const PAGES = {
@@ -35,6 +42,13 @@ export const PAGES = {
     "VideoClipPreview": VideoClipPreview,
     "VoiceToText": VoiceToText,
     "Home": Home,
+    "SketchToImage": SketchToImage,
+    "Avatar3D": Avatar3D,
+    "GifGenerator": GifGenerator,
+    "VoiceIsolator": VoiceIsolator,
+    "AudioTranscription": AudioTranscription,
+    "VoiceTranslator": VoiceTranslator,
+    "GrammarImprover": GrammarImprover,
 }
 
 export const pagesConfig = {
