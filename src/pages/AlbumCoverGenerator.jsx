@@ -110,7 +110,7 @@ export default function AlbumCoverGenerator() {
           {/* Painel de Controles */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardHeader>
-              <CardTitle>Configurações</CardTitle>
+              <CardTitle className="text-white">Configurações</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Tipo de Capa */}
