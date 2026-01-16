@@ -162,8 +162,8 @@ export default function VideoClipPreview() {
       console.log('🎬 Iniciando geração - VideoClip ID:', videoClip.id);
       toast.loading("Iniciando geração do videoclipe...", { id: "video" });
 
-      // Chamar a função backend que integra com a Runway ML
-      const response = await base44.functions.invoke('generateVideoWithRunway', {
+      // Chamar a função backend que integra com a Stability AI
+      const response = await base44.functions.invoke('generateVideoWithStability', {
         videoClipId: videoClip.id
       });
 
@@ -184,7 +184,7 @@ export default function VideoClipPreview() {
         // Verificar se é erro de créditos
         if (response.data?.needsCredits) {
           setCreditError(response.data);
-          toast.error("💳 Créditos insuficientes na Runway ML", { id: "video" });
+          toast.error("💳 Créditos insuficientes na Stability AI", { id: "video" });
         } else {
           const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
           console.error('❌ ERRO DETALHADO:', {
@@ -434,11 +434,11 @@ export default function VideoClipPreview() {
                     Créditos Insuficientes
                   </h3>
                   <p className="text-gray-300 mb-4">
-                    Sua conta Runway ML não possui créditos suficientes para gerar vídeos. 
+                    Sua conta Stability AI não possui créditos suficientes para gerar vídeos. 
                     Adicione créditos para continuar criando videoclipes incríveis!
                   </p>
                   <a
-                    href="https://app.runwayml.com/account"
+                    href="https://platform.stability.ai/account/credits"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
