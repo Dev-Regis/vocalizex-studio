@@ -239,7 +239,7 @@ export default function AlbumCoverGenerator() {
 
               {/* Texto Customizado */}
               <div>
-                <label className="block text-sm font-medium mb-2">Texto (opcional)</label>
+                <label className="block text-sm font-medium mb-2 text-white">Texto (opcional)</label>
                 <Textarea
                   placeholder="Deixe em branco para criar por padrão"
                   value={customText}
