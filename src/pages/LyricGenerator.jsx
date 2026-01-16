@@ -434,7 +434,7 @@ Requisitos CRÍTICOS:
                     </div>
                   </div>
                   <p className="text-white font-semibold mb-2">Compilando estrutura...</p>
-                  <p className="text-sm text-gray-400">Verticalizando versos • Simplificando rimas</p>
+                  <p className="text-sm text-gray-400">Criado letras sem direitos autorais</p>
                 </div>
               </div>
             )}
