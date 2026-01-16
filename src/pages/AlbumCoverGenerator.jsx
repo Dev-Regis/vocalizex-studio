@@ -291,7 +291,7 @@ export default function AlbumCoverGenerator() {
                 </div>
               ) : (
                 <div className="h-96 bg-[#1a1a1c] rounded-lg flex items-center justify-center border-2 border-dashed border-[#27272a]">
-                  <p className="text-gray-400">A capa aparecerá aqui</p>
+                  <p className="text-white">A capa aparecerá aqui</p>
                 </div>
               )}
             </CardContent>
