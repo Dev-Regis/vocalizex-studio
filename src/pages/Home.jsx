@@ -1,11 +1,41 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video } from "lucide-react";
+import LoginModal from "../components/LoginModal";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [pendingPageUrl, setPendingPageUrl] = useState(null);
+
+  useEffect(() => {
+    const userAuth = localStorage.getItem("user_auth");
+    if (userAuth) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleFeatureClick = (pageUrl) => {
+    if (!isLoggedIn) {
+      setPendingPageUrl(pageUrl);
+      setLoginModalOpen(true);
+      return false;
+    }
+    return true;
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    if (pendingPageUrl) {
+      navigate(pendingPageUrl);
+      setPendingPageUrl(null);
+    }
+  };
+
   const features = [
     {
       icon: MessageSquare,
