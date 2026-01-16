@@ -317,7 +317,7 @@ Requisitos CRÍTICOS:
                        <SelectTrigger className="bg-[#18181b] border-[#27272a]">
                          <SelectValue placeholder="Selecione um estilo" />
                        </SelectTrigger>
-                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[280px] overflow-y-auto">
+                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[280px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#18181b] [&::-webkit-scrollbar-thumb]:bg-purple-600 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-500">
                          {styles.map((style) => (
                            <SelectItem key={style} value={style} className="text-white">
                              {style}
