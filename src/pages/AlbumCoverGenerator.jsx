@@ -184,7 +184,7 @@ export default function AlbumCoverGenerator() {
 
                 {photoType === "both" && (
                   <div>
-                    <label className="block text-sm font-medium mb-2">Foto com Ambos</label>
+                    <label className="block text-sm font-medium mb-2 text-white">Foto com Ambos</label>
                     <label className="flex items-center justify-center w-full p-3 border-2 border-dashed border-[#27272a] rounded-lg cursor-pointer hover:border-purple-500">
                       <Upload className="w-4 h-4 mr-2" />
                       <span className="text-sm">Selecionar foto</span>
