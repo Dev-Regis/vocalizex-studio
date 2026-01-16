@@ -130,16 +130,29 @@ export default function AlbumCoverGenerator() {
               {/* Tipo de Foto */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-white">Tipo de Foto</label>
-                <Select value={photoType} onValueChange={setPhotoType}>
-                   <SelectTrigger className="bg-[#1a1a1c] border-[#27272a] text-white">
-                     <SelectValue className="text-white" />
-                   </SelectTrigger>
-                  <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
-                    <SelectItem value="man" className="text-white">Homem</SelectItem>
-                    <SelectItem value="woman" className="text-white">Mulher</SelectItem>
-                    <SelectItem value="both" className="text-white">Ambos</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setPhotoType("man")}
+                    variant={photoType === "man" ? "default" : "outline"}
+                    className={`flex-1 ${photoType === "man" ? "bg-purple-600 hover:bg-purple-500" : "border-[#27272a] text-white hover:border-purple-500"}`}
+                  >
+                    Homem
+                  </Button>
+                  <Button
+                    onClick={() => setPhotoType("woman")}
+                    variant={photoType === "woman" ? "default" : "outline"}
+                    className={`flex-1 ${photoType === "woman" ? "bg-purple-600 hover:bg-purple-500" : "border-[#27272a] text-white hover:border-purple-500"}`}
+                  >
+                    Mulher
+                  </Button>
+                  <Button
+                    onClick={() => setPhotoType("both")}
+                    variant={photoType === "both" ? "default" : "outline"}
+                    className={`flex-1 ${photoType === "both" ? "bg-purple-600 hover:bg-purple-500" : "border-[#27272a] text-white hover:border-purple-500"}`}
+                  >
+                    Ambos
+                  </Button>
+                </div>
               </div>
 
               {/* Upload de Fotos */}
