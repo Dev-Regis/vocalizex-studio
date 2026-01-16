@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2 } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2, FileText, AlertCircle, Share2, User, Clock, ImageIcon } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -125,6 +125,62 @@ export default function Home() {
       description: "Melhore sua escrita com IA",
       link: "GrammarImprover",
       color: "bg-emerald-500"
+    },
+    {
+      icon: Globe,
+      title: "Tradutor Texto",
+      description: "Traduza para múltiplos idiomas",
+      link: "TextTranslator",
+      color: "bg-blue-500"
+    },
+    {
+      icon: CheckCircle2,
+      title: "Corretor Texto",
+      description: "Corrija PT, EN e ES",
+      link: "TextCorrector",
+      color: "bg-green-500"
+    },
+    {
+      icon: FileText,
+      title: "Escritor de Roteiros",
+      description: "Gere roteiros profissionais",
+      link: "ScriptWriter",
+      color: "bg-orange-500"
+    },
+    {
+      icon: AlertCircle,
+      title: "Verificador de Letras",
+      description: "Verifique direitos autorais",
+      link: "LyricChecker",
+      color: "bg-red-500"
+    },
+    {
+      icon: Share2,
+      title: "Conteúdo Social",
+      description: "Gere posts para redes sociais",
+      link: "SocialContentGenerator",
+      color: "bg-pink-500"
+    },
+    {
+      icon: ImageIcon,
+      title: "Gerador de Thumbnails",
+      description: "Crie thumbnails para vídeos",
+      link: "ThumbnailGenerator",
+      color: "bg-red-500"
+    },
+    {
+      icon: User,
+      title: "Gerador de Bio",
+      description: "Bios para todas as redes",
+      link: "BioGenerator",
+      color: "bg-purple-500"
+    },
+    {
+      icon: Clock,
+      title: "Horários de Postagem",
+      description: "Melhores horas para postar",
+      link: "BestPostingTimes",
+      color: "bg-yellow-500"
     }
     ];
 

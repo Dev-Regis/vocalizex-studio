@@ -22,6 +22,14 @@ import VoiceIsolator from './pages/VoiceIsolator';
 import AudioTranscription from './pages/AudioTranscription';
 import VoiceTranslator from './pages/VoiceTranslator';
 import GrammarImprover from './pages/GrammarImprover';
+import TextTranslator from './pages/TextTranslator';
+import TextCorrector from './pages/TextCorrector';
+import ScriptWriter from './pages/ScriptWriter';
+import LyricChecker from './pages/LyricChecker';
+import SocialContentGenerator from './pages/SocialContentGenerator';
+import ThumbnailGenerator from './pages/ThumbnailGenerator';
+import BioGenerator from './pages/BioGenerator';
+import BestPostingTimes from './pages/BestPostingTimes';
 
 
 export const PAGES = {
@@ -49,6 +57,14 @@ export const PAGES = {
     "AudioTranscription": AudioTranscription,
     "VoiceTranslator": VoiceTranslator,
     "GrammarImprover": GrammarImprover,
+    "TextTranslator": TextTranslator,
+    "TextCorrector": TextCorrector,
+    "ScriptWriter": ScriptWriter,
+    "LyricChecker": LyricChecker,
+    "SocialContentGenerator": SocialContentGenerator,
+    "ThumbnailGenerator": ThumbnailGenerator,
+    "BioGenerator": BioGenerator,
+    "BestPostingTimes": BestPostingTimes,
 }
 
 export const pagesConfig = {
