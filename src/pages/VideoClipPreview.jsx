@@ -158,34 +158,28 @@ export default function VideoClipPreview() {
     setIsGeneratingVideo(true);
     
     try {
-      toast.loading("Gerando videoclipe profissional...", { id: "video" });
+      toast.loading("Gerando videoclipe com D-ID...", { id: "video" });
 
-      // NOTA: Esta é uma simulação. Na prática, você precisaria de uma API especializada
-      // como Runway ML, Pika Labs, D-ID, Synthesia, etc. para:
-      // 1. Sincronização labial (lip-sync) com a música
-      // 2. Geração de vídeo a partir das imagens
-      // 3. Processamento de áudio e legendas
-      // 4. Aplicação de marca d'água
-      
-      // Simulação de processamento
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
-      // Aqui você chamaria a API real de geração de vídeo
-      // Por enquanto, vamos apenas salvar o status
-      await base44.entities.VideoClip.update(videoClip.id, {
-        status: "completed",
-        videoUrl: "https://example.com/video.mp4" // URL fictícia
+      // Chamar a função backend que integra com a D-ID
+      const response = await base44.functions.invoke('generateVideoWithDID', {
+        videoClipId: videoClip.id
       });
 
-      toast.success("Videoclipe gerado! (Demo - requer integração com API de vídeo)", { id: "video" });
-      
-      // Informar o usuário sobre a necessidade de integração
-      toast.info("⚠️ Para geração real de vídeo, é necessário integrar com APIs como Runway ML, D-ID ou Synthesia", { 
-        duration: 8000 
-      });
+      if (response.data.success) {
+        toast.success("Videoclipe gerado com sucesso!", { id: "video" });
+        
+        // Atualizar o videoClip local com a URL do vídeo
+        setVideoClip({
+          ...videoClip,
+          videoUrl: response.data.videoUrl,
+          status: "completed"
+        });
+      } else {
+        toast.error("Erro ao gerar vídeo: " + response.data.error, { id: "video" });
+      }
 
     } catch (error) {
-      toast.error("Erro ao gerar vídeo", { id: "video" });
+      toast.error("Erro ao gerar vídeo: " + error.message, { id: "video" });
       console.error(error);
     } finally {
       setIsGeneratingVideo(false);
