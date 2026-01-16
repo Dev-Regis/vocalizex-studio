@@ -84,7 +84,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto mb-20">
-          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/f0c5d4c0e_ChatGPTImage16dejande202600_29_33.png" alt="VocalizeX" className="h-32 mx-auto mb-8" />
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/f0c5d4c0e_ChatGPTImage16dejande202600_29_33.png" alt="VocalizeX" className="h-48 mx-auto mb-8" />
 
               <h1 className="text-5xl md:text-7xl font-bold mb-6">
                 VocalizeX
