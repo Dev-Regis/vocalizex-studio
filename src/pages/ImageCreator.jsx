@@ -4,13 +4,28 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Loader2, Download, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Image as ImageIcon, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ImageCreator() {
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [imageCount, setImageCount] = useState(1);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await base44.integrations.Core.UploadFile({ file });
+      setUploadedImage(response.file_url);
+      toast.success("Imagem importada!");
+    } catch (error) {
+      toast.error("Erro ao importar imagem");
+    }
+  };
 
   const generateImage = async () => {
     if (!prompt.trim()) {
@@ -20,15 +35,21 @@ export default function ImageCreator() {
 
     setIsGenerating(true);
     try {
-      toast.loading("Gerando imagem...", { id: 'generate' });
+      toast.loading(`Gerando ${imageCount} imagem(ns)...`, { id: 'generate' });
       
-      const response = await base44.integrations.Core.GenerateImage({
-        prompt: prompt + " Crie uma imagem de alta qualidade, profissional e realista."
-      });
+      const images = [];
+      for (let i = 0; i < imageCount; i++) {
+        const response = await base44.integrations.Core.GenerateImage({
+          prompt: prompt + " Crie uma imagem de alta qualidade, profissional e realista.",
+          existing_image_urls: uploadedImage ? [uploadedImage] : undefined
+        });
 
-      const imageUrl = response.url || response.file_url || response;
-      setImage(imageUrl);
-      toast.success("Imagem gerada com sucesso!", { id: 'generate' });
+        const imageUrl = response.url || response.file_url || response;
+        images.push(imageUrl);
+      }
+
+      setImage(images.length === 1 ? images[0] : images);
+      toast.success(`${imageCount} imagem(ns) gerada(s) com sucesso!`, { id: 'generate' });
     } catch (error) {
       console.error("Erro:", error);
       toast.error("Erro ao gerar imagem", { id: 'generate' });
@@ -37,10 +58,10 @@ export default function ImageCreator() {
     }
   };
 
-  const downloadImage = async () => {
-    if (!image) return;
+  const downloadImage = async (imageUrl) => {
+    if (!imageUrl) return;
     try {
-      const response = await fetch(image);
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -92,6 +113,60 @@ export default function ImageCreator() {
             className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[120px] mb-4"
             disabled={isGenerating}
           />
+
+          {/* Upload Imagem */}
+          <div className="mb-4 p-4 bg-[#18181b] border border-[#27272a] rounded-lg">
+            <label className="block text-xs font-semibold text-gray-300 mb-3 uppercase">Importar Imagem (Opcional)</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isGenerating}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#27272a] border border-dashed border-[#3f3f46] rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors"
+              >
+                <Upload className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-400">Clique para importar uma imagem</span>
+              </label>
+            </div>
+            {uploadedImage && (
+              <div className="mt-3 flex items-center gap-2">
+                <div className="flex-1 text-xs text-green-400">✓ Imagem importada</div>
+                <button
+                  onClick={() => setUploadedImage(null)}
+                  className="text-xs text-red-400 hover:text-red-300"
+                >
+                  Remover
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Quantidade de Imagens */}
+          <div className="mb-4 p-4 bg-[#18181b] border border-[#27272a] rounded-lg">
+            <label className="block text-xs font-semibold text-gray-300 mb-3 uppercase">Quantas imagens gerar?</label>
+            <div className="flex gap-2">
+              {[1, 2].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setImageCount(num)}
+                  disabled={isGenerating}
+                  className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
+                    imageCount === num
+                      ? "bg-blue-600 text-white border border-blue-400"
+                      : "bg-[#27272a] text-gray-300 border border-[#3f3f46] hover:border-blue-500/50"
+                  }`}
+                >
+                  {num} Imagem{num > 1 ? "s" : ""}
+                </button>
+              ))}
+            </div>
+          </div>
           
           <Button
             onClick={generateImage}
@@ -115,20 +190,41 @@ export default function ImageCreator() {
         {/* Generated Image */}
         {image && (
           <div className="bg-[#121214] border border-[#27272a] rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4">Imagem Gerada</h2>
-            <div className="relative group mb-6">
-              <img
-                src={image}
-                alt="Generated"
-                className="w-full rounded-xl"
-              />
-              <Button
-                onClick={downloadImage}
-                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black hover:bg-gray-200"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Baixar
-              </Button>
+            <h2 className="text-2xl font-bold mb-6">Imagens Geradas</h2>
+            <div className={`grid gap-6 mb-6 ${Array.isArray(image) ? "grid-cols-1 md:grid-cols-2" : ""}`}>
+              {Array.isArray(image) ? (
+                image.map((img, idx) => (
+                  <div key={idx} className="relative group">
+                    <img
+                      src={img}
+                      alt={`Generated ${idx + 1}`}
+                      className="w-full rounded-xl"
+                    />
+                    <Button
+                      onClick={() => downloadImage(img)}
+                      className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black hover:bg-gray-200"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Baixar
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <div className="relative group">
+                  <img
+                    src={image}
+                    alt="Generated"
+                    className="w-full rounded-xl"
+                  />
+                  <Button
+                    onClick={() => downloadImage(image)}
+                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black hover:bg-gray-200"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Baixar
+                  </Button>
+                </div>
+              )}
             </div>
 
             <Button
