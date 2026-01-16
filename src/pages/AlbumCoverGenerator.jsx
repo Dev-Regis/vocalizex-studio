@@ -61,10 +61,10 @@ export default function AlbumCoverGenerator() {
       const color = selectedColor || "#FFFFFF";
       const text = customText || `${coverType.charAt(0).toUpperCase() + coverType.slice(1)} Cover`;
 
-      const prompt = `Create a professional ${coverType} cover art (3000x3000px) with the provided photo as background. 
-        Add the text "${text}" in ${font} font with color ${color}. 
-        The design should be modern, visually appealing, and suitable for music distribution platforms.
-        Make sure the text is clearly visible and well-positioned.`;
+      const prompt = `Create a professional ${coverType} cover art (3000x3000px) using the provided image as the main visual. 
+      Add bold, centered text "${text}" in ${font} style with ${color} color. 
+      Make it modern, eye-catching, and ready for music platforms like Spotify, Apple Music.
+      Ensure good contrast and visibility. High quality, professional design.`;
 
       const response = await base44.integrations.Core.GenerateImage({
         prompt,
