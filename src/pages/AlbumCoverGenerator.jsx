@@ -121,8 +121,8 @@ export default function AlbumCoverGenerator() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
-                    <SelectItem value="album">Álbum</SelectItem>
-                    <SelectItem value="single">Single</SelectItem>
+                    <SelectItem value="album" className="text-white">Álbum</SelectItem>
+                    <SelectItem value="single" className="text-white">Single</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
