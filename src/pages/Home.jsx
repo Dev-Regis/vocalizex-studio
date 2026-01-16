@@ -57,41 +57,6 @@ export default function Home() {
       color: "bg-indigo-500"
     },
     {
-      icon: Folder,
-      title: "Templates",
-      description: "Prompts prontos para diferentes estilos",
-      link: "TemplateGallery",
-      color: "bg-orange-500"
-    },
-    {
-      icon: Image,
-      title: "Histórico",
-      description: "Todas suas criações em um só lugar",
-      link: "CreationHistory",
-      color: "bg-cyan-500"
-    },
-    {
-      icon: Folder,
-      title: "Coleções",
-      description: "Organize criações em pastas",
-      link: "Collections",
-      color: "bg-emerald-500"
-    },
-    {
-      icon: Heart,
-      title: "Feed Público",
-      description: "Compartilhe e descubra criações",
-      link: "PublicFeed",
-      color: "bg-pink-500"
-    },
-    {
-      icon: Trophy,
-      title: "Desafios",
-      description: "Participe de desafios criativos",
-      link: "Challenges",
-      color: "bg-yellow-500"
-    },
-    {
       icon: Mic,
       title: "Voz → Texto",
       description: "Converta voz em prompts",
@@ -111,97 +76,6 @@ export default function Home() {
       description: "IA descreve o que vê nas imagens",
       link: "ImageAnalyzer",
       color: "bg-teal-500"
-    },
-    {
-      icon: Sparkles,
-      title: "Outpainting",
-      description: "Expanda bordas da imagem",
-      link: "ImageOutpainting",
-      color: "bg-blue-500"
-    },
-    {
-      icon: Video,
-      title: "Vídeo Curto",
-      description: "Anime imagens em vídeos",
-      link: "VideoGenerator",
-      color: "bg-red-500"
-    },
-    {
-      icon: Image,
-      title: "Comparar Imagens",
-      description: "Compare lado a lado",
-      link: "ImageCompare",
-      color: "bg-yellow-500"
-    },
-    {
-      icon: Zap,
-      title: "Créditos & Planos",
-      description: "Gerencie seus créditos",
-      link: "Credits",
-      color: "bg-orange-500"
-    },
-    {
-      icon: Heart,
-      title: "Marketplace",
-      description: "Compre e venda criações",
-      link: "Marketplace",
-      color: "bg-green-500"
-    },
-    {
-      icon: Trophy,
-      title: "Ranking",
-      description: "Top criadores da semana",
-      link: "Ranking",
-      color: "bg-yellow-500"
-    },
-    {
-      icon: Trophy,
-      title: "Badges",
-      description: "Conquistas e progresso",
-      link: "Badges",
-      color: "bg-purple-500"
-    },
-    {
-      icon: Eye,
-      title: "Analytics",
-      description: "Dashboard de estatísticas",
-      link: "Analytics",
-      color: "bg-cyan-500"
-    },
-    {
-      icon: Image,
-      title: "Portfolio",
-      description: "Exportar suas criações",
-      link: "Portfolio",
-      color: "bg-pink-500"
-    },
-    {
-      icon: Heart,
-      title: "Seguir Usuários",
-      description: "Acompanhe criadores",
-      link: "Following",
-      color: "bg-blue-500"
-    },
-    {
-      icon: Bot,
-      title: "Mentoria",
-      description: "Sistema de mentoria",
-      link: "Mentorship",
-      color: "bg-indigo-500"
-    },
-    {
-      icon: Sparkles,
-      title: "Estilos Favoritos",
-      description: "Seus estilos salvos",
-      link: "SavedStyles",
-      color: "bg-pink-500"
-    },
-    {
-      icon: Zap,
-      title: "Configurações",
-      description: "Tema, idioma e atalhos",
-      link: "Settings",
-      color: "bg-gray-500"
     }
     ];
 
