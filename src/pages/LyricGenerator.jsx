@@ -323,6 +323,7 @@ Requisitos CRÍTICOS:
                              {style}
                            </SelectItem>
                          ))}
+                       </div>
                        </SelectContent>
                      </Select>
                   </div>
