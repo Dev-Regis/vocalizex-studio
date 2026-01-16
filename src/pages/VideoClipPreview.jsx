@@ -203,7 +203,7 @@ export default function VideoClipPreview() {
           {videoClip.photoMan && (
             <Card className="bg-[#121214] border-[#27272a]">
               <CardContent className="p-6">
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+                <Label className="text-sm font-bold uppercase text-white mb-4 block">
                   Cena do Homem
                 </Label>
 
@@ -216,7 +216,7 @@ export default function VideoClipPreview() {
                     <img
                       src={manSceneUrl}
                       alt="Cena do homem"
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-64 object-contain bg-[#18181b] rounded-lg"
                     />
                     <Button
                       onClick={() => regenerateScene("man")}
@@ -240,7 +240,7 @@ export default function VideoClipPreview() {
           {videoClip.photoWoman && (
             <Card className="bg-[#121214] border-[#27272a]">
               <CardContent className="p-6">
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+                <Label className="text-sm font-bold uppercase text-white mb-4 block">
                   Cena da Mulher
                 </Label>
 
@@ -253,7 +253,7 @@ export default function VideoClipPreview() {
                     <img
                       src={womanSceneUrl}
                       alt="Cena da mulher"
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-64 object-contain bg-[#18181b] rounded-lg"
                     />
                     <Button
                       onClick={() => regenerateScene("woman")}
@@ -277,7 +277,7 @@ export default function VideoClipPreview() {
         {/* Música */}
         <Card className="bg-[#121214] border-[#27272a] mb-6">
           <CardContent className="p-6">
-            <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+            <Label className="text-sm font-bold uppercase text-white mb-4 block">
               Música
             </Label>
             <audio src={videoClip.musicUrl} controls className="w-full" />
@@ -287,7 +287,7 @@ export default function VideoClipPreview() {
         {/* Letra */}
         <Card className="bg-[#121214] border-[#27272a] mb-6">
           <CardContent className="p-6">
-            <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+            <Label className="text-sm font-bold uppercase text-white mb-4 block">
               Letra da Música
             </Label>
             <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-4 max-h-64 overflow-y-auto">
@@ -304,34 +304,34 @@ export default function VideoClipPreview() {
         {/* Informações */}
         <Card className="bg-[#121214] border-[#27272a] mb-6">
           <CardContent className="p-6">
-            <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+            <Label className="text-sm font-bold uppercase text-white mb-4 block">
               Configurações
             </Label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <p className="text-gray-500">Tipo</p>
-                <p className="font-semibold capitalize">{videoClip.type}</p>
+                <p className="text-gray-400">Tipo</p>
+                <p className="font-semibold text-white capitalize">{videoClip.type}</p>
               </div>
               <div>
-                <p className="text-gray-500">Orientação</p>
-                <p className="font-semibold capitalize">{videoClip.orientation}</p>
+                <p className="text-gray-400">Orientação</p>
+                <p className="font-semibold text-white capitalize">{videoClip.orientation}</p>
               </div>
               <div>
-                <p className="text-gray-500">Idioma</p>
-                <p className="font-semibold">{videoClip.language}</p>
+                <p className="text-gray-400">Idioma</p>
+                <p className="font-semibold text-white">{videoClip.language}</p>
               </div>
               <div>
-                <p className="text-gray-500">Duração</p>
-                <p className="font-semibold">{videoClip.duration} min</p>
+                <p className="text-gray-400">Duração</p>
+                <p className="font-semibold text-white">{videoClip.duration} min</p>
               </div>
               <div>
-                <p className="text-gray-500">Legendas</p>
-                <p className="font-semibold">{videoClip.subtitlesEnabled ? "Ativadas" : "Desativadas"}</p>
+                <p className="text-gray-400">Legendas</p>
+                <p className="font-semibold text-white">{videoClip.subtitlesEnabled ? "Ativadas" : "Desativadas"}</p>
               </div>
               {videoClip.watermark && (
                 <div>
-                  <p className="text-gray-500">Marca d'água</p>
-                  <p className="font-semibold">{videoClip.watermark}</p>
+                  <p className="text-gray-400">Marca d'água</p>
+                  <p className="font-semibold text-white">{videoClip.watermark}</p>
                 </div>
               )}
             </div>
@@ -371,7 +371,7 @@ export default function VideoClipPreview() {
         {videoClip.videoUrl && videoClip.status === "completed" && (
           <Card className="bg-[#121214] border-[#27272a] mt-6">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+              <Label className="text-sm font-bold uppercase text-white mb-4 block">
                 Videoclipe Gerado
               </Label>
               <video src={videoClip.videoUrl} controls className="w-full rounded-lg mb-4" />
