@@ -210,6 +210,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto mb-20">
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/4e228c678_ChatGPTImage16dejande202600_29_33.png" alt="VocalizeX" className="h-32 mx-auto mb-8 object-contain" />
           <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-6">
             <Sparkles className="w-4 h-4 text-purple-400" />
             <span className="text-sm text-purple-300">Plataforma de IA Completa</span>
