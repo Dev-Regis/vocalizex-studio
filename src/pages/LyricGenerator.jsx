@@ -65,6 +65,7 @@ const musicStyles = {
 };
 
 const vocalStyles = [
+  "Padrão",
   "Voz Rouca & Emotiva",
   "Voz Clara & Poderosa",
   "Voz Suave & Melódica",
