@@ -244,7 +244,7 @@ export default function AlbumCoverGenerator() {
                   placeholder="Deixe em branco para criar por padrão"
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
-                  className="bg-[#1a1a1c] border-[#27272a] text-white min-h-24"
+                  className="bg-[#1a1a1c] border-[#27272a] text-white placeholder-gray-500 min-h-24"
                 />
               </div>
 
