@@ -314,17 +314,17 @@ Requisitos CRÍTICOS:
                   <div key={category}>
                     <p className="text-xs font-semibold text-purple-400 mb-2">{category}</p>
                     <Select value={musicStyle} onValueChange={setMusicStyle} disabled={isGenerating}>
-                      <SelectTrigger className="bg-[#18181b] border-[#27272a]">
-                        <SelectValue placeholder="Selecione um estilo" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#121214] border-[#27272a]">
-                        {styles.map((style) => (
-                          <SelectItem key={style} value={style} className="text-white">
-                            {style}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                       <SelectTrigger className="bg-[#18181b] border-[#27272a]">
+                         <SelectValue placeholder="Selecione um estilo" />
+                       </SelectTrigger>
+                       <SelectContent className="bg-[#121214] border-[#27272a] max-h-[280px] overflow-y-auto">
+                         {styles.map((style) => (
+                           <SelectItem key={style} value={style} className="text-white">
+                             {style}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
                   </div>
                 ))}
               </div>
