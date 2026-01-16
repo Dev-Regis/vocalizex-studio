@@ -135,9 +135,9 @@ export default function AlbumCoverGenerator() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
-                    <SelectItem value="man">Homem</SelectItem>
-                    <SelectItem value="woman">Mulher</SelectItem>
-                    <SelectItem value="both">Ambos</SelectItem>
+                    <SelectItem value="man" className="text-white">Homem</SelectItem>
+                    <SelectItem value="woman" className="text-white">Mulher</SelectItem>
+                    <SelectItem value="both" className="text-white">Ambos</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
