@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, Volume2, Globe, CheckCircle2, FileText, AlertCircle, Share2, User, Clock, ImageIcon } from "lucide-react";
 
 export default function Home() {
-  const mainFeatures = [
+  const features = [
     {
       icon: MessageSquare,
       title: "Chat IA Completo",
@@ -48,8 +48,107 @@ export default function Home() {
       description: "Crie e melhore composições com IA",
       link: "ComposerHelper",
       color: "bg-pink-500"
+    },
+
+    {
+      icon: Sparkles,
+      title: "Editor de Imagens IA",
+      description: "Remova fundo, altere cores e adicione elementos às suas imagens",
+      link: "ImageEditor",
+      color: "bg-purple-500"
+    },
+    {
+      icon: Wand2,
+      title: "Remix de Imagens",
+      description: "Transforme imagens com descrições criativas",
+      link: "ImageRemix",
+      color: "bg-indigo-500"
+    },
+    {
+      icon: Mic,
+      title: "Voz → Texto",
+      description: "Converta voz em prompts",
+      link: "VoiceToText",
+      color: "bg-blue-500"
+    },
+    {
+      icon: Languages,
+      title: "Melhorar Prompts",
+      description: "Transforme prompts simples em detalhados",
+      link: "PromptTranslator",
+      color: "bg-green-500"
+    },
+    {
+      icon: Eye,
+      title: "Analisar Imagem",
+      description: "IA descreve o que vê nas imagens",
+      link: "ImageAnalyzer",
+      color: "bg-teal-500"
+    },
+    {
+      icon: Sparkles,
+      title: "Avatar 3D",
+      description: "Crie avatares 3D personalizados",
+      link: "Avatar3D",
+      color: "bg-purple-500"
+    },
+    {
+      icon: CheckCircle2,
+      title: "Melhorador Gramática",
+      description: "Melhore sua escrita com IA",
+      link: "GrammarImprover",
+      color: "bg-emerald-500"
+    },
+    {
+      icon: Globe,
+      title: "Tradutor Texto",
+      description: "Traduza para múltiplos idiomas",
+      link: "TextTranslator",
+      color: "bg-blue-500"
+    },
+    {
+      icon: CheckCircle2,
+      title: "Corretor Texto",
+      description: "Corrija PT, EN e ES",
+      link: "TextCorrector",
+      color: "bg-green-500"
+    },
+    {
+      icon: FileText,
+      title: "Escritor de Roteiros",
+      description: "Gere roteiros profissionais",
+      link: "ScriptWriter",
+      color: "bg-orange-500"
+    },
+    {
+      icon: AlertCircle,
+      title: "Verificador de Letras",
+      description: "Verifique direitos autorais",
+      link: "LyricChecker",
+      color: "bg-red-500"
+    },
+    {
+      icon: Share2,
+      title: "Conteúdo Social",
+      description: "Gere posts para redes sociais",
+      link: "SocialContentGenerator",
+      color: "bg-pink-500"
+    },
+    {
+      icon: ImageIcon,
+      title: "Gerador de Thumbnails",
+      description: "Crie thumbnails para vídeos",
+      link: "ThumbnailGenerator",
+      color: "bg-red-500"
+    },
+    {
+      icon: Clock,
+      title: "Horários de Postagem",
+      description: "Melhores horas para postar",
+      link: "BestPostingTimes",
+      color: "bg-yellow-500"
     }
-  ];
+    ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">
@@ -83,7 +182,7 @@ export default function Home() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {mainFeatures.map((feature, index) => (
+          {features.map((feature, index) => (
             <Link key={index} to={createPageUrl(feature.link)}>
               <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
                 <CardHeader>
@@ -98,6 +197,25 @@ export default function Home() {
               </Card>
             </Link>
           ))}
+        </div>
+
+        {/* Stats Section */}
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
+          <div className="p-6 bg-[#121214] border border-[#27272a] rounded-xl">
+            <Zap className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+            <h3 className="text-3xl font-bold mb-2">Rápido</h3>
+            <p className="text-gray-400">Respostas instantâneas</p>
+          </div>
+          <div className="p-6 bg-[#121214] border border-[#27272a] rounded-xl">
+            <Sparkles className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+            <h3 className="text-3xl font-bold mb-2">Inteligente</h3>
+            <p className="text-gray-400">IA de última geração</p>
+          </div>
+          <div className="p-6 bg-[#121214] border border-[#27272a] rounded-xl">
+            <Bot className="w-8 h-8 text-pink-400 mx-auto mb-3" />
+            <h3 className="text-3xl font-bold mb-2">Completo</h3>
+            <p className="text-gray-400">Múltiplas funcionalidades</p>
+          </div>
         </div>
       </div>
 
