@@ -3,7 +3,6 @@ import Challenges from './pages/Challenges';
 import Collections from './pages/Collections';
 import CreationHistory from './pages/CreationHistory';
 import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
 import ImageAnalyzer from './pages/ImageAnalyzer';
 import ImageChat from './pages/ImageChat';
 import ImageCreator from './pages/ImageCreator';
@@ -34,6 +33,7 @@ import Mentorship from './pages/Mentorship';
 import SavedStyles from './pages/SavedStyles';
 import Settings from './pages/Settings';
 import AdminPanel from './pages/AdminPanel';
+import Home from './pages/Home';
 
 
 export const PAGES = {
@@ -42,7 +42,6 @@ export const PAGES = {
     "Collections": Collections,
     "CreationHistory": CreationHistory,
     "Dashboard": Dashboard,
-    "Home": Home,
     "ImageAnalyzer": ImageAnalyzer,
     "ImageChat": ImageChat,
     "ImageCreator": ImageCreator,
@@ -73,6 +72,7 @@ export const PAGES = {
     "SavedStyles": SavedStyles,
     "Settings": Settings,
     "AdminPanel": AdminPanel,
+    "Home": Home,
 }
 
 export const pagesConfig = {

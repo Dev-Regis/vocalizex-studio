@@ -179,6 +179,11 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#050506] via-[#0a0a0b] to-[#050506] text-white">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-6 p-4 bg-[#18181b] border border-[#27272a] rounded-lg">
+          <p className="text-lg text-white">
+            Bem-vindo, <span className="font-bold text-white">{ADMIN_EMAIL.split("@")[0]}</span>
+          </p>
+        </div>
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-black bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">
             Painel Administrativo
