@@ -167,8 +167,8 @@ export default function AlbumCoverGenerator() {
                   <div>
                     <label className="block text-sm font-medium mb-2 text-white">Foto da Mulher</label>
                     <label className="flex items-center justify-center w-full p-3 border-2 border-dashed border-[#27272a] rounded-lg cursor-pointer hover:border-purple-500">
-                      <Upload className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Selecionar foto</span>
+                      <Upload className="w-4 h-4 mr-2 text-white" />
+                      <span className="text-sm text-white">Selecionar foto</span>
                       <input
                         type="file"
                         accept="image/*"
