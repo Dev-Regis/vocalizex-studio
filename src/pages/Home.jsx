@@ -283,7 +283,14 @@ export default function Home() {
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <Link key={index} to={createPageUrl(feature.link)}>
+            <div 
+              key={index} 
+              onClick={() => {
+                if (handleFeatureClick(createPageUrl(feature.link))) {
+                  navigate(createPageUrl(feature.link));
+                }
+              }}
+            >
               <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
                 <CardHeader>
                   <div className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}>
@@ -295,9 +302,16 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-            </Link>
+            </div>
           ))}
         </div>
+
+        {/* Login Modal */}
+        <LoginModal 
+          isOpen={loginModalOpen} 
+          onClose={() => setLoginModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
 
         {/* Stats Section */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
