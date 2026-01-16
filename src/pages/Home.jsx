@@ -1,45 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video, User, LogOut } from "lucide-react";
-import LoginModal from "../components/LoginModal";
-import UserProfile from "../components/UserProfile";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2, Video } from "lucide-react";
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const isAuthenticated = await base44.auth.isAuthenticated();
-      if (isAuthenticated) {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      }
-    } catch (error) {
-      console.log("Usuário não autenticado");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFeatureClick = (e, featureName) => {
-    if (!user) {
-      e.preventDefault();
-      setShowLoginModal(true);
-      return false;
-    }
-  };
-
   const features = [
     {
       icon: MessageSquare,
@@ -286,21 +252,19 @@ export default function Home() {
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <div key={index} onClick={(e) => handleFeatureClick(e, feature.title)}>
-              <Link to={user ? createPageUrl(feature.link) : "#"}>
-                <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
-                  <CardHeader>
-                    <div className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}>
-                      <feature.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white text-xl">{feature.title}</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {feature.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            </div>
+            <Link key={index} to={createPageUrl(feature.link)}>
+              <Card className="bg-[#121214] border-[#27272a] hover:border-purple-500/50 transition-all duration-300 hover:scale-105 cursor-pointer h-full">
+                <CardHeader>
+                  <div className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}>
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <CardTitle className="text-white text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    {feature.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           ))}
         </div>
 
@@ -326,39 +290,10 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-[#27272a] mt-20 py-8">
-        <div className="container mx-auto px-4 flex items-center justify-between text-gray-500">
+        <div className="container mx-auto px-4 text-center text-gray-500">
           <p>Plataforma de IA • Criado com Base44</p>
-
-          <div className="flex items-center gap-4">
-            {user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-white font-medium">Bem-vindo, {user.full_name}!</span>
-                <Button
-                  onClick={() => setShowProfileModal(true)}
-                  size="sm"
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Configurações
-                </Button>
-              </div>
-            ) : (
-              <Button
-                onClick={() => setShowLoginModal(true)}
-                size="sm"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Login Usuário
-              </Button>
-            )}
-          </div>
         </div>
       </footer>
-
-      <LoginModal isOpen={showLoginModal} onLoginSuccess={() => setShowLoginModal(false)} />
-      {user && <UserProfile user={user} onClose={() => setShowProfileModal(false)} />}
-      {showProfileModal && user && <UserProfile user={user} onClose={() => setShowProfileModal(false)} />}
-      </div>
-      );
-      }
+    </div>
+  );
+}
