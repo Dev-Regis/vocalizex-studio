@@ -49,6 +49,13 @@ export default function Home() {
       link: "ComposerHelper",
       color: "bg-pink-500"
     },
+    {
+      icon: ImageIcon,
+      title: "Gerador de Capas",
+      description: "Crie capas de álbum e single com IA",
+      link: "AlbumCoverGenerator",
+      color: "bg-amber-500"
+    },
 
     {
       icon: Sparkles,
