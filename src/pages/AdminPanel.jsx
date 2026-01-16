@@ -5,11 +5,12 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Lock, Mail, Plus, LogOut, Users, Trash2, Shield } from "lucide-react";
+import { Lock, Mail, Plus, LogOut, Users, Trash2, Shield, Key } from "lucide-react";
 import { toast } from "sonner";
 
 const ADMIN_EMAIL = "teste12345678@teste.com";
 const ADMIN_PASSWORD = "124567887654210";
+const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6967e4600e0679ed371f5df6/526911b01_ChatGPTImage16dejande202600_27_45.png";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
