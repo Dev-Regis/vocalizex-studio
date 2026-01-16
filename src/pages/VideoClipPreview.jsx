@@ -161,8 +161,8 @@ export default function VideoClipPreview() {
       console.log('🎬 Iniciando geração - VideoClip ID:', videoClip.id);
       toast.loading("Iniciando geração do videoclipe...", { id: "video" });
 
-      // Chamar a função backend que integra com a D-ID
-      const response = await base44.functions.invoke('generateVideoWithDID', {
+      // Chamar a função backend que integra com a Runway ML
+      const response = await base44.functions.invoke('generateVideoWithRunway', {
         videoClipId: videoClip.id
       });
 
