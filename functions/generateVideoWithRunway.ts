@@ -73,6 +73,17 @@ Deno.serve(async (req) => {
         if (!createResponse.ok) {
             const error = await createResponse.text();
             console.error('❌ Erro Runway:', error);
+            
+            // Verificar se é erro de créditos
+            if (error.includes('not have enough credits') || error.includes('credits')) {
+                return Response.json({ 
+                    error: 'Créditos insuficientes na Runway ML',
+                    details: 'Você precisa adicionar créditos em https://app.runwayml.com/account para gerar vídeos',
+                    status_code: createResponse.status,
+                    needsCredits: true
+                }, { status: createResponse.status });
+            }
+            
             return Response.json({ 
                 error: 'Erro ao criar vídeo na Runway',
                 details: error,

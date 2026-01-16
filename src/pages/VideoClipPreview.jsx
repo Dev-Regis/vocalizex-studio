@@ -173,22 +173,27 @@ export default function VideoClipPreview() {
       if (response.data?.success) {
         toast.success("Videoclipe gerado com sucesso!", { id: "video" });
         console.log('🎉 Vídeo URL:', response.data.videoUrl);
-        
+
         // Recarregar o videoClip atualizado do banco
         const clips = await base44.entities.VideoClip.filter({ id: videoClip.id });
         if (clips.length > 0) {
           setVideoClip(clips[0]);
         }
       } else {
-        const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
-        console.error('❌ ERRO DETALHADO:', {
-          error: response.data?.error,
-          details: response.data?.details,
-          status: response.status,
-          completo: response.data
-        });
-        toast.error("❌ ERRO: " + errorMsg, { id: "video", duration: 10000 });
-        alert('ERRO COMPLETO: ' + JSON.stringify(response.data, null, 2));
+        // Verificar se é erro de créditos
+        if (response.data?.needsCredits) {
+          toast.error("💳 Créditos insuficientes na Runway ML", { id: "video", duration: 8000 });
+          alert('⚠️ CRÉDITOS INSUFICIENTES\n\n' + response.data.details + '\n\nAdicione créditos em: https://app.runwayml.com/account');
+        } else {
+          const errorMsg = response.data?.error || response.data?.details || 'Erro desconhecido';
+          console.error('❌ ERRO DETALHADO:', {
+            error: response.data?.error,
+            details: response.data?.details,
+            status: response.status,
+            completo: response.data
+          });
+          toast.error("❌ ERRO: " + errorMsg, { id: "video", duration: 10000 });
+        }
       }
 
     } catch (error) {
