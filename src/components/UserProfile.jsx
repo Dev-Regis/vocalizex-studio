@@ -47,8 +47,10 @@ export default function UserProfile({ user, onClose }) {
   };
 
   const handleLogout = async () => {
-    await base44.auth.logout();
-    navigate("/");
+    onClose();
+    setTimeout(() => {
+      base44.auth.logout("/");
+    }, 100);
   };
 
   return (
