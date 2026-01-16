@@ -15,8 +15,6 @@ import VideoClipForm from './pages/VideoClipForm';
 import VideoClipPreview from './pages/VideoClipPreview';
 import VoiceToText from './pages/VoiceToText';
 import Home from './pages/Home';
-import Chatbot from './pages/Chatbot';
-import AutoPromptImprove from './pages/AutoPromptImprove';
 
 
 export const PAGES = {
@@ -37,8 +35,6 @@ export const PAGES = {
     "VideoClipPreview": VideoClipPreview,
     "VoiceToText": VoiceToText,
     "Home": Home,
-    "Chatbot": Chatbot,
-    "AutoPromptImprove": AutoPromptImprove,
 }
 
 export const pagesConfig = {
