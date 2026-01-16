@@ -160,7 +160,7 @@ export default function VideoClipForm() {
           {/* Fotos */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+              <Label className="text-sm font-bold uppercase text-white mb-4 block">
                 Fotos (Obrigatório: Homem e/ou Mulher)
               </Label>
 
@@ -180,7 +180,7 @@ export default function VideoClipForm() {
                       <img
                         src={photoMan.url}
                         alt="Homem"
-                        className="w-full h-48 object-cover rounded-lg border-2 border-blue-500"
+                        className="w-full h-48 object-contain bg-[#18181b] rounded-lg border-2 border-blue-500"
                       />
                       <button
                         onClick={() => setPhotoMan(null)}
@@ -220,7 +220,7 @@ export default function VideoClipForm() {
                       <img
                         src={photoWoman.url}
                         alt="Mulher"
-                        className="w-full h-48 object-cover rounded-lg border-2 border-pink-500"
+                        className="w-full h-48 object-contain bg-[#18181b] rounded-lg border-2 border-pink-500"
                       />
                       <button
                         onClick={() => setPhotoWoman(null)}
@@ -251,7 +251,7 @@ export default function VideoClipForm() {
           {/* Música */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-4 block">
+              <Label className="text-sm font-bold uppercase text-white mb-4 block">
                 Música (MP3) *
               </Label>
 
@@ -295,7 +295,7 @@ export default function VideoClipForm() {
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6 space-y-4">
               <div>
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+                <Label className="text-sm font-bold uppercase text-white mb-3 block">
                   Tipo de Vídeo
                 </Label>
                 <Select value={type} onValueChange={setType}>
@@ -310,7 +310,7 @@ export default function VideoClipForm() {
               </div>
 
               <div>
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+                <Label className="text-sm font-bold uppercase text-white mb-3 block">
                   Orientação
                 </Label>
                 <Select value={orientation} onValueChange={setOrientation}>
@@ -325,7 +325,7 @@ export default function VideoClipForm() {
               </div>
 
               <div>
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+                <Label className="text-sm font-bold uppercase text-white mb-3 block">
                   Idioma
                 </Label>
                 <Select value={language} onValueChange={setLanguage}>
@@ -346,7 +346,7 @@ export default function VideoClipForm() {
           {/* Letra */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+              <Label className="text-sm font-bold uppercase text-white mb-3 block">
                 Letra da Música *
               </Label>
               <Textarea
@@ -364,7 +364,7 @@ export default function VideoClipForm() {
           {/* Cenário */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+              <Label className="text-sm font-bold uppercase text-white mb-3 block">
                 Descrição do Cenário (Opcional)
               </Label>
               <Textarea
@@ -381,14 +381,14 @@ export default function VideoClipForm() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-sm font-bold uppercase text-gray-400">Legendas</Label>
+                  <Label className="text-sm font-bold uppercase text-white">Legendas</Label>
                   <p className="text-xs text-gray-500 mt-1">Mostrar letra no rodapé do vídeo</p>
                 </div>
                 <Switch checked={subtitlesEnabled} onCheckedChange={setSubtitlesEnabled} />
               </div>
 
               <div>
-                <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+                <Label className="text-sm font-bold uppercase text-white mb-3 block">
                   Marca d'água (Opcional - Máx. 12 caracteres)
                 </Label>
                 <Input
@@ -406,7 +406,7 @@ export default function VideoClipForm() {
           {/* Duração */}
           <Card className="bg-[#121214] border-[#27272a]">
             <CardContent className="p-6">
-              <Label className="text-sm font-bold uppercase text-gray-400 mb-3 block">
+              <Label className="text-sm font-bold uppercase text-white mb-3 block">
                 Duração do Vídeo: {duration} minuto{duration !== 1 ? 's' : ''}
               </Label>
               <input
