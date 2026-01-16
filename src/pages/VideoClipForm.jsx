@@ -313,7 +313,7 @@ export default function VideoClipForm() {
                 <div className="flex items-center gap-3 bg-[#18181b] border border-[#27272a] rounded-lg p-4">
                   <MusicIcon className="w-6 h-6 text-red-400" />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">{musicFile.name}</p>
+                    <p className="text-sm font-semibold text-white">{musicFile.name}</p>
                     <audio src={musicFile.url} controls className="w-full mt-2" />
                   </div>
                   <button
