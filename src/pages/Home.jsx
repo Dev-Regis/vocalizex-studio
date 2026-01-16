@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Mic, Video } from "lucide-react";
+import { MessageSquare, Image, Zap, Sparkles, ArrowRight, Bot, Music, Folder, Heart, Trophy, Mic, Eye, Languages, Wand2 } from "lucide-react";
 
 export default function Home() {
   const features = [
@@ -48,6 +48,69 @@ export default function Home() {
       description: "Remova fundo, altere cores e adicione elementos às suas imagens",
       link: "ImageEditor",
       color: "bg-purple-500"
+    },
+    {
+      icon: Wand2,
+      title: "Remix de Imagens",
+      description: "Transforme imagens com descrições criativas",
+      link: "ImageRemix",
+      color: "bg-indigo-500"
+    },
+    {
+      icon: Folder,
+      title: "Templates",
+      description: "Prompts prontos para diferentes estilos",
+      link: "TemplateGallery",
+      color: "bg-orange-500"
+    },
+    {
+      icon: Image,
+      title: "Histórico",
+      description: "Todas suas criações em um só lugar",
+      link: "CreationHistory",
+      color: "bg-cyan-500"
+    },
+    {
+      icon: Folder,
+      title: "Coleções",
+      description: "Organize criações em pastas",
+      link: "Collections",
+      color: "bg-emerald-500"
+    },
+    {
+      icon: Heart,
+      title: "Feed Público",
+      description: "Compartilhe e descubra criações",
+      link: "PublicFeed",
+      color: "bg-pink-500"
+    },
+    {
+      icon: Trophy,
+      title: "Desafios",
+      description: "Participe de desafios criativos",
+      link: "Challenges",
+      color: "bg-yellow-500"
+    },
+    {
+      icon: Mic,
+      title: "Voz → Texto",
+      description: "Converta voz em prompts",
+      link: "VoiceToText",
+      color: "bg-blue-500"
+    },
+    {
+      icon: Languages,
+      title: "Melhorar Prompts",
+      description: "Transforme prompts simples em detalhados",
+      link: "PromptTranslator",
+      color: "bg-green-500"
+    },
+    {
+      icon: Eye,
+      title: "Analisar Imagem",
+      description: "IA descreve o que vê nas imagens",
+      link: "ImageAnalyzer",
+      color: "bg-teal-500"
     },
 
     ];

@@ -13,6 +13,10 @@ import TemplateGallery from './pages/TemplateGallery';
 import CreationHistory from './pages/CreationHistory';
 import Collections from './pages/Collections';
 import PublicFeed from './pages/PublicFeed';
+import Challenges from './pages/Challenges';
+import VoiceToText from './pages/VoiceToText';
+import PromptTranslator from './pages/PromptTranslator';
+import ImageAnalyzer from './pages/ImageAnalyzer';
 
 
 export const PAGES = {
@@ -31,6 +35,10 @@ export const PAGES = {
     "CreationHistory": CreationHistory,
     "Collections": Collections,
     "PublicFeed": PublicFeed,
+    "Challenges": Challenges,
+    "VoiceToText": VoiceToText,
+    "PromptTranslator": PromptTranslator,
+    "ImageAnalyzer": ImageAnalyzer,
 }
 
 export const pagesConfig = {
