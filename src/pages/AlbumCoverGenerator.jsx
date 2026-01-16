@@ -206,7 +206,7 @@ export default function AlbumCoverGenerator() {
               <div>
                 <label className="block text-sm font-medium mb-2">Fonte da Letra</label>
                 <Select value={selectedFont} onValueChange={setSelectedFont}>
-                  <SelectTrigger className="bg-[#1a1a1c] border-[#27272a]">
+                  <SelectTrigger className="bg-[#1a1a1c] border-[#27272a] text-white">
                     <SelectValue placeholder="Escolher fonte" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
