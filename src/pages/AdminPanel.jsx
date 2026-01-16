@@ -242,17 +242,17 @@ export default function AdminPanel() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#27272a]">
-                    <th className="text-left py-3 px-4">Nome</th>
-                    <th className="text-left py-3 px-4">Email</th>
-                    <th className="text-left py-3 px-4">Cargo</th>
-                    <th className="text-left py-3 px-4">Ação</th>
+                    <th className="text-left py-3 px-4 text-white font-bold">Nome</th>
+                    <th className="text-left py-3 px-4 text-white font-bold">Email</th>
+                    <th className="text-left py-3 px-4 text-white font-bold">Cargo</th>
+                    <th className="text-left py-3 px-4 text-white font-bold">Ação</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-b border-[#27272a] hover:bg-[#18181b] transition-colors">
-                      <td className="py-3 px-4">{user.full_name || "-"}</td>
-                      <td className="py-3 px-4">{user.email}</td>
+                    <tr key={user.id} className="border-b border-[#27272a] hover:bg-[#18181b] transition-colors text-white">
+                      <td className="py-3 px-4 text-white">{user.full_name || "-"}</td>
+                      <td className="py-3 px-4 text-white">{user.email}</td>
                       <td className="py-3 px-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${user.role === "admin" ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
                           {user.role === "admin" ? "Admin" : "Usuário"}
