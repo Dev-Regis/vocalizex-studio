@@ -117,9 +117,9 @@ export default function AlbumCoverGenerator() {
               <div>
                 <label className="block text-sm font-medium mb-2 text-white">Tipo de Capa</label>
                 <Select value={coverType} onValueChange={setCoverType}>
-                  <SelectTrigger className="bg-[#1a1a1c] border-[#27272a] text-white">
-                    <SelectValue />
-                  </SelectTrigger>
+                   <SelectTrigger className="bg-[#1a1a1c] border-[#27272a] text-white">
+                     <SelectValue className="text-white" />
+                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
                     <SelectItem value="album" className="text-white">Álbum</SelectItem>
                     <SelectItem value="single" className="text-white">Single</SelectItem>
