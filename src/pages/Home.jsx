@@ -42,13 +42,6 @@ export default function Home() {
       link: "LyricGenerator",
       color: "bg-pink-500"
     },
-    {
-      icon: Video,
-      title: "Criar Videoclipes ou Shorts",
-      description: "Transforme músicas em videoclipes profissionais com sincronização labial",
-      link: "VideoClipForm",
-      color: "bg-red-500"
-    },
 
     ];
 
