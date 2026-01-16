@@ -984,7 +984,7 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
                 <Button
                   variant="outline"
                   size="icon"
-                  disabled={files.length >= 10 || isGenerating}
+                  disabled={files.length >= 10}
                   className="flex-shrink-0 bg-[#18181b] border-[#27272a] hover:bg-[#27272a]"
                 >
                   <Plus className="w-5 h-5 text-white" />
@@ -1057,31 +1057,29 @@ LEIA O CONTEÚDO DOS ARQUIVOS e forneça a análise/resposta solicitada com base
               
               <div className="relative">
                 <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Pergunte alguma coisa..."
-                  className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] pr-12"
-                  disabled={isGenerating}
-                />
+                   value={input}
+                   onChange={(e) => setInput(e.target.value)}
+                   onKeyPress={handleKeyPress}
+                   placeholder="Pergunte alguma coisa..."
+                   className="bg-[#18181b] border-[#27272a] text-white resize-none min-h-[60px] pr-12"
+                 />
                 <Button
-                  onClick={toggleListening}
-                  disabled={isGenerating}
-                  size="icon"
-                  variant="ghost"
-                  className={`absolute right-2 top-2 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
-                >
+                   onClick={toggleListening}
+                   size="icon"
+                   variant="ghost"
+                   className={`absolute right-2 top-2 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
+                 >
                   {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                 </Button>
               </div>
             </div>
 
             <Button
-              onClick={handleSubmit}
-              disabled={(!input.trim() && files.length === 0) || isGenerating}
-              size="icon"
-              className="flex-shrink-0 bg-purple-600 hover:bg-purple-500"
-            >
+               onClick={handleSubmit}
+               disabled={!input.trim() && files.length === 0}
+               size="icon"
+               className="flex-shrink-0 bg-purple-600 hover:bg-purple-500"
+             >
               {isGenerating ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
