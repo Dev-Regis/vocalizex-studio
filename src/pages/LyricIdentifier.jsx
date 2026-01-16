@@ -145,8 +145,8 @@ export default function LyricIdentifier() {
               ) : (
                 <div className="bg-gray-500/10 border border-gray-500/30 rounded-lg p-4 h-[280px] flex items-center justify-center">
                   <div className="text-center">
-                    <p className="text-gray-400 font-semibold mb-2">❌ Não Encontrado</p>
-                    <p className="text-gray-500 text-sm">Esta letra não foi identificada como uma música conhecida</p>
+                    <p className="text-gray-400 font-semibold mb-2">❌ Artista Não Encontrado</p>
+                    <p className="text-gray-500 text-sm">Não foi possível identificar o artista que pertence a esta letra</p>
                   </div>
                 </div>
               )
