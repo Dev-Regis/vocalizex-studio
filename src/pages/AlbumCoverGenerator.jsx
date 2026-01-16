@@ -211,7 +211,7 @@ export default function AlbumCoverGenerator() {
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1c] border-[#27272a]">
                     {fonts.map((font) => (
-                      <SelectItem key={font} value={font}>
+                      <SelectItem key={font} value={font} className="text-white">
                         {font}
                       </SelectItem>
                     ))}
