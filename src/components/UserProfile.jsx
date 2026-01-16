@@ -46,6 +46,7 @@ export default function UserProfile({ user, onClose }) {
 
   const handleLogout = async () => {
     await base44.auth.logout();
+    window.location.href = "/";
   };
 
   return (
