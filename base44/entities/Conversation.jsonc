@@ -1,0 +1,23 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "T\u00edtulo da conversa",
+      "default": "Nova Conversa"
+    },
+    "messages": {
+      "type": "string",
+      "description": "Mensagens da conversa em JSON"
+    },
+    "last_message_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data da \u00faltima mensagem"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

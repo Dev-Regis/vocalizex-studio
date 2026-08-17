@@ -1,0 +1,45 @@
+{
+  "name": "MarketplaceItem",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "T\u00edtulo do item"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "prompt",
+        "template",
+        "creation"
+      ],
+      "description": "Tipo de item"
+    },
+    "price": {
+      "type": "number",
+      "description": "Pre\u00e7o em cr\u00e9ditos"
+    },
+    "content": {
+      "type": "string",
+      "description": "Conte\u00fado ou URL"
+    },
+    "preview_url": {
+      "type": "string",
+      "description": "URL de preview"
+    },
+    "sales_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "price",
+    "content"
+  ]
+}

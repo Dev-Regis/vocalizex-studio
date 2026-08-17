@@ -1,0 +1,13 @@
+{
+  "name": "Following",
+  "type": "object",
+  "properties": {
+    "following_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio seguido"
+    }
+  },
+  "required": [
+    "following_email"
+  ]
+}

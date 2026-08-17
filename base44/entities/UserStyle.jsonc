@@ -1,0 +1,22 @@
+{
+  "name": "UserStyle",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome do estilo salvo"
+    },
+    "prompt_template": {
+      "type": "string",
+      "description": "Template do prompt"
+    },
+    "settings": {
+      "type": "string",
+      "description": "JSON com configura\u00e7\u00f5es"
+    }
+  },
+  "required": [
+    "name",
+    "prompt_template"
+  ]
+}

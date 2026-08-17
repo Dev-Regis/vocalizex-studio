@@ -1,0 +1,83 @@
+{
+  "name": "VideoClip",
+  "type": "object",
+  "properties": {
+    "photoMan": {
+      "type": "string",
+      "description": "URL da foto do homem"
+    },
+    "photoWoman": {
+      "type": "string",
+      "description": "URL da foto da mulher"
+    },
+    "photoBoth": {
+      "type": "string",
+      "description": "URL da foto com m\u00faltiplas pessoas (ambos)"
+    },
+    "musicUrl": {
+      "type": "string",
+      "description": "URL da m\u00fasica em MP3"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "videoclipe",
+        "short"
+      ],
+      "description": "Tipo de v\u00eddeo"
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "vertical",
+        "horizontal"
+      ],
+      "description": "Orienta\u00e7\u00e3o do v\u00eddeo"
+    },
+    "language": {
+      "type": "string",
+      "description": "Idioma da voz e letra"
+    },
+    "lyrics": {
+      "type": "string",
+      "description": "Letra da m\u00fasica"
+    },
+    "sceneDescription": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o do cen\u00e1rio"
+    },
+    "subtitlesEnabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Legendas ativadas"
+    },
+    "watermark": {
+      "type": "string",
+      "description": "Marca d'\u00e1gua (at\u00e9 12 caracteres)"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Dura\u00e7\u00e3o em minutos"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "processing",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "videoUrl": {
+      "type": "string",
+      "description": "URL do v\u00eddeo gerado"
+    }
+  },
+  "required": [
+    "type",
+    "orientation",
+    "language",
+    "lyrics",
+    "duration"
+  ]
+}

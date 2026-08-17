@@ -1,0 +1,31 @@
+{
+  "name": "Mentorship",
+  "type": "object",
+  "properties": {
+    "mentor_email": {
+      "type": "string",
+      "description": "Email do mentor"
+    },
+    "mentee_email": {
+      "type": "string",
+      "description": "Email do mentorado"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "completed"
+      ],
+      "default": "pending"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notas da mentoria"
+    }
+  },
+  "required": [
+    "mentor_email",
+    "mentee_email"
+  ]
+}

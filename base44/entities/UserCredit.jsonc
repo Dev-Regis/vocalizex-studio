@@ -1,0 +1,28 @@
+{
+  "name": "UserCredit",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio"
+    },
+    "credits": {
+      "type": "number",
+      "default": 10,
+      "description": "Cr\u00e9ditos dispon\u00edveis"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "premium",
+        "pro"
+      ],
+      "default": "free",
+      "description": "Plano do usu\u00e1rio"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

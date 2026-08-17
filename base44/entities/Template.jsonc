@@ -1,0 +1,35 @@
+{
+  "name": "Template",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome do template"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "landscape",
+        "abstract",
+        "fantasy",
+        "realistic",
+        "artistic"
+      ],
+      "description": "Categoria"
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Prompt do template"
+    },
+    "thumbnail": {
+      "type": "string",
+      "description": "Imagem de exemplo"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "prompt"
+  ]
+}

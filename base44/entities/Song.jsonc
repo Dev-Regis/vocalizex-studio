@@ -1,0 +1,39 @@
+{
+  "name": "Song",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "T\u00edtulo da m\u00fasica"
+    },
+    "musicStyle": {
+      "type": "string",
+      "description": "Estilo de m\u00fasica"
+    },
+    "vocalStyle": {
+      "type": "string",
+      "description": "Estilo vocal"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Dura\u00e7\u00e3o em minutos"
+    },
+    "concept": {
+      "type": "string",
+      "description": "Conceito e vibe da m\u00fasica"
+    },
+    "details": {
+      "type": "string",
+      "description": "Detalhes sobre batida e tom"
+    },
+    "lyrics": {
+      "type": "string",
+      "description": "Letra completa em JSON string"
+    }
+  },
+  "required": [
+    "title",
+    "musicStyle",
+    "lyrics"
+  ]
+}

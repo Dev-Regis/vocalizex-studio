@@ -1,0 +1,50 @@
+{
+  "name": "Creation",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "lyrics",
+        "edited_image"
+      ],
+      "description": "Tipo de cria\u00e7\u00e3o"
+    },
+    "content_url": {
+      "type": "string",
+      "description": "URL da imagem ou conte\u00fado"
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Prompt usado"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "Vis\u00edvel no feed p\u00fablico"
+    },
+    "likes_count": {
+      "type": "number",
+      "default": 0,
+      "description": "N\u00famero de likes"
+    },
+    "collection_id": {
+      "type": "string",
+      "description": "ID da cole\u00e7\u00e3o"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Tags separadas por v\u00edrgula"
+    },
+    "views_count": {
+      "type": "number",
+      "default": 0,
+      "description": "N\u00famero de visualiza\u00e7\u00f5es"
+    }
+  },
+  "required": [
+    "type",
+    "content_url"
+  ]
+}
